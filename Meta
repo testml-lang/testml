@@ -22,6 +22,9 @@ devel:
   irc: irc.freenode.net#testml
 
 =npm:
+  bin:
+    testml-boot: ./bin/testml-boot
+    testml-compiler: ./bin/testml-compiler
   dependencies:
     lodash: '>=2.2.2'
     pegex: '>=0.1.3'
