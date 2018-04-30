@@ -1,0 +1,57 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use TestML;
+
+my $testml_path = $ARGV[0];
+
+open TESTML, $testml_path or
+    die "Can't open '$testml_path' for input";
+
+my $testml = do {local $/; <TESTML>};
+
+close TESTML;
+
+$testml =~ s/\A\s*%TestML\s+\d.*\n+//;
+
+$testml = "%TestML 0.1.0\n\n$testml";
+
+{
+    package Bridge;
+    use base 'TestML::Bridge';
+    use TestML::Util;
+    use File::Temp qw/tempfile/;
+    use Capture::Tiny 'capture';
+    use XXX;
+
+    sub undent {
+        my ($self, $text) = @_;
+        $text = $text->value;
+        $text =~ s/^    //mg;
+        return str $text;
+    }
+
+    sub compile {
+        my ($self, $testml) = @_;
+        $testml = $testml->value;
+
+        my ($temp_handle, $temp_path) = tempfile or die;
+        print $temp_handle $testml;
+        close $temp_handle;
+
+        my ($stdout, $stderr, $rc) = capture {
+            system("testml-compiler $temp_path");
+        };
+        die "Error while testing testml-compiler:\n$stderr"
+            if $rc != 0;
+
+        return str $stdout;
+    }
+}
+
+TestML->new(
+    testml => $testml,
+    bridge => 'Bridge',
+)->run;

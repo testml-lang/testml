@@ -1,0 +1,182 @@
+#------------------------------------------------------------------------------
+# Pegex grammar for TestML 0.2.0
+#------------------------------------------------------------------------------
+testml-document:
+  head-section
+  code-section
+  data-section
+
+head-section:
+  comment-lines*
+  testml-directive?
+  head-statement*
+
+head-statement:
+  | directive-statement
+  | comment-lines
+
+directive-statement:
+  | import-directive
+
+testml-directive:
+  / '%TestML' + version-number eol /
+
+import-directive:
+  / '%Import' + module-name eol /
+
+#------------------------------------------------------------------------------
+code-section:
+  code-statement*
+
+code-statement:
+  | comment-lines
+  | assignment-statement
+  | expression-statement
+
+assignment-statement:
+  / ( variable-name ) +
+    ( assignment-operator ) +/
+  code-expression
+
+expression-statement:
+  expression-label?
+  code-expression
+  assertion-expression?
+  eol
+
+expression-label: xxx
+
+code-expression:
+  code-object
+  function-call*
+
+code-object:
+  | point-object
+  | string-object
+  | number-object
+  | call-object
+
+point-object:
+  / STAR ( LOWER [\-\_a-z0-9]* ) /
+
+string-object: xxx
+
+number-object: /( DIGIT+ )/
+
+function-call:
+  .call-operator
+  call-object
+
+call-object:
+  call-name
+  call-arguments?
+
+call-name: /( identifier-name )/
+
+call-arguments:
+  LPAREN
+  (
+    code-expression (/ COMMA -/ code-expression)*
+  )?
+  RPAREN
+
+assertion-expression:
+  | assertion-eq
+  | assertion-has
+  | assertion-like
+
+assertion-eq:
+  /+ ('==') +/
+  code-expression
+
+assertion-has:
+  /+ ('==') +/
+  code-expression
+
+assertion-like:
+  /+ ('==') +/
+  code-expression
+
+#------------------------------------------------------------------------------
+data-section:
+  block-definition*
+
+block-definition:
+  block-heading
+  user-defined
+  point-definition*
+
+block-heading:
+  / block-marker (: + ( ANY*? ) -)?  EOL /
+
+user-defined:
+  point-lines
+
+point-lines:
+  / ( (: ANY* EOL)*? ) point-boundary /
+
+point-definition:
+  | point-single
+  | point-multi
+
+point-single: /
+  point-marker +
+  ( point-name )
+  ( NS* )
+  COLON + ( ANY*? -)
+  EOL
+  point-lines
+/
+
+point-multi: /
+  point-marker +
+  ( point-name )
+  ( NS* ) -
+  EOL
+  point-lines
+/
+
+#------------------------------------------------------------------------------
+
+assignment-operator:
+  /(: '=' | '||=' )/
+
+blank-line:
+  /( WS* EOL | WS+ EOS )/
+
+call-operator: DOT
+
+comment-line:
+  /(: HASH ANY* eol)/
+
+comment-lines:
+  /(: comment-line | blank-line )+/
+
+block-marker: '==='
+
+point-marker: '---'
+
+point-boundary:
+  /(= point-marker | block-marker | eos )/
+
+eol: / EOL? /
+
+eos: EOS
+
+identifier-name:
+  / ALPHA ALNUM* (: DASH ALNUM+)* /
+
+module-name: /( NS+ )/
+
+point-name: identifier-name
+
+variable-name: identifier-name
+
+version-number:
+  /( DIGIT+ DOT DIGIT+ DOT DIGIT+ )/
+
+ws: BLANK
+
+xxx: 'XXX'
+
+# vim: sw=2 lisp:

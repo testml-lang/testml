@@ -3,7 +3,7 @@ testml-compiler
 
 The TestML Compiler
 
-## Synopsis
+= Synopsis
 
 ```
 testml-compiler foo.tml > foo.tml.json
