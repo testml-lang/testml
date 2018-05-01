@@ -1,8 +1,6 @@
-module.paths = TestML.module_paths
-
 require('pegex').require 'tree'
 
-(global.TestML ||= {}).AST = class extends Pegex.Tree
+class TestML.AST extends Pegex.Tree
   constructor: ->
     super()
     @code = []

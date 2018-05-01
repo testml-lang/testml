@@ -1,17 +1,10 @@
 #!/usr/bin/env coffee
 
-(global.TestML ||= {}).module_paths = module.paths
-
-TestML.root = process.env.TESTML_COMPILER_ROOT \
-  or throw "TESTML_COMPILER_ROOT not set. TestML not properly installed."
-
-TestML.module_paths.unshift "#{TestML.root}/lib"
-module.paths = TestML.module_paths
+module.paths.unshift "#{require('path').dirname(__dirname)}/lib"
 
 require 'testml/prelude'
 require 'testml/compiler'
 
-#------------------------------------------------------------------------------
 [input_file] = process.argv[2..]
 throw "usage: testml-compiler <input-file>" \
   unless input_file?

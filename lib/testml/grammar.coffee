@@ -1,8 +1,6 @@
-module.paths = TestML.module_paths
-
 require('pegex').require 'grammar'
 
-(global.TestML ||= {}).Grammar = class extends Pegex.Grammar
+class TestML.Grammar extends Pegex.Grammar
   make_tree: ->
     {
       "+toprule": "testml_document",

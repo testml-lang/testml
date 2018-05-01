@@ -1,12 +1,11 @@
-module.paths = TestML.module_paths
-
-require 'testml/prelude'
-require 'testml/grammar'
-require 'testml/ast'
+require '../testml'
+require '../testml/prelude'
+require '../testml/grammar'
+require '../testml/ast'
 
 require('pegex').require 'parser'
 
-(global.TestML ||= {}).Compiler = class
+class TestML.Compiler
   ast: null
 
   compile: (input_path)->

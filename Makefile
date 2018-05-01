@@ -7,7 +7,11 @@ else
 endif
 
 test: node_modules
-	(source .rc; prove -lv test/)
+	(source .rc; NODE_PATH=lib prove -lv test/)
+
+test-pegex: node_modules ../pegex-js/npm
+	rm -fr node_modules/pegex
+	(source .rc; NODE_PATH=lib:../pegex-js/npm/lib prove -lv test/)
 
 clean: ingy-npm-clean
 	rm -fr node_modules
