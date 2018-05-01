@@ -1,4 +1,9 @@
 ---
+version: 0.0.3
+date:    Tue May  1 12:42:49 PDT 2018
+changes:
+- Fix npm install issues
+---
 version: 0.0.2
 date:    Mon Apr 30 11:39:54 PDT 2018
 changes:

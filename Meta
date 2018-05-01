@@ -1,7 +1,7 @@
 =meta: 0.0.2
 
 name: testml-compiler
-version: 0.0.2
+version: 0.0.3
 abstract: TestML Compiler CLI
 homepage: http://testml.org
 tag: [testml, compiler, testing, language, acmeism]
@@ -22,11 +22,12 @@ devel:
   irc: irc.freenode.net#testml
 
 =npm:
+  main: ./lib/testml/index.js
   bin:
     testml-boot: ./bin/testml-boot
     testml-compiler: ./bin/testml-compiler
   dependencies:
     lodash: '>=2.2.2'
-    pegex: '>=0.1.3'
+    pegex: '>=0.1.4'
   scripts:
     test: (source .rc; prove -v test)
