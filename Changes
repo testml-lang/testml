@@ -1,4 +1,9 @@
 ---
+version: 0.0.4
+date:    Wed May  2 16:23:55 PDT 2018
+changes:
+- Support Undent compilation time filtering
+---
 version: 0.0.3
 date:    Tue May  1 12:42:49 PDT 2018
 changes:
