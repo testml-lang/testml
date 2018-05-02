@@ -41,6 +41,12 @@ lodash.extend global,
       out "---\n#{yaml.dump elem}"
     say '...'
     data[0]
+  WWW: (data...)->
+    yaml = require 'js-yaml'
+    for elem in data
+      err "---\n#{yaml.dump elem}"
+    err '...\n'
+    data[0]
 
   read_file: (file_path)->
     if file_path == '-'

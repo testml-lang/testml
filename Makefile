@@ -6,8 +6,10 @@ else
     $(error Fix your errors)
 endif
 
+test = test/
+
 test: node_modules
-	(source .rc; NODE_PATH=lib prove -lv test/)
+	(source .rc; NODE_PATH=lib prove -lv $(test))
 
 test-pegex: node_modules ../pegex-js/npm
 	rm -fr node_modules/pegex

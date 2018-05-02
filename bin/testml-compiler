@@ -9,7 +9,7 @@ require 'testml/compiler'
 throw "usage: testml-compiler <input-file>" \
   unless input_file?
 throw "Input file does not exist: '#{input_file}'" \
-  unless file_exists input_file
+  unless input_file == '-' or file_exists input_file
 
 compiler = new TestML.Compiler
 

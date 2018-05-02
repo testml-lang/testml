@@ -1,6 +1,10 @@
 require('pegex').require 'grammar'
 
 class TestML.Grammar extends Pegex.Grammar
+  Xconstructor: ->
+    super()
+    @file = 'share/testml.pgx'
+
   make_tree: ->
     {
       "+toprule": "testml_document",

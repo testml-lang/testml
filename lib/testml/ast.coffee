@@ -3,18 +3,22 @@ require('pegex').require 'tree'
 class TestML.AST extends Pegex.Tree
   constructor: ->
     super()
-    @code = []
-    @data = []
+    @code = null
+    @data = null
 
   final: ->
-    testml: '0.3.0'
-    code: @code
-    data: @data
+    got =
+      testml: '0.3.0'
+
+    got.code = @code if @code
+    got.data = @data if @data
+
+    got
 
   got_code_section: (got)->
-    func = ['=>', []]
-    func.push got...
-    @code = func
+    if got.length
+      @code = ['=>', [], got...]
+    return
 
   got_comment_lines: (got)->
     return
@@ -45,9 +49,6 @@ class TestML.AST extends Pegex.Tree
   got_number_object: (got)->
     Number got
 
-  got_call_object: (got)->
-    got
-
   got_assertion_expression: (got)->
     [operator, expression] = got
     [operator, null, expression]
@@ -56,8 +57,27 @@ class TestML.AST extends Pegex.Tree
     point = {}
     for p in points
       [name, expr, value, extra] = p
-      point[name] = value
+      point[name] = @apply_filters(value, expr)
+
+    @data ||= []
 
     @data.push
       label: label
       point: point
+
+  apply_filters: (value, expr)->
+    value = value.replace /^#.*\n/gm, ''
+
+    value = value.replace /^\\/gm, ''
+
+    if value.match /\n/
+      value = value.replace /\n*$/, '\n'
+
+    return value unless expr
+
+    if expr == '(<)'
+      value = value.replace /^    /gm, ''
+    else
+      throw "Unsupported point filter: '#{expr}'"
+
+    value

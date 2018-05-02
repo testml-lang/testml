@@ -28,6 +28,6 @@ devel:
     testml-compiler: ./bin/testml-compiler
   dependencies:
     lodash: '>=2.2.2'
-    pegex: '>=0.1.4'
+    pegex: '>=0.1.5'
   scripts:
     test: (source .rc; prove -v test)
