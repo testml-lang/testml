@@ -12,7 +12,6 @@
     --- end
 
 --- output
---- output
 { "testml": "0.3.0",
   "data": [
     { "label": "Test 1",

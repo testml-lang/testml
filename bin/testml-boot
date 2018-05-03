@@ -24,6 +24,7 @@ $testml = "%TestML 0.1.0\n\n$testml";
     use TestML::Util;
     use File::Temp qw/tempfile/;
     use Capture::Tiny 'capture';
+    use Test::More;
     use XXX;
 
     sub undent {
@@ -44,8 +45,11 @@ $testml = "%TestML 0.1.0\n\n$testml";
         my ($stdout, $stderr, $rc) = capture {
             system("testml-compiler $temp_path");
         };
+
         die "Error while testing testml-compiler:\n$stderr"
             if $rc != 0;
+
+        warn $stderr if $stderr;
 
         return str $stdout;
     }

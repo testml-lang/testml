@@ -49,6 +49,20 @@ class TestML.AST extends Pegex.Tree
   got_number_object: (got)->
     Number got
 
+  got_call_object: (got)->
+    [name, args] = got
+    args ||= []
+    [name, args...]
+
+  got_call_arguments: (got)->
+    got = got[0]
+    args = [got.shift()]
+    more = got[0]
+    for item in more
+      continue unless item.length
+      args.push item[0]
+    args
+
   got_assertion_expression: (got)->
     [operator, expression] = got
     [operator, null, expression]

@@ -19,33 +19,40 @@ lodash.extend global,
     err "Died: #{msg}\n"
     exit 1
 
+  dump: (data...)->
+    util = require 'util'
+    dump = ''
+    for elem in data
+      dump += util.inspect(elem) + '...\n'
+    dump
   xxx: (data...)->
-    yyy data...
+    err dump data...
     exit 1
   yyy: (data...)->
-    for elem in data
-      console.dir elem
-    say '...'
+    out dump data...
+    data[0]
+  www: (data...)->
+    err dump data...
     data[0]
   jjj: (data...)->
     for elem in data
       say JSON.stringify elem, null, 2
     say '...'
     data[0]
-  XXX: (data...)->
-    YYY data...
-    exit 1
-  YYY: (data...)->
+  DUMP: (data...)->
     yaml = require 'js-yaml'
+    dump = ''
     for elem in data
-      out "---\n#{yaml.dump elem}"
-    say '...'
+      dump += "---\n#{yaml.dump elem}...\n"
+    dump
+  XXX: (data...)->
+    err DUMP data...
+    exit 1
+  yyy: (data...)->
+    out dump data...
     data[0]
   WWW: (data...)->
-    yaml = require 'js-yaml'
-    for elem in data
-      err "---\n#{yaml.dump elem}"
-    err '...\n'
+    err DUMP data...
     data[0]
 
   read_file: (file_path)->

@@ -7,9 +7,10 @@ else
 endif
 
 test = test/
+debug =
 
 test: node_modules
-	(source .rc; NODE_PATH=lib prove -lv $(test))
+	(source .rc; NODE_PATH=lib DEBUG=$(debug) prove -v $(test))
 
 test-pegex: node_modules ../pegex-js/npm
 	rm -fr node_modules/pegex
