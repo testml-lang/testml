@@ -1,4 +1,9 @@
 ---
+version: 0.0.5
+date:    Thu May  3 12:15:18 PDT 2018
+changes:
+- Support callable function arguments
+---
 version: 0.0.4
 date:    Wed May  2 16:23:55 PDT 2018
 changes:
