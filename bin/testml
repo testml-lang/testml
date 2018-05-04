@@ -45,6 +45,8 @@ set-variables() {
 }
 
 compile-testml() {
+  [[ -e $testml_compiled_file && ! -s $testml_compiled_file ]] &&
+    rm -f "$testml_compiled_file"
   [[ $testml_compiled_file -nt $testml_input_file ]] &&
     return 0
 
