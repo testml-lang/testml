@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e
+
+. "$(cd "$(dirname "$0")" && pwd)/testml"
+
+testml_run_command=(
+  perl -I"$testml_root/lib/perl" -MTestMLRunTAP -e 'TestMLRunTAP->run'
+)
+
+testml-run-runner "$@"

@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+set -e
+
+testml_root="$(cd "$(dirname "$0")/.." && pwd)"
+export testml_root
+
+main() {
+  get-testml-runtime-name
+
+  exec "testml-$runtime" "$@"
+}
+
+testml-run-runner() {
+  if [[ -t 0 && -t 1 ]]; then
+    run-testml-cli "$@"
+  else
+    run-testml-file "$@"
+  fi
+}
+
+run-testml-file() {
+  check-environment "$@"
+
+  set-variables "$@"
+
+  compile-testml "$@"
+
+  # shellcheck disable=SC2154
+  "${testml_run_command[@]}" "$testml_compiled_file"
+}
+
+check-environment() {
+  true
+}
+
+set-variables() {
+  testml_input_file=$1
+  testml_input_name=$(basename "$testml_input_file")
+  testml_input_dir=$(cd "$(dirname "$testml_input_file")" && pwd)
+  testml_cache="$testml_input_dir/.testml"
+  testml_compiled_file="$testml_cache/$testml_input_name.json"
+
+  export TESTML_TEST_DIR=$testml_input_dir
+}
+
+compile-testml() {
+  [[ $testml_compiled_file -nt $testml_input_file ]] &&
+    return 0
+
+  mkdir -p "$testml_cache"
+
+  testml-compiler "$testml_input_file" > "$testml_compiled_file" || {
+    local rc=$?
+    rm -f "$testml_compiled_file"
+    return "$rc"
+  }
+}
+
+get-testml-runtime-name() {
+  runtime=${TESTML_RUNTIME:?}
+}
+
+die() {
+  echo "Died: $*"
+  exit 1
+}
+
+[[ $0 != "${BASH_SOURCE[0]}" ]] || main "$@"
+
+# vim: ft=sh sw=2 lisp:
