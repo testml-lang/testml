@@ -43,7 +43,12 @@ sub new {
     local @INC = @INC;
     unshift @INC, $ENV{TESTML_TEST_DIR};
     require Bridge;
-  } || die "Can't find Bridge module for TestML";
+    1;
+  } || do {
+    die "Can't find Bridge module for TestML"
+      if $@ =~ /^Can't locate Bridge/;
+    die $@;
+  };
 
   $self->{bridge} = Bridge->new;
 
