@@ -1,5 +1,6 @@
 #!/usr/bin/env testml-boot
 
+# Diff = 1
 *input.undent.compile == *output
 
 === Basic comments, assignment, assertions and data
@@ -30,16 +31,18 @@
 { "testml": "0.3.0",
   "code": ["=>",[],
     ["=","Plan",3],
-    ["==",
-      [".",
-        ["*","input"],
-        ["get-sha1"]],
-      ["*","sha1"]],
-    ["==",
-      [".",
-        ["*","input"],
-        ["get-md5"]],
-      ["*","md5"]]],
+    ["@%",["*input","*sha1"],
+      ["==",
+        [".",
+          ["*","input"],
+          ["get-sha1"]],
+        ["*","sha1"]]],
+    ["@%",["*input","*md5"],
+      ["==",
+        [".",
+          ["*","input"],
+          ["get-md5"]],
+        ["*","md5"]]]],
   "data": [
     { "label": "Test 1",
       "point": {

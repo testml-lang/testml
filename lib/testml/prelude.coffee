@@ -23,7 +23,7 @@ lodash.extend global,
     util = require 'util'
     dump = ''
     for elem in data
-      dump += util.inspect(elem) + '...\n'
+      dump += util.inspect(elem) + '\n...\n'
     dump
   xxx: (data...)->
     err dump data...

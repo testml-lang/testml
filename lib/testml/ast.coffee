@@ -3,21 +3,28 @@ require('pegex').require 'tree'
 class TestML.AST extends Pegex.Tree
   constructor: ->
     super()
-    @code = null
-    @data = null
+    @code = []
+    @data = []
 
   final: ->
     got =
       testml: '0.3.0'
+      code: []
+      data:[]
 
-    got.code = @code if @code
-    got.data = @data if @data
+    for statement in @code
+      if statement[0].match /^(?:=>|==|=~|~~)$/
+        statement = @add_loop statement
+      got.code.push statement
+
+    got.code.unshift '=>', [] if got.code.length
+
+    got.data = @data
 
     got
 
   got_code_section: (got)->
-    if got.length
-      @code = ['=>', [], got...]
+    @code = got
     return
 
   got_comment_lines: (got)->
@@ -29,22 +36,39 @@ class TestML.AST extends Pegex.Tree
 
   got_expression_statement: (got)->
     [left, right] = got
+
     if right?
       right[1] = left
-      right
+      statement = right
+      statement.points = {}
+      _.merge(statement.points, statement[1].points, statement[2].points)
     else
-      left
+      statement = left
+
+    statement
 
   got_code_expression: (got)->
     [object, calls] = got
-    expr = [ object, calls... ]
+    expr = [object, calls...]
+
+    points = {}
+    for e in expr
+      _.merge points, e.points || {}
+
     if expr.length == 1
-      expr[0]
+      expr = expr[0]
     else
-      ['.', expr...]
+      expr = ['.', expr...]
+
+    if _.isArray expr
+      expr.points = points
+
+    expr
 
   got_point_object: (got)->
-    ['*', got]
+    object = ['*', got]
+    object.points = "#{got}": true
+    object
 
   got_number_object: (got)->
     Number got
@@ -52,7 +76,13 @@ class TestML.AST extends Pegex.Tree
   got_call_object: (got)->
     [name, args] = got
     args ||= []
-    [name, args...]
+    object = [name, args...]
+
+    object.points = {}
+    for a in args
+      _.merge object.points, a.points || {}
+
+    object
 
   got_call_arguments: (got)->
     got = got[0]
@@ -78,6 +108,16 @@ class TestML.AST extends Pegex.Tree
     @data.push
       label: label
       point: point
+
+#------------------------------------------------------------------------------
+  add_loop: (statement)->
+    points = _.keys(statement.points || {})
+    points = _.map points, (p)-> "*#{p}"
+
+    if points.length
+      statement = ['@%', points, statement]
+
+    statement
 
   apply_filters: (value, expr)->
     value = value.replace /^#.*\n/gm, ''
