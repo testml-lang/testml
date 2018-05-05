@@ -13,8 +13,8 @@ class TestML.AST extends Pegex.Tree
       data:[]
 
     for statement in @code
-      if statement[0].match /^(?:=>|==|=~|~~)$/
-        statement = @add_loop statement
+      if statement[0] == '()'
+        statement[0] = '%()'
       got.code.push statement
 
     got.code.unshift '=>', [] if got.code.length
@@ -37,13 +37,18 @@ class TestML.AST extends Pegex.Tree
   got_expression_statement: (got)->
     [left, right] = got
 
+    pick = {}
+
     if right?
       right[1] = left
       statement = right
-      statement.points = {}
-      _.merge(statement.points, statement[1].points, statement[2].points)
+      _.merge(pick, statement[1].pick, statement[2].pick)
     else
       statement = left
+
+    pick = _.keys pick
+    if pick.length > 0
+      statement = ['()', pick, statement]
 
     statement
 
@@ -51,9 +56,9 @@ class TestML.AST extends Pegex.Tree
     [object, calls] = got
     expr = [object, calls...]
 
-    points = {}
+    pick = {}
     for e in expr
-      _.merge points, e.points || {}
+      _.merge pick, e.pick || {}
 
     if expr.length == 1
       expr = expr[0]
@@ -61,13 +66,13 @@ class TestML.AST extends Pegex.Tree
       expr = ['.', expr...]
 
     if _.isArray expr
-      expr.points = points
+      expr.pick = pick
 
     expr
 
   got_point_object: (got)->
     object = ['*', got]
-    object.points = "#{got}": true
+    object.pick = "*#{got}": true
     object
 
   got_number_object: (got)->
@@ -78,9 +83,9 @@ class TestML.AST extends Pegex.Tree
     args ||= []
     object = [name, args...]
 
-    object.points = {}
+    object.pick = {}
     for a in args
-      _.merge object.points, a.points || {}
+      _.merge object.pick, a.pick || {}
 
     object
 
@@ -110,15 +115,6 @@ class TestML.AST extends Pegex.Tree
       point: point
 
 #------------------------------------------------------------------------------
-  add_loop: (statement)->
-    points = _.keys(statement.points || {})
-    points = _.map points, (p)-> "*#{p}"
-
-    if points.length
-      statement = ['%()', points, statement]
-
-    statement
-
   apply_filters: (value, expr)->
     value = value.replace /^#.*\n/gm, ''
 
