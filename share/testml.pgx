@@ -40,11 +40,22 @@ assignment-statement:
 
 expression-statement:
   expression-label?
+  pick-expression?
   code-expression
   assertion-expression?
   eol
 
 expression-label: xxx
+
+pick-expression:
+  LPAREN
+  (
+    pick-argument (/ COMMA -/ pick-argument)*
+  )
+  RPAREN +
+
+pick-argument:
+  /( BANG? STAR LOWER [\-\_a-z0-9]* )/
 
 code-expression:
   code-object

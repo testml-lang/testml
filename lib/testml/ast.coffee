@@ -35,9 +35,11 @@ class TestML.AST extends Pegex.Tree
     [operator, variable, expression]
 
   got_expression_statement: (got)->
-    [left, right] = got
-
     pick = {}
+    if _.isArray(got[0]) and got[0][0] == '()'
+      pick = got.shift().pick
+
+    [left, right] = got
 
     if right?
       right[1] = left
@@ -51,6 +53,17 @@ class TestML.AST extends Pegex.Tree
       statement = ['()', pick, statement]
 
     statement
+
+  got_pick_expression: (got)->
+    got = got[0]
+    pick = "#{got.shift()}": true
+    more = got[0]
+    for item in more
+      continue unless item.length
+      pick[item[0]] = true
+    expr = ['()']
+    expr.pick = pick
+    expr
 
   got_code_expression: (got)->
     [object, calls] = got

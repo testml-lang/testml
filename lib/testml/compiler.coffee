@@ -16,6 +16,14 @@ class TestML.Compiler
       receiver: new TestML.AST
       debug: Boolean process.env.DEBUG
 
+    ###
+        Uncomment this and then run:
+        ./bin/testml-compiler Makefile > new
+        Then paste `new` into lib/testml/grammar.coffee
+    ###
+    # parser.grammar.make_tree()
+    # jjj parser.grammar.tree
+
     @ast_to_lingy parser.parse testml_input
 
   ast_to_lingy: (ast)->

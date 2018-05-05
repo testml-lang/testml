@@ -1,9 +1,10 @@
 require('pegex').require 'grammar'
 
 class TestML.Grammar extends Pegex.Grammar
-  Xconstructor: ->
-    super()
-    @file = 'share/testml.pgx'
+#   constructor: ->
+#     super()
+#     @file = 'share/testml.pgx'
+#   make_treeXXX: ->
 
   make_tree: ->
     {
@@ -198,6 +199,10 @@ class TestML.Grammar extends Pegex.Grammar
             "+max": 1
           },
           {
+            ".ref": "pick_expression",
+            "+max": 1
+          },
+          {
             ".ref": "code_expression"
           },
           {
@@ -211,6 +216,43 @@ class TestML.Grammar extends Pegex.Grammar
       },
       "expression_label": {
         ".ref": "xxx"
+      },
+      "pick_expression": {
+        ".all": [
+          {
+            ".ref": "LPAREN"
+          },
+          {
+            ".all": [
+              {
+                ".ref": "pick_argument"
+              },
+              {
+                ".all": [
+                  {
+                    ".rgx": ",[\\ \\t]*"
+                  },
+                  {
+                    ".ref": "pick_argument"
+                  }
+                ],
+                "+min": 0
+              }
+            ]
+          },
+          {
+            ".ref": "RPAREN"
+          },
+          {
+            ".ref": "__"
+          }
+        ]
+      },
+      "pick_argument": {
+        ".rgx": "(!?\\*[a-z][\\-\\_a-z0-9]*)"
+      },
+      "__": {
+        ".rgx": "[\\ \\t]+"
       },
       "assertion_expression": {
         ".any": [
