@@ -25,6 +25,6 @@ class TestML.Compiler
     lingy = lingy.replace /("=>",)\n *(\[[^\n]*\])/g, '$1$2'
     lingy = lingy.replace /\n *([\}\]])/g, '$1'
     lingy = lingy.replace /\[\n +"/g, '["'
-    lingy = lingy.replace /^( *\["@%",)\n *(\[.*\],)$/mg, '$1$2'
+    lingy = lingy.replace /^( *\["%\(\)",)\n *(\[.*\],)$/mg, '$1$2'
     lingy = lingy.replace /(\{)\n +("(?:testml|label)":)/g, '$1 $2'
     lingy + "\n"

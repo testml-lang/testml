@@ -115,7 +115,7 @@ class TestML.AST extends Pegex.Tree
     points = _.map points, (p)-> "*#{p}"
 
     if points.length
-      statement = ['@%', points, statement]
+      statement = ['%()', points, statement]
 
     statement
 
