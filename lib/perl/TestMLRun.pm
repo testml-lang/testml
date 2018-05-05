@@ -8,7 +8,7 @@ my $operator = {
   '=='    => 'eq',
   '.'     => 'call',
   '=>'    => 'func',
-  '@%'    => 'pickloop',
+  '%()'   => 'pickloop',
   '*'     => 'point',
 };
 
@@ -137,7 +137,12 @@ sub exec_pickloop {
 
   outer: for my $block (@{$self->{data}}) {
     for my $point (@$list) {
-      next outer unless exists $block->{point}{substr($point, 1)};
+      if ($point =~ /^\*/) {
+        next outer unless exists $block->{point}{substr($point, 1)};
+      }
+      elsif ($point =~ /^!*/) {
+        next outer if exists $block->{point}{substr($point, 2)};
+      }
     }
     $self->{block} = $block;
     $self->exec($expr);
