@@ -1,37 +1,62 @@
 #!/usr/bin/env bash
 
+# shellcheck disable=1090,2034
+
 set -e
 
+export TESTML_VERSION='0.3.0'
+
+TESTML_ROOT=${TESTML_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}
+export TESTML_ROOT
+
 main() {
-  testml_root="$(cd "$(dirname "$0")/.." && pwd)"
-  export testml_root
-
   if is-tty; then
-    # shellcheck disable=SC1090
-    source "$testml_root/testml-cli"
-    testml-run-cli "$@"
-    exit $?
+    run-cli "$@"
+
+  else
+    check-input-file "$@"
+
+    set-testml-bin
+
+    exec "$TESTML_BIN" "$TESTML_INPUT"
   fi
-
-  set-testml-bin
-
-  set-input-vars "$@"
-
-  exec "$TESTML_BIN" "$@"
 }
 
 testml-run() {
-  compile-testml "$@"
+  if is-tty; then
+    run-cli "$@"
 
-  # shellcheck disable=SC2154
-  testml-run-file "$TESTML_EXEC_PATH"
+  else
+    set-input-vars
+
+    compile-testml
+
+    testml-run-file "$TESTML_EXEC_PATH"
+  fi
+}
+
+run-cli() {
+  source "$TESTML_ROOT/bin/testml-cli.sh"
+
+  testml-run-cli "$@"
+}
+
+check-input-file() {
+  [[ $# == 1 && -n $1 ]] ||
+    die "Can't determine testml source file"
+  [[ -e $1 ]] ||
+    die "TestML input file '$1' does not exist"
+
+  export TESTML_INPUT=$1
 }
 
 set-testml-bin() {
+  local PATH="$TESTML_ROOT/bin:$PATH"
+
   if [[ -n $TESTML_BIN ]]; then
     can "$TESTML_BIN" ||
       die "TESTML_BIN=$TESTML_BIN but '$TESTML_BIN' not found"
-    export TESTML_BIN
+    export TESTML_BIN=$can_path
     return 0
   fi
 
@@ -40,7 +65,7 @@ set-testml-bin() {
     can "$TESTML_BIN" ||
       die "TESTML_LANG=$TESTML_LANG but '$TESTML_BIN' not found"
     export TESTML_LANG
-    export TESTML_BIN
+    export TESTML_BIN=$can_path
     return 0
   fi
 
@@ -51,7 +76,6 @@ Try setting TESTML_LANG or TESTML_BIN.
 }
 
 set-input-vars() {
-  export TESTML_INPUT=$1
   TESTML_INPUT_DIR=$(cd "$(dirname "$TESTML_INPUT")" && pwd)
   export TESTML_INPUT_DIR
   TESTML_INPUT_FILE=$(basename "$TESTML_INPUT")
@@ -77,17 +101,23 @@ compile-testml() {
 }
 
 is-tty() {
-  [[ -t 0 && -t 1 ]]
+  [[ -t 0 || -t 1 ]]
 }
 
 can() {
-  type "$1" >/dev/null
+  can_path=$(which "$1") || return $?
 }
 
 die() {
-  echo "Died: $*" >&2
+  if [[ $# -eq 0 ]]; then
+    echo "Died" >&2
+  else
+    echo "$*" >&2
+  fi
   exit 1
 }
+
+TESTML_SOURCED=true
 
 [[ $0 != "${BASH_SOURCE[0]}" ]] || main "$@"
 

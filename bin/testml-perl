@@ -1,20 +1,21 @@
 #!/bin/bash
 
+# shellcheck disable=SC1090,2034
+
 set -e
 
-export TESTML_ROOT=${TESTML_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}
-
-# shellcheck disable=SC1090
-source "$TESTML_ROOT/bin/testml"
+[[ -n $TESTML_SOURCED ]] ||
+  source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
 
 export TESTML_LANG=${TESTML_LANG:-perl}
-export TESTML_RUN=${TESTML_RUN:-TestML::Run::TAP}
-export TESTML_LIB=${TESTML_LIB:-$TESTML_ROOT/lib/perl}
-export TESTML_BRIDGE=${TESTML_BRIDGE:-TestMLBridge}
-export TESTML_PATH=${TESTML_PATH:-$TESTML_INPUT_DIR}
 
 testml-run-file() {
   local testml_run_file=$1
+
+  export TESTML_RUN=${TESTML_RUN:-TestML::Run::TAP}
+  export TESTML_LIB=${TESTML_LIB:-$TESTML_ROOT/lib/perl}
+  export TESTML_BRIDGE=${TESTML_BRIDGE:-TestMLBridge}
+  export TESTML_PATH=${TESTML_PATH:-$TESTML_INPUT_DIR}
 
   # shellcheck disable=SC2154
   perl \
@@ -25,4 +26,6 @@ testml-run-file() {
        "$testml_run_file"
 }
 
-testml-run "$@"
+TESTML_LANG_SOURCED=1
+
+[[ $0 != "${BASH_SOURCE[0]}" ]] || testml-run "$@"
