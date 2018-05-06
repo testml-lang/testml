@@ -1,7 +1,7 @@
 use strict; use warnings;
-package Bridge;
-use TestMLBridge;
-use base 'TestMLBridge';
+package TestMLBridge;
+use TestML::Bridge;
+use base 'TestML::Bridge';
 
 sub add {
   my ($self, $a, $b) = @_;

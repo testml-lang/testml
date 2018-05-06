@@ -2,10 +2,27 @@
 
 set -e
 
-. "$(cd "$(dirname "$0")" && pwd)/testml"
+export TESTML_ROOT=${TESTML_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}
 
-testml_run_command=(
-  perl -I"$testml_root/lib/perl" -MTestMLRunTAP -e 'TestMLRunTAP->run'
-)
+# shellcheck disable=SC1090
+source "$TESTML_ROOT/bin/testml"
 
-testml-run-runner "$@"
+export TESTML_LANG=${TESTML_LANG:-perl}
+export TESTML_RUN=${TESTML_RUN:-TestML::Run::TAP}
+export TESTML_LIB=${TESTML_LIB:-$TESTML_ROOT/lib/perl}
+export TESTML_BRIDGE=${TESTML_BRIDGE:-TestMLBridge}
+export TESTML_PATH=${TESTML_PATH:-$TESTML_INPUT_DIR}
+
+testml-run-file() {
+  local testml_run_file=$1
+
+  # shellcheck disable=SC2154
+  perl \
+    -I"$TESTML_LIB" \
+    -I"$TESTML_PATH" \
+    -M"$TESTML_RUN" \
+    -e "$TESTML_RUN->run" \
+       "$testml_run_file"
+}
+
+testml-run "$@"

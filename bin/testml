@@ -2,69 +2,90 @@
 
 set -e
 
-testml_root="$(cd "$(dirname "$0")/.." && pwd)"
-export testml_root
-
 main() {
-  get-testml-runtime-name
+  testml_root="$(cd "$(dirname "$0")/.." && pwd)"
+  export testml_root
 
-  exec "testml-$runtime" "$@"
-}
-
-testml-run-runner() {
-  if [[ -t 0 && -t 1 ]]; then
-    run-testml-cli "$@"
-  else
-    run-testml-file "$@"
+  if is-tty; then
+    # shellcheck disable=SC1090
+    source "$testml_root/testml-cli"
+    testml-run-cli "$@"
+    exit $?
   fi
+
+  set-testml-bin
+
+  set-input-vars "$@"
+
+  exec "$TESTML_BIN" "$@"
 }
 
-run-testml-file() {
-  check-environment "$@"
-
-  set-variables "$@"
-
+testml-run() {
   compile-testml "$@"
 
   # shellcheck disable=SC2154
-  "${testml_run_command[@]}" "$testml_compiled_file"
+  testml-run-file "$TESTML_EXEC_PATH"
 }
 
-check-environment() {
-  true
+set-testml-bin() {
+  if [[ -n $TESTML_BIN ]]; then
+    can "$TESTML_BIN" ||
+      die "TESTML_BIN=$TESTML_BIN but '$TESTML_BIN' not found"
+    export TESTML_BIN
+    return 0
+  fi
+
+  if [[ -n $TESTML_LANG ]]; then
+    TESTML_BIN="testml-$TESTML_LANG"
+    can "$TESTML_BIN" ||
+      die "TESTML_LANG=$TESTML_LANG but '$TESTML_BIN' not found"
+    export TESTML_LANG
+    export TESTML_BIN
+    return 0
+  fi
+
+  die "
+Can't determine TestML binary to use.
+Try setting TESTML_LANG or TESTML_BIN.
+"
 }
 
-set-variables() {
-  testml_input_file=$1
-  testml_input_name=$(basename "$testml_input_file")
-  testml_input_dir=$(cd "$(dirname "$testml_input_file")" && pwd)
-  testml_cache="$testml_input_dir/.testml"
-  testml_compiled_file="$testml_cache/$testml_input_name.json"
-
-  export TESTML_TEST_DIR=$testml_input_dir
+set-input-vars() {
+  export TESTML_INPUT=$1
+  TESTML_INPUT_DIR=$(cd "$(dirname "$TESTML_INPUT")" && pwd)
+  export TESTML_INPUT_DIR
+  TESTML_INPUT_FILE=$(basename "$TESTML_INPUT")
+  export TESTML_INPUT_FILE
+  export TESTML_INPUT_PATH="$TESTML_INPUT_DIR/$TESTML_INPUT_FILE"
+  export TESTML_CACHE="$TESTML_INPUT_DIR/.testml"
+  export TESTML_EXEC_PATH="$TESTML_CACHE/$TESTML_INPUT_FILE.json"
 }
 
 compile-testml() {
-  [[ -e $testml_compiled_file && ! -s $testml_compiled_file ]] &&
-    rm -f "$testml_compiled_file"
-  [[ $testml_compiled_file -nt $testml_input_file ]] &&
+  [[ -e $TESTML_EXEC_PATH && ! -s $TESTML_EXEC_PATH ]] &&
+    rm -f "$TESTML_EXEC_PATH"
+  [[ $TESTML_EXEC_PATH -nt $TESTML_INPUT_PATH ]] &&
     return 0
 
-  mkdir -p "$testml_cache"
+  mkdir -p "$TESTML_CACHE"
 
-  testml-compiler "$testml_input_file" > "$testml_compiled_file" || {
+  testml-compiler "$TESTML_INPUT_PATH" > "$TESTML_EXEC_PATH" || {
     local rc=$?
-    rm -f "$testml_compiled_file"
+    rm -f "$TESTML_EXEC_PATH"
     return "$rc"
   }
 }
 
-get-testml-runtime-name() {
-  runtime=${TESTML_RUNTIME:?}
+is-tty() {
+  [[ -t 0 && -t 1 ]]
+}
+
+can() {
+  type "$1" >/dev/null
 }
 
 die() {
-  echo "Died: $*"
+  echo "Died: $*" >&2
   exit 1
 }
 

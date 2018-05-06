@@ -1,5 +1,5 @@
 use strict; use warnings;
-package TestMLBridge;
+package TestML::Bridge;
 
 sub new {
   my $class = shift;

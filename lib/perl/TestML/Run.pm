@@ -1,5 +1,5 @@
 use strict; use warnings;
-package TestMLRun;
+package TestML::Run;
 
 use JSON::PP 'decode_json';
 # use XXX;
@@ -39,18 +39,14 @@ sub new {
     } @{$testml->{data}}
   ];
 
-  eval {
-    local @INC = @INC;
-    unshift @INC, $ENV{TESTML_TEST_DIR};
-    require Bridge;
-    1;
-  } || do {
+  my $bridge_module = $ENV{TESTML_BRIDGE};
+  eval "require $bridge_module; 1" || do {
     die "Can't find Bridge module for TestML"
-      if $@ =~ /^Can't locate Bridge/;
+      if $@ =~ /^Can't locate $bridge_module/;
     die $@;
   };
 
-  $self->{bridge} = Bridge->new;
+  $self->{bridge} = $bridge_module->new;
 
   return $self;
 }

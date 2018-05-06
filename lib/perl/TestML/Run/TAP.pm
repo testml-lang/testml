@@ -1,7 +1,7 @@
 use strict; use warnings;
-package TestMLRunTAP;
+package TestML::Run::TAP;
 
-use base 'TestMLRun';
+use base 'TestML::Run';
 
 use Test::Builder;
 # use XXX;

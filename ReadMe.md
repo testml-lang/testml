@@ -30,7 +30,7 @@ particular test makes 7 assertions.
 
 To run the test, let's say in Perl:
 ```
-TESTML_RUNTIME=perl prove math.tml
+TESTML_LANG=perl prove math.tml
 ```
 
 # Description

@@ -1,8 +1,9 @@
-runtime := perl
+lang := perl
+test := test/*.tml
 
 .PHONY: test
 test:
-	(. .rc; TESTML_RUNTIME=$(runtime) prove -v test/*.tml)
+	(. .rc; TESTML_LANG=$(lang) prove -v $(test))
 
 clean:
 	rm -fr test/.testml
