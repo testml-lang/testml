@@ -11,18 +11,16 @@ class TestML.Compiler
   compile: (input_path)->
     testml_input = read_file input_path
 
+    if process.env.TESTML_COMPILER_GRAMMAR_PRINT
+      grammar = new TestML.DevGrammar
+      grammar.make_tree()
+      say JSON.stringify grammar.tree, null, 2
+      exit 0
+
     parser = new Pegex.Parser
       grammar: new TestML.Grammar
       receiver: new TestML.AST
-      debug: Boolean process.env.DEBUG
-
-    ###
-        Uncomment this and then run:
-        ./bin/testml-compiler Makefile > new
-        Then paste `new` into lib/testml/grammar.coffee
-    ###
-    # parser.grammar.make_tree()
-    # jjj parser.grammar.tree
+      debug: Boolean process.env.TESTML_COMPILER_DEBUG
 
     @ast_to_lingy parser.parse testml_input
 

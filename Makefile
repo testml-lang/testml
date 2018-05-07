@@ -10,11 +10,21 @@ test = test/
 debug =
 
 test: node_modules
-	(source .rc; NODE_PATH=lib DEBUG=$(debug) prove -v $(test))
+	(source .rc; NODE_PATH=lib TESTML_COMPILER_DEBUG=$(debug) \
+          prove -v $(test))
 
 test-pegex: node_modules ../pegex-js/npm
 	rm -fr node_modules/pegex
 	(source .rc; NODE_PATH=lib:../pegex-js/npm/lib prove -lv test/)
+
+update-grammar:
+	( \
+	grep -B99 make_tree lib/testml/grammar.coffee; \
+	TESTML_COMPILER_GRAMMAR_PRINT=1 \
+            ./bin/testml-compiler Makefile \
+            | sed 's/^/    /' \
+	) > tmp-grammar
+	mv tmp-grammar lib/testml/grammar.coffee
 
 clean: ingy-npm-clean
 	rm -fr node_modules
