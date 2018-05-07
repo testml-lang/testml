@@ -8,7 +8,7 @@ use TestML;
 my $testml_path = $ARGV[0];
 
 open TESTML, $testml_path or
-    die "Can't open '$testml_path' for input";
+  die "Can't open '$testml_path' for input";
 
 my $testml = do {local $/; <TESTML>};
 
@@ -19,43 +19,43 @@ $testml =~ s/\A\s*%TestML\s+\d.*\n+//;
 $testml = "%TestML 0.1.0\n\n$testml";
 
 {
-    package Bridge;
-    use base 'TestML::Bridge';
-    use TestML::Util;
-    use File::Temp qw/tempfile/;
-    use Capture::Tiny 'capture';
-    use Test::More;
-    use XXX;
+  package Bridge;
+  use base 'TestML::Bridge';
+  use TestML::Util;
+  use File::Temp qw/tempfile/;
+  use Capture::Tiny 'capture';
+  use Test::More;
+  use XXX;
 
-    sub undent {
-        my ($self, $text) = @_;
-        $text = $text->value;
-        $text =~ s/^    //mg;
-        return str $text;
-    }
+  sub undent {
+    my ($self, $text) = @_;
+    $text = $text->value;
+    $text =~ s/^    //mg;
+    return str $text;
+  }
 
-    sub compile {
-        my ($self, $testml) = @_;
-        $testml = $testml->value;
+  sub compile {
+    my ($self, $testml) = @_;
+    $testml = $testml->value;
 
-        my ($temp_handle, $temp_path) = tempfile or die;
-        print $temp_handle $testml;
-        close $temp_handle;
+    my ($temp_handle, $temp_path) = tempfile or die;
+    print $temp_handle $testml;
+    close $temp_handle;
 
-        my ($stdout, $stderr, $rc) = capture {
-            system("testml-compiler $temp_path");
-        };
+    my ($stdout, $stderr, $rc) = capture {
+      system("testml-compiler $temp_path");
+    };
 
-        die "Error while testing testml-compiler:\n$stderr"
-            if $rc != 0;
+    die "Error while testing testml-compiler:\n$stderr"
+      if $rc != 0;
 
-        warn $stderr if $stderr;
+    warn $stderr if $stderr;
 
-        return str $stdout;
-    }
+    return str $stdout;
+  }
 }
 
 TestML->new(
-    testml => $testml,
-    bridge => 'Bridge',
+  testml => $testml,
+  bridge => 'Bridge',
 )->run;
