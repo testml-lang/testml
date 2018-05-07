@@ -24,7 +24,6 @@ devel:
 =npm:
   main: ./lib/testml/index.js
   bin:
-    testml-boot: ./bin/testml-boot
     testml-compiler: ./bin/testml-compiler
   dependencies:
     lodash: '>=2.2.2'
