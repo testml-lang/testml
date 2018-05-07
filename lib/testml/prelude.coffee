@@ -60,5 +60,10 @@ lodash.extend global,
       fs.readFileSync('/dev/stdin').toString()
     else
       fs.readFileSync(file_path).toString()
+  write_file: (file_path, output)->
+    if file_path == '-'
+      fs.writeFileSync('/dev/stdout', output)
+    else
+      fs.writeFileSync(file_path, output)
   file_exists: (file_path)->
     fs.existsSync file_path

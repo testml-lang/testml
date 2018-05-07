@@ -177,9 +177,16 @@ eos: EOS
 identifier-name:
   / ALPHA ALNUM* (: DASH ALNUM+)* /
 
+identifier-user:
+  / LOWER ALNUM* (: DASH ALNUM+)* /
+
+pseudo-point-name:
+  /(:HEAD|LAST|ONLY|SKIP|TODO)/
+
 module-name: /( NS+ )/
 
-point-name: identifier-name
+point-name:
+  /(: identifier-user | pseudo-point-name)/
 
 variable-name: identifier-name
 

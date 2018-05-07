@@ -19,7 +19,7 @@ class TestML.AST extends Pegex.Tree
 
     got.code.unshift '=>', [] if got.code.length
 
-    got.data = @data
+    got.data = @process_data @data
 
     got
 
@@ -119,7 +119,10 @@ class TestML.AST extends Pegex.Tree
     point = {}
     for p in points
       [name, expr, value, extra] = p
-      point[name] = @apply_filters(value, expr)
+      if name.match /^(?:HEAD|LAST|ONLY|SKIP|TODO)$/
+        point[name] = true
+      else
+        point[name] = @apply_filters(value, expr)
 
     @data ||= []
 
@@ -144,3 +147,21 @@ class TestML.AST extends Pegex.Tree
       throw "Unsupported point filter: '#{expr}'"
 
     value
+
+  process_data: (data)->
+    blocks = []
+
+    for block in data
+      if block.point.SKIP
+        continue
+      if block.point.ONLY
+        return [block]
+      if block.point.HEAD
+        blocks = []
+      if block.point.LAST
+        blocks.push block
+        return blocks
+
+      blocks.push block
+
+    return blocks
