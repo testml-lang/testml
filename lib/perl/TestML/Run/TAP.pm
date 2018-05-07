@@ -6,6 +6,12 @@ use base 'TestML::Run';
 use Test::Builder;
 # use XXX;
 
+sub run {
+  my ($class, $testml_file) = @_;
+
+  $class->new($testml_file)->test;
+}
+
 sub new {
   my $class = shift;
   my $self = $class->SUPER::new(@_);

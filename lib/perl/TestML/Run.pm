@@ -12,22 +12,12 @@ my $operator = {
   '*'     => 'point',
 };
 
-sub run {
-  my ($class) = @_;
-
-  my $self = $class->new(testml_file => $ARGV[0]);
-
-  $self->test_begin;
-
-  $self->exec($self->{code});
-
-  $self->test_end;
-}
-
 sub new {
-  my $class = shift;
+  my ($class, $testml_file) = @_;
 
-  my $self = bless {@_}, $class;
+  my $self = bless {}, $class;
+
+  $self->{testml_file} = $testml_file;
 
   my $testml = decode_json $self->read_file($self->{testml_file});
 
@@ -49,6 +39,16 @@ sub new {
   $self->{bridge} = $bridge_module->new;
 
   return $self;
+}
+
+sub test {
+  my ($self) = @_;
+
+  $self->test_begin;
+
+  $self->exec($self->{code});
+
+  $self->test_end;
 }
 
 sub exec {

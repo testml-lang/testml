@@ -18,12 +18,9 @@ testml-run-file() {
   export TESTML_PATH=${TESTML_PATH:-$TESTML_INPUT_DIR}
 
   # shellcheck disable=SC2154
-  perl \
-    -I"$TESTML_LIB" \
-    -I"$TESTML_PATH" \
-    -M"$TESTML_RUN" \
-    -e "$TESTML_RUN->run" \
-       "$testml_run_file"
+  PERL5LIB="$TESTML_LIB:$TESTML_PATH" \
+    "$TESTML_LANG" \
+      -e "use $TESTML_RUN; $TESTML_RUN->run('$testml_run_file')"
 }
 
 TESTML_LANG_SOURCED=1
