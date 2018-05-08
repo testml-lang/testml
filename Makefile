@@ -12,3 +12,4 @@ test:
 
 clean:
 	rm -fr test/.testml
+	rm -fr lib/perl6/.precomp
