@@ -34,36 +34,70 @@ written in NodeJS. You can install it like this:
 npm install -g testml-compiler
 ```
 
+## Current Implementation Level
+
+To implement TestML, 2 things need to happen:
+
+* Implement all the language features into the TestML Compiler
+* Implement the Runtime in each programming language / test framework
+
+To date, the basic data language and the minimal assertion syntax can compile.
+Runtime support is as follows:
+
+* Perl(5) - Complete. Runs all features presented by the compiler.
+* Perl 6 - Complete.
+* CoffeeScript (JavaScript) - Started. In progress.
+
 # Synopsis
 
 An example TestML file, `math.tml`:
 ```
 #!/usr/bin/env testml
 
-*n1.add(*n1) == *a1
-*n1.mul(2) == *a1
-*a1.div(2) == *n1
-*n1.mul(*n2) == *a2
+*a.add(*a) == *c
+*c.sub(*a) == *a
+*a.mul(2) == *c
+*c.div(2) == *a
+*a.mul(*b) == *d
 
 === Test block 1
---- n1: 3
---- a1: 6
+--- a: 3
+--- c: 6
 
 === Test block 2
---- n1: -5
---- n2: 7
---- a1: -10
---- a2: -35
+--- a: -5
+--- b: 7
+--- c: -10
+--- d: -35
 ```
 
 could be run to test a math software library written in any language. This
-particular test makes 7 assertions.
+particular test makes 9 assertions.
 
 To run the test, let's say in Perl 6, use any of these:
 ```
 testml -l perl6 math.tml
 testml-perl6 math.tml
 TESTML_LANG=perl6 prove -v math.tml
+```
+
+The output would look something like this:
+```
+foo.tml ..
+ok 1 - Test block 1
+ok 2 - Test block 2
+ok 3 - Test block 1
+ok 4 - Test block 2
+ok 5 - Test block 1
+ok 6 - Test block 2
+ok 7 - Test block 1
+ok 8 - Test block 2
+ok 9 - Test block 2
+1..9
+ok
+All tests successful.
+Files=1, Tests=9,  1 wallclock secs ( 0.02 usr  0.00 sys +  0.60 cusr  0.06 csys =  0.68 CPU)
+Result: PASS
 ```
 
 # Description
@@ -93,7 +127,7 @@ The bridge code is written in the language of the software you are testing. It
 acts as a connection between the language agnostic TestML and the software you
 are testing.
 
-It is common for a data block to defined many related data points, and then use
+It is common for a data block to define many related data points, and then use
 different input/output pairs of points for different test assertions.
 
 # Installation
