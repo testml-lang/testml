@@ -3,6 +3,37 @@ TestML
 
 An Acmeist Software Testing Language
 
+# Status
+
+TestML ideas started back in 2005. The Perl module Test::Base, used the same
+data definition syntax that is still used today.
+
+In 2009, an imperative assertion syntax was added, that could be run in any
+programming language. It was called TestML and ported to a few languages.
+
+In 2017, the assertion syntax was reinvented, and a TestML compiler was added.
+This made the runtime be much cleaner and easier to port to any language. The
+full stack was implemented at OpenResty Inc for internal use only.
+
+Now, in 2018, this work is being rewitten as open source, with the goal of
+quickly adding support for all popular programming languges.
+
+One example of a fairly big TestML suite is
+https://github.com/yaml/yaml-test-suite
+
+To see a lot of TestML CLI invocations being run, try this command:
+```
+test/test-cli.sh
+```
+
+## The TestML Compiler
+
+To use TestML you will need to install the TestML Compiler, which is currently
+written in NodeJS. You can install it like this:
+```
+npm install -g testml-compiler
+```
+
 # Synopsis
 
 An example TestML file, `math.tml`:
@@ -28,9 +59,11 @@ An example TestML file, `math.tml`:
 could be run to test a math software library written in any language. This
 particular test makes 7 assertions.
 
-To run the test, let's say in Perl:
+To run the test, let's say in Perl 6, use any of these:
 ```
-TESTML_LANG=perl prove math.tml
+testml -l perl6 math.tml
+testml-perl6 math.tml
+TESTML_LANG=perl6 prove -v math.tml
 ```
 
 # Description
@@ -39,7 +72,8 @@ TestML is a language for writing data driven tests for software written in most
 modern programming languages.
 
 You define sections of data called blocks, that define pieces of data called
-points. A data point is either an input or an output, or sometimes both.
+points. A data point is either an input or an expected output, or sometimes
+both.
 
 You also define assertions that are run against the data blocks. For example,
 this assertion:

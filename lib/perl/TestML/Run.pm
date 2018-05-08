@@ -61,8 +61,8 @@ sub exec {
   my @args = @$expr;
   my @return;
   my $call = shift @args;
-  if ($operator->{$call}) {
-    $call = "exec_$operator->{$call}";
+  if (my $name = $operator->{$call}) {
+    $call = "exec_$name";
     @return = $self->$call(@args);
   }
   else {

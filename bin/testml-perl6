@@ -7,13 +7,13 @@ set -e
 [[ -n $TESTML_SOURCED ]] ||
   source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
 
-export TESTML_LANG=${TESTML_LANG:-perl}
+export TESTML_LANG=${TESTML_LANG:-perl6}
 
 testml-run-file() {
   local testml_run_file=$1
 
   export TESTML_RUN=${TESTML_RUN:-TestML::Run::TAP}
-  export TESTML_LIB=${TESTML_LIB:-$TESTML_ROOT/lib/perl}
+  export TESTML_LIB=${TESTML_LIB:-$TESTML_ROOT/lib/perl6}
   export TESTML_BRIDGE=${TESTML_BRIDGE:-TestMLBridge}
   export TESTML_PATH=${TESTML_PATH:-$TESTML_INPUT_DIR}
 
@@ -21,7 +21,7 @@ testml-run-file() {
     -I"$TESTML_LIB" \
     -I"$TESTML_PATH" \
     -M"$TESTML_RUN" \
-    -e "$TESTML_RUN->run('$testml_run_file')"
+    -e "$TESTML_RUN.run('$testml_run_file')"
 }
 
 TESTML_LANG_SOURCED=1

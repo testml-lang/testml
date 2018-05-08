@@ -70,10 +70,13 @@ cmd-compile() {
 
     set-input-vars
 
+
     if $option_print; then
       testml-compiler "$TESTML_INPUT_PATH"
 
     else
+      mkdir -p "$TESTML_CACHE"
+
       testml-compiler "$TESTML_INPUT_PATH" > "$TESTML_EXEC_PATH" || {
         rc=$?
         rm -f "$TESTML_EXEC_PATH"

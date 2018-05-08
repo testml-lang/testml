@@ -1,6 +1,10 @@
-#!/bin/sh
+#!/bin/bash
+
+# shellcheck disable=1091
 
 set -e
+
+langs=(perl perl6)
 
 run() {
   echo '----------------------------------------------------------------------'
@@ -10,18 +14,19 @@ run() {
   )
 }
 
-(
-  make clean
+make clean
 
+(
   run './bin/testml'
   run './bin/testml --help'
   run './bin/testml -h'
   run './bin/testml --version'
+  run './bin/testml --env'
+
+  run 'testml-compiler test/010-math.tml'
 )
 
 (
-  make clean
-
   source .rc
 
   run 'testml'
@@ -31,17 +36,23 @@ run() {
 )
 
 (
-  make clean
-
   source .rc
 
-  run 'testml-compiler test/010-math.tml'
+  run 'testml -c test/*.tml'
   run 'testml -c -p test/*.tml'
-
-  run 'TESTML_LANG=perl prove -v test/*.tml'
-  run 'TESTML_LANG=perl testml test/*.tml'
-  run 'testml -l perl test/*.tml'
-  run 'testml-perl test/*.tml'
 )
 
-run 'echo ALL CLI TESTS ARE WORKING'
+for lang in "${langs[@]}"; do
+  (
+    make clean
+
+    source .rc
+
+    run 'TESTML_LANG=$lang prove -v test/*.tml'
+    run 'TESTML_LANG=$lang testml test/*.tml'
+    run 'testml -l $lang test/*.tml'
+    run 'testml-$lang test/*.tml'
+  )
+done
+
+cowsay 'ALL CLI TESTS ARE WORKING!!!'
