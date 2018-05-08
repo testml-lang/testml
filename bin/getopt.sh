@@ -22,7 +22,7 @@ getopt() {
   parsed="$(
     echo "$GETOPT_SPEC" |
     git rev-parse --parseopt -- "$@"
-  )" || exit $rc
+  )" || rc=$?
 
   if [[ $parsed =~ ^cat ]]; then
     eval "$parsed" | pager
