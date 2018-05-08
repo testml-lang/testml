@@ -7,6 +7,5 @@ TESTML_ROOT="$(cd "$(dirname "$TESTML_ROOT")" && pwd)"
 export TESTML_ROOT
 export PATH="$TESTML_ROOT/bin:$PATH"
 export MANPATH="$TESTML_ROOT/man:$MANPATH"
-export PERL5LIB="$TESTML_ROOT/lib:$PERL5LIB"
 
 # vim: set ft=sh:

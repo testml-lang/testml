@@ -71,11 +71,13 @@ cmd-compile() {
     set-input-vars
 
     if $option_print; then
-      testml-compiler "$TESTML_INPUT_PATH" || true
+      testml-compiler "$TESTML_INPUT_PATH"
 
     else
       testml-compiler "$TESTML_INPUT_PATH" > "$TESTML_EXEC_PATH" || {
+        rc=$?
         rm -f "$TESTML_EXEC_PATH"
+        exit $rc
       }
     fi
   done

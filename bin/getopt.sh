@@ -17,16 +17,15 @@ getopt() {
     fi
   fi
 
-  local rc=0
   local parsed
   parsed="$(
     echo "$GETOPT_SPEC" |
     git rev-parse --parseopt -- "$@"
-  )" || rc=$?
+  )" || true
 
   if [[ $parsed =~ ^cat ]]; then
     eval "$parsed" | pager
-    exit $rc
+    exit 0
   else
     eval "$parsed"
   fi
