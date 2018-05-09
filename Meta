@@ -1,0 +1,31 @@
+=meta: 0.0.2
+
+name: testml
+version: 0.0.1
+abstract: JavaScript TestML Framework
+homepage: http://testml.org
+tag: [testml, compiler, testing, language, acmeism]
+license: MIT
+copyright: 2018
+
+author:
+  name: Ingy döt Net
+  email: ingy@ingy.net
+  homepage: http://ingy.net
+  github: ingydotnet
+  twitter: ingydotnet
+  freenode: ingy
+
+devel:
+  git: https://github.com/testml-lang/testml
+  bug: https://github.com/testml-lang/testml/issues
+  irc: irc.freenode.net#testml
+
+=npm:
+  main: ./lib/testml/index.js
+  bin:
+    testml-compiler: ./bin/testml
+  dependencies:
+    lodash: '>=2.2.2'
+  scripts:
+    test: (source .rc; prove -v test)
