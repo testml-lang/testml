@@ -39,10 +39,10 @@ class TestML.Grammar extends Pegex.Grammar
         ]
       },
       "comment_lines": {
-        ".rgx": "(?:(?:\\#.*\\r?\\n?)|(\\s*\\r?\\n|\\s+$))+"
+        ".rgx": "(?:(?:\\#.*\\r?\\n)|(\\s*\\r?\\n|\\s+$))+"
       },
       "testml_directive": {
-        ".rgx": "%TestML[\\ \\t]+([0-9]+\\.[0-9]+\\.[0-9]+)\\r?\\n?"
+        ".rgx": "%TestML[\\ \\t]+([0-9]+\\.[0-9]+\\.[0-9]+)\\r?\\n"
       },
       "head_statement": {
         ".any": [
@@ -58,7 +58,7 @@ class TestML.Grammar extends Pegex.Grammar
         ".ref": "import_directive"
       },
       "import_directive": {
-        ".rgx": "%Import[\\ \\t]+(\\S+)\\r?\\n?"
+        ".rgx": "%Import[\\ \\t]+(\\S+)\\r?\\n"
       },
       "code_section": {
         ".ref": "code_statement",
@@ -84,6 +84,9 @@ class TestML.Grammar extends Pegex.Grammar
           },
           {
             ".ref": "code_expression"
+          },
+          {
+            ".ref": "eol"
           }
         ]
       },
@@ -192,6 +195,9 @@ class TestML.Grammar extends Pegex.Grammar
       "DOT": {
         ".rgx": "\\."
       },
+      "eol": {
+        ".rgx": "\\r?\\n"
+      },
       "expression_statement": {
         ".all": [
           {
@@ -296,9 +302,6 @@ class TestML.Grammar extends Pegex.Grammar
             ".ref": "code_expression"
           }
         ]
-      },
-      "eol": {
-        ".rgx": "\\r?\\n?"
       },
       "data_section": {
         ".ref": "block_definition",

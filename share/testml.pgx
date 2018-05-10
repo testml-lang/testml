@@ -37,6 +37,7 @@ assignment-statement:
   / ( variable-name ) +
     ( assignment-operator ) +/
   code-expression
+  eol
 
 expression-statement:
   expression-label?
@@ -170,7 +171,7 @@ point-marker: '---'
 point-boundary:
   /(= point-marker | block-marker | eos )/
 
-eol: / EOL? /
+eol: / EOL /
 
 eos: EOS
 
