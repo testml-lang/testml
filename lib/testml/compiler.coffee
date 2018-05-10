@@ -9,7 +9,7 @@ class TestML.Compiler
   ast: null
 
   compile: (testml_input)->
-    if TestML.node and process.env.TESTML_COMPILER_GRAMMAR_PRINT
+    if TestML.env.TESTML_COMPILER_GRAMMAR_PRINT
       grammar = new TestML.DevGrammar
       grammar.make_tree()
       say JSON.stringify grammar.tree, null, 2
@@ -18,7 +18,7 @@ class TestML.Compiler
     parser = new Pegex.Parser
       grammar: new TestML.Grammar
       receiver: new TestML.AST
-      debug: Boolean TestML.node and process.env.TESTML_COMPILER_DEBUG
+      debug: Boolean TestML.env.TESTML_COMPILER_DEBUG
 
     @ast_to_lingy parser.parse testml_input
 
