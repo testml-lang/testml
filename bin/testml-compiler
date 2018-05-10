@@ -11,8 +11,10 @@ throw "usage: testml-compiler <input-file>" \
 throw "Input file does not exist: '#{input_file}'" \
   unless input_file == '-' or file_exists input_file
 
+input_text = read_file input_file
+
 compiler = new TestML.Compiler
 
-out compiler.compile input_file
+out compiler.compile input_text
 
 # vim: sw=2 lisp:

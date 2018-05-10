@@ -1,7 +1,7 @@
-lodash = require 'lodash'
+_ = require 'lodash'
 
-lodash.extend global,
-  _: lodash
+_.extend global,
+  _: _
   fs: require 'fs'
   path: require 'path'
 
