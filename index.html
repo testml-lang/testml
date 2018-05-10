@@ -1,14 +1,19 @@
-<script type="text/javascript" src="https://unpkg.com/lodash/lodash.min.js"></script>
-<script type="text/javascript" src="https://unpkg.com/testml-compiler/lib/testml/compiler/browser.js"></script>
+<script src="https://unpkg.com/testml-compiler/lib/testml/compiler/browser.js"></script>
+<script src="https://unpkg.com/lodash/lodash.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
+
+<h2>TestML Compiler Interactive Demo</h2>
+<div id="nav">
+<input id="update" type="button" value="Update" onclick="compileTestML()" />
+</div>
 
 <textarea id="input"></textarea>
-<input id="update" type="button" value="Update" onclick="compileTestML()" />
 <textarea id="output"></textarea>
 
 
 <script>
-document.getElementById('input').value = `\
+$('#input')[0].value = `\
 # A simple testml file
 
 # For test frameworks that support planning:
@@ -33,7 +38,7 @@ I like pie.
 `
 
 function compileTestML() {
-  var input = document.getElementById('input').value
+  var input = $('#input')[0].value
   var output
 
   try {
@@ -43,7 +48,9 @@ function compileTestML() {
     output = String(e)
   }
 
-  document.getElementById('output').value = output
+  $('#output')[0].value = output
+
+  $('#input').focus()
 }
 
 compileTestML()
@@ -51,6 +58,13 @@ compileTestML()
 
 
 <style>
+body {
+    font-family: sans-serif;
+}
+#nav {
+    width: 100%;
+    padding-bottom: 5px;
+}
 textarea {
   font-family: monospace;
   width: 500px;
