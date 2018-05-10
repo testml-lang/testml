@@ -1,7 +1,7 @@
 =meta: 0.0.2
 
 name: testml-compiler
-version: 0.0.8
+version: 0.0.9
 abstract: TestML Compiler CLI
 homepage: http://testml.org
 tag: [testml, compiler, testing, language, acmeism]
