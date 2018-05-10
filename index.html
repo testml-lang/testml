@@ -5,12 +5,24 @@
 
 <h2>TestML Compiler Interactive Demo</h2>
 <div id="nav">
-<input id="update" type="button" value="Recompile" onclick="compileTestML()" />
+<!-- input id="update" type="button" value="Recompile" onclick="compileTestML()" /-->
 <select id="yaml" onchange="setYAMLTest(this.value)"><option>YAML Test Suite</option></select>
 </div>
 
 <textarea id="input"></textarea>
 <textarea id="output"></textarea>
+<br>
+<div id="explanation">
+This is an interactive demo for the TestML Compiler. You can change the TestML
+on the left side and it will auto-recompile into the right side. If the
+compilation fails it will show the error message.<br><br>
+
+You can also trying compiling all of the TestML files that are in the <a
+href="https://github.com/yaml/yaml-test-suite/tree/testml-new/test">YAML Test
+Suite</a> by choosing a test from the drop down menu.<br><br>
+
+<a href="https://github.com/testml-lang/testml-compiler">Fork me on GitHub</a>
+</div>
 
 
 <script>
@@ -87,18 +99,22 @@ $('#input').on('keyup', _.debounce(compileTestML, 333))
 
 <style>
 body {
-    font-family: sans-serif;
+  font-family: sans-serif;
 }
 #nav {
-    width: 100%;
-    padding-bottom: 5px;
+  width: 100%;
+  padding-bottom: 5px;
 }
 textarea {
   font-family: monospace;
   width: 500px;
   height: 500px;
 }
+#explanation {
+  padding-top: 15px;
+  width: 500px;
+}
 #update {
-    background-color: yellow;
+  background-color: yellow;
 }
 </style>
