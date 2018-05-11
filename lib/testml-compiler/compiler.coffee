@@ -5,6 +5,16 @@ require '../testml-compiler/ast'
 
 require('pegex').require 'parser'
 
+parse_testml = (testml_input, testml_file, importer)->
+  parser = new Pegex.Parser
+    grammar: new TestML.Grammar
+    receiver: new TestML.AST
+      file: testml_file
+      importer: importer
+    debug: Boolean TestML.env.TESTML_COMPILER_DEBUG
+
+  parser.parse testml_input
+
 class TestML.Compiler
   ast: null
 
@@ -15,14 +25,7 @@ class TestML.Compiler
       say JSON.stringify grammar.tree, null, 2
       exit 0
 
-    parser = new Pegex.Parser
-      grammar: new TestML.Grammar
-      receiver: new TestML.AST
-        file: testml_file
-        importer: @importer
-      debug: Boolean TestML.env.TESTML_COMPILER_DEBUG
-
-    @ast_to_lingy parser.parse testml_input
+    @ast_to_lingy parse_testml testml_input, testml_file, @importer
 
   importer: (name, from)->
     if from == '-' or not from.match /\//
@@ -33,14 +36,7 @@ class TestML.Compiler
     testml_file = "#{root}/#{name}.tml"
     testml_input = read_file testml_file
 
-    parser = new Pegex.Parser
-      grammar: new TestML.Grammar
-      receiver: new TestML.AST
-        file: testml_file
-        importer: @importer
-      debug: Boolean TestML.env.TESTML_COMPILER_DEBUG
-
-    ast = parser.parse testml_input
+    ast = parse_testml testml_input, testml_file, @importer
     ast.code = ast.code[2..]
     ast
 
