@@ -1,4 +1,10 @@
 ---
+version: 0.0.10
+date:    Thu May 10 10:25:43 PDT 2018
+changes:
+- Add %Import support
+- Move lib/testml/ to lib/testml-compiler/
+---
 version: 0.0.9
 date:    Thu May 10 10:25:43 PDT 2018
 changes:
