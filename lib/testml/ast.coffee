@@ -1,25 +1,31 @@
 require('pegex').require 'tree'
 
 class TestML.AST extends Pegex.Tree
-  constructor: ->
+  constructor: (args={})->
     super()
     @code = []
     @data = []
+    {@file, @importer} = args
 
   final: ->
-    got =
-      testml: '0.3.0'
-      code: []
-      data:[]
+    got = testml: '0.3.0', code: [], data: []
 
     for statement in @code
-      if statement[0] == '()'
-        statement[0] = '%()'
-      got.code.push statement
+      if _.isPlainObject statement
+        if imports = statement.imports
+          for ast in imports
+            die "Can't import code after data started" \
+              if ast.code.length and got.data.length
+            got.code.push ast.code...
+            got.data.push ast.data...
+      else
+        if statement[0] == '()'
+          statement[0] = '%()'
+        got.code.push statement
 
     got.code.unshift '=>', [] if got.code.length
 
-    got.data = @process_data @data
+    got.data.push (@process_data @data)...
 
     got
 
@@ -27,8 +33,15 @@ class TestML.AST extends Pegex.Tree
     @code = got
     return
 
-  got_comment_lines: (got)->
-    return
+  got_import_directive: (got)->
+    [[name, more]] = got
+    names = [name]
+    for name in more
+      names.push name[0] if name[0]?
+    imports = []
+    for name in names
+      imports.push @importer name, @file
+    imports: imports
 
   got_assignment_statement: (got)->
     [[variable, operator], expression] = got
@@ -129,6 +142,9 @@ class TestML.AST extends Pegex.Tree
     @data.push
       label: label
       point: point
+
+  got_comment_lines: (got)->
+    return
 
 #------------------------------------------------------------------------------
   apply_filters: (value, expr)->

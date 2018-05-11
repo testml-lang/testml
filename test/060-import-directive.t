@@ -1,0 +1,81 @@
+#!/usr/bin/env testml-boot
+
+Diff = 1
+*input.undent.compile(*import.undent) == *output
+*input.undent.compile.Catch ~~ *error
+
+=== Import code then Import data
+--- input
+    %Import code
+    *a.x == *b
+    %Import data
+
+--- import
+    +++ code.tml
+    foo = 123
+    +++ data.tml
+    === Test 1
+    --- a: 1
+    --- b: 2
+
+--- output
+{ "testml": "0.3.0",
+  "code": ["=>",[],
+    ["=","foo",123],
+    ["%()",["*a","*b"],
+      ["==",
+        [".",
+          ["*","a"],
+          ["x"]],
+        ["*","b"]]]],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "a": "1",
+        "b": "2"}}]}
+
+=== Import multiple files at once
+--- input
+    *a.x == *b
+
+    %Import data1 data2 data3
+
+--- import
+    +++ data1.tml
+    === Test 1
+    --- a: 1
+    --- b: 2
+    +++ data2.tml
+    === Test 2
+    --- a: 3
+    --- b: 4
+    +++ data3.tml
+    === Test 3
+    --- a: 5
+    --- b: 6
+
+--- output
+{ "testml": "0.3.0",
+  "code": ["=>",[],
+    ["%()",["*a","*b"],
+      ["==",
+        [".",
+          ["*","a"],
+          ["x"]],
+        ["*","b"]]]],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "a": "1",
+        "b": "2"}},
+    { "label": "Test 2",
+      "point": {
+        "a": "3",
+        "b": "4"}},
+    { "label": "Test 3",
+      "point": {
+        "a": "5",
+        "b": "6"}}]}
+
+# vim: ft=:
+

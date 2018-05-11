@@ -47,18 +47,18 @@ class TestML.Grammar extends Pegex.Grammar
       "head_statement": {
         ".any": [
           {
-            ".ref": "directive_statement"
+            ".ref": "head_directive"
           },
           {
             ".ref": "comment_lines"
           }
         ]
       },
-      "directive_statement": {
-        ".ref": "import_directive"
+      "head_directive": {
+        ".ref": "xxx"
       },
-      "import_directive": {
-        ".rgx": "%Import[\\ \\t]+(\\S+)\\r?\\n"
+      "xxx": {
+        ".rgx": "XXX"
       },
       "code_section": {
         ".ref": "code_statement",
@@ -66,6 +66,9 @@ class TestML.Grammar extends Pegex.Grammar
       },
       "code_statement": {
         ".any": [
+          {
+            ".ref": "import_directive"
+          },
           {
             ".ref": "comment_lines"
           },
@@ -76,6 +79,46 @@ class TestML.Grammar extends Pegex.Grammar
             ".ref": "expression_statement"
           }
         ]
+      },
+      "import_directive": {
+        ".all": [
+          {
+            ".rgx": "%Import"
+          },
+          {
+            ".ref": "__"
+          },
+          {
+            ".all": [
+              {
+                ".ref": "module_name"
+              },
+              {
+                ".all": [
+                  {
+                    ".ref": "__"
+                  },
+                  {
+                    ".ref": "module_name"
+                  }
+                ],
+                "+min": 0
+              }
+            ]
+          },
+          {
+            ".ref": "eol"
+          }
+        ]
+      },
+      "__": {
+        ".rgx": "[\\ \\t]+"
+      },
+      "module_name": {
+        ".rgx": "(\\S+)"
+      },
+      "eol": {
+        ".rgx": "\\r?\\n"
       },
       "assignment_statement": {
         ".all": [
@@ -122,9 +165,6 @@ class TestML.Grammar extends Pegex.Grammar
       },
       "string_object": {
         ".ref": "xxx"
-      },
-      "xxx": {
-        ".rgx": "XXX"
       },
       "number_object": {
         ".rgx": "([0-9]+)"
@@ -195,9 +235,6 @@ class TestML.Grammar extends Pegex.Grammar
       "DOT": {
         ".rgx": "\\."
       },
-      "eol": {
-        ".rgx": "\\r?\\n"
-      },
       "expression_statement": {
         ".all": [
           {
@@ -256,9 +293,6 @@ class TestML.Grammar extends Pegex.Grammar
       },
       "pick_argument": {
         ".rgx": "(!?\\*[a-z][\\-\\_a-z0-9]*)"
-      },
-      "__": {
-        ".rgx": "[\\ \\t]+"
       },
       "assertion_expression": {
         ".any": [

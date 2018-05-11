@@ -22,7 +22,7 @@ $testml = "%TestML 0.1.0\n\n$testml";
   package Bridge;
   use base 'TestML::Bridge';
   use TestML::Util;
-  use File::Temp qw/tempfile/;
+  use File::Temp qw/tempdir/;
   use Capture::Tiny 'capture';
   use Test::More;
   use XXX;
@@ -35,15 +35,28 @@ $testml = "%TestML 0.1.0\n\n$testml";
   }
 
   sub compile {
-    my ($self, $testml) = @_;
+    my ($self, $testml, $import) = @_;
     $testml = $testml->value;
+    $import = $import ? $import->value : undef;
+    $import = $self->parse_import($import);
 
-    my ($temp_handle, $temp_path) = tempfile or die;
+    my ($temp_dir) = tempdir or die;
+    my $temp_file = "$temp_dir/test.tml";
+    open my $temp_handle, '>', $temp_file
+      or die "Can't open '$temp_file' for output: $!";
     print $temp_handle $testml;
     close $temp_handle;
 
+    for my $file (keys %$import) {
+      my $temp_file = "$temp_dir/$file";
+      open my $temp_handle, '>', $temp_file
+        or die "Can't open '$temp_file' for output: $!";
+      print $temp_handle $import->{$file};
+      close $temp_handle;
+    }
+
     my ($stdout, $stderr, $rc) = capture {
-      system("testml-compiler $temp_path");
+      system("testml-compiler $temp_file");
     };
 
     die "Error while testing testml-compiler:\n$stderr"
@@ -52,6 +65,17 @@ $testml = "%TestML 0.1.0\n\n$testml";
     warn $stderr if $stderr;
 
     return str $stdout;
+  }
+
+  sub parse_import {
+    my ($self, $import) = @_;
+
+    return {} unless $import;
+
+    my @import = split /^\+\+\+\ (.*)\n/m, $import;
+    shift @import;
+
+    return {@import};
   }
 }
 

@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Pegex grammar for TestML 0.2.0
+# Pegex grammar for TestML 0.3.0
 #------------------------------------------------------------------------------
 testml-document:
   head-section
@@ -12,23 +12,23 @@ head-section:
   head-statement*
 
 head-statement:
-  | directive-statement
+  | head-directive
   | comment-lines
 
-directive-statement:
-  | import-directive
+head-directive: xxx
 
 testml-directive:
   / '%TestML' + version-number eol /
 
 import-directive:
-  / '%Import' + module-name eol /
+  '%Import' + (module-name (+ module-name)*) eol
 
 #------------------------------------------------------------------------------
 code-section:
   code-statement*
 
 code-statement:
+  | import-directive
   | comment-lines
   | assignment-statement
   | expression-statement
