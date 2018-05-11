@@ -2,7 +2,7 @@
 version: 0.0.9
 date:    Thu May 10 10:25:43 PDT 2018
 changes:
-- Add browser support, testml/compiler/browser.js
+- Add browser support, testml-compiler/compiler/browser.js
 ---
 version: 0.0.8
 date:    Mon May  7 17:26:14 PDT 2018

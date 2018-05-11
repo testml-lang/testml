@@ -15,10 +15,10 @@ window.exports = {}
 # include node_modules/pegex/lib/pegex/input.js
 # include node_modules/pegex/lib/pegex/optimizer.js
 # include node_modules/pegex/lib/pegex/parser.js
-# include npm/lib/testml/index.js
-# include npm/lib/testml/grammar.js
-# include npm/lib/testml/ast.js
-# include npm/lib/testml/compiler.js
+# include npm/lib/testml-compiler/index.js
+# include npm/lib/testml-compiler/grammar.js
+# include npm/lib/testml-compiler/ast.js
+# include npm/lib/testml-compiler/compiler.js
 ```
 
 window.global = _global

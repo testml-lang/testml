@@ -1,7 +1,7 @@
-require '../testml'
-require '../testml/prelude'
-require '../testml/grammar'
-require '../testml/ast'
+require '../testml-compiler'
+require '../testml-compiler/prelude'
+require '../testml-compiler/grammar'
+require '../testml-compiler/ast'
 
 require('pegex').require 'parser'
 

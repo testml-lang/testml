@@ -22,12 +22,12 @@ test-pegex: node_modules ../pegex-js/npm
 update-grammar: node_modules
 	( \
 	set -o pipefail; \
-	grep -B99 make_tree lib/testml/grammar.coffee; \
+	grep -B99 make_tree lib/testml-compiler/grammar.coffee; \
 	TESTML_COMPILER_GRAMMAR_PRINT=1 \
             ./bin/testml-compiler Makefile \
             | sed 's/^/    /' \
 	) > tmp-grammar
-	mv tmp-grammar lib/testml/grammar.coffee
+	mv tmp-grammar lib/testml-compiler/grammar.coffee
 
 clean: ingy-npm-clean
 	rm -fr node_modules

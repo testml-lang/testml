@@ -22,7 +22,7 @@ devel:
   irc: irc.freenode.net#testml
 
 =npm:
-  main: ./lib/testml/index.js
+  main: ./lib/testml-compiler/index.js
   bin:
     testml-compiler: ./bin/testml-compiler
   dependencies:

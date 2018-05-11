@@ -2,8 +2,8 @@
 
 module.paths.unshift "#{require('path').dirname(__dirname)}/lib"
 
-require 'testml/prelude'
-require 'testml/compiler'
+require 'testml-compiler/prelude'
+require 'testml-compiler/compiler'
 
 argv = process.argv[2..]
 
