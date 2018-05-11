@@ -36,9 +36,7 @@ class TestML.Compiler
     testml_file = "#{root}/#{name}.tml"
     testml_input = read_file testml_file
 
-    ast = parse_testml testml_input, testml_file, @importer
-    ast.code = ast.code[2..]
-    ast
+    parse_testml testml_input, testml_file, @importer
 
   ast_to_lingy: (ast)->
     lingy = JSON.stringify ast, null, 2

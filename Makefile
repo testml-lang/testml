@@ -8,7 +8,7 @@ else
     $(error Fix your errors)
 endif
 
-test = test/
+test = test/[0-9]*.tml
 debug =
 
 test: node_modules

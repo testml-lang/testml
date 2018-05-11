@@ -23,8 +23,6 @@ class TestML.AST extends Pegex.Tree
           statement[0] = '%()'
         got.code.push statement
 
-    got.code.unshift '=>', [] if got.code.length
-
     got.data.push (@process_data @data)...
 
     got

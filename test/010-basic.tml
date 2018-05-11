@@ -1,6 +1,6 @@
 #!/usr/bin/env testml-boot
 
-# Diff = 1
+Diff = 1
 *input.undent.compile == *output
 
 === Basic comments, assignment, assertions and data
@@ -29,7 +29,7 @@
 
 --- output
 { "testml": "0.3.0",
-  "code": ["=>",[],
+  "code": [
     ["=","Plan",3],
     ["%()",["*input","*sha1"],
       ["==",
