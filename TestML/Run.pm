@@ -45,6 +45,8 @@ submethod TWEAK {
 method test {
   self.test-begin;
 
+  $.code.unshift('=>', []);
+
   self.exec: $.code;
 
   self.test-end;
