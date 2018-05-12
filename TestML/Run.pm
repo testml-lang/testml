@@ -5,7 +5,6 @@ class TestML::Block {
 
 class TestML::Run {
 
-use TestML::Bridge;
 use JSON::Tiny;
 
 has Str $.testml-file;
@@ -31,6 +30,8 @@ submethod TWEAK {
 
   $!code = $testml<code>;
 
+  $!code.unshift('=>', []);
+
   $!data = [
     $testml<data>.map: {
       TestML::Block.new(|$_);
@@ -45,29 +46,9 @@ submethod TWEAK {
 method test {
   self.test-begin;
 
-  $.code.unshift('=>', []);
-
   self.exec: $.code;
 
   self.test-end;
-}
-
-method exec-call(*@args) {
-  my $context = [];
-
-  for |@args -> $call {
-    $context = self.exec($call, $context);
-  }
-
-  return |$context;
-}
-
-method exec-eq($left, $right) {
-  my $got = self.exec($left)[0];
-
-  my $want = self.exec($right)[0];
-
-  self.test-eq($got, $want, $.block.label);
 }
 
 method exec($expr, $context=[]) {
@@ -101,6 +82,26 @@ method exec($expr, $context=[]) {
       die "Can't resolve TestML function '$call'";
     }
   }
+
+  return @return;
+}
+
+method exec-call(*@args) {
+  my $context = [];
+
+  for |@args -> $call {
+    $context = self.exec($call, $context);
+  }
+
+  return |$context;
+}
+
+method exec-eq($left, $right) {
+  my $got = self.exec($left)[0];
+
+  my $want = self.exec($right)[0];
+
+  self.test-eq($got, $want, $.block.label);
 }
 
 method exec-func(*@args) {
