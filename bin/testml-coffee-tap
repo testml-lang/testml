@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# shellcheck disable=SC1090
+
+set -e
+
+testml-run-file() {
+  NODE_PATH="$TESTML_LIB:$TESTML_INPUT_DIR${NODE_PATH:+:$NODE_PATH}" \
+    "$TESTML_LANG" \
+      -e "require('$TESTML_MODULE').run('$1')"
+}
+
+: "${TESTML_BIN:=testml-coffee-tap}"
+: "${TESTML_LANG:=node}"
+: "${TESTML_MODULE:=testml/run/tap}"
+: "${TESTML_LIB:=$TESTML_ROOT/lib/node}"
+: "${TESTML_BRIDGE:=testml-bridge}"
+export TESTML_{BIN,LANG,MODULE,LIB,BRIDGE}
+
+[[ -n $TESTML_SOURCED ]] ||
+  source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
+
+[[ $0 != "${BASH_SOURCE[0]}" ]] || testml-run "$@"

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# shellcheck disable=SC1090
+
+set -e
+
+testml-run-file() {
+  "$TESTML_LANG" \
+    -I"$TESTML_LIB" \
+    -I"$TESTML_INPUT_DIR" \
+    -M"$TESTML_MODULE" \
+    -e "$TESTML_MODULE->run('$1')"
+}
+
+: "${TESTML_BIN:=testml-perl-tap}"
+: "${TESTML_LANG:=perl}"
+: "${TESTML_MODULE:=TestML::Run::TAP}"
+: "${TESTML_LIB:=$TESTML_ROOT/lib/perl}"
+: "${TESTML_BRIDGE:=TestMLBridge}"
+export TESTML_{BIN,LANG,MODULE,LIB,BRIDGE}
+
+[[ -n $TESTML_SOURCED ]] ||
+  source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
+
+[[ $0 != "${BASH_SOURCE[0]}" ]] || testml-run "$@"

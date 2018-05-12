@@ -4,7 +4,7 @@
 
 set -e
 
-langs=(perl perl6)
+runners=(perl-tap perl6-tap)
 
 run() {
   echo '----------------------------------------------------------------------'
@@ -42,16 +42,16 @@ make clean
   run 'testml -c -p test/*.tml'
 )
 
-for lang in "${langs[@]}"; do
+for runner in "${runners[@]}"; do
   (
     make clean
 
     source .rc
 
-    run 'TESTML_LANG=$lang prove -v test/*.tml'
-    run 'TESTML_LANG=$lang testml test/*.tml'
-    run 'testml -l $lang test/*.tml'
-    run 'testml-$lang test/*.tml'
+    run 'TESTML_RUN=$runner prove -v test/*.tml'
+    run 'TESTML_RUN=$runner testml test/*.tml'
+    run 'testml --run=$runner test/*.tml'
+    run 'testml-$runner test/*.tml'
   )
 done
 

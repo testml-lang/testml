@@ -12,27 +12,27 @@ Common commands:
   testml --lang=python foo.tml
   testml --compile foo.tml
   testml --compile --print foo.tml
+  testml --list
   testml --env
   testml --clean
 
 Options:
 --
  
-c,compile   Compile a TestML file
+c,compile   Compile a TestML file to the cache directory
 e,eval=     Specify TestML input on command line
 p,print     Print compiled TestML to stdout
+l,list      List all the TestML langauge/framework runners
 env         Show the TestML environment details
 clean       Remove generated TestML files
 version     Print TestML version
 h,help      Show the command summary
  
-f,config=   TestML config file
-l,lang=     Programming language to use
-b,bin=      TestML language command to use (eg 'testml-perl')
-R,run=      TestML runtime module to use
+R,run=      TestML runner to use (see: testml --list)
+M,module=   TestML runner module to use
 I,lib=      Directory path to find TestML modules
-B,bridge=   TestML bridge module to use
-P,path=     Directory path to find bridge modules
+P,path=     Directory path to find TestML test files
+C,config=   TestML config file
  
 x,debug     Print lots of debugging info
 "
@@ -57,8 +57,10 @@ cmd-run() {
 
     compile-testml
 
-    [[ -n $TESTML_LANG_SOURCED ]] ||
+    if [[ -z $testml_runner_sourced ]]; then
+      testml_runner_sourced=true
       source "$TESTML_BIN"
+    fi
 
     testml-run-file "$TESTML_EXEC_PATH" || true
   done
@@ -86,11 +88,36 @@ cmd-compile() {
   done
 }
 
+cmd-list() {
+  cat <<...
+TestML runners use a programming language with one of its testing frameworks.
+
+TestML supports the following runners:
+
+    coffee-mocha    CoffeeScript with Mocha
+    coffee-tap      CoffeeScript with TAP
+    node-mocha      NodeJS with Mocha
+    node-tap        NodeJS with TAP
+    perl-tap        Perl 5 with TAP (Test::Builder)
+    perl6-tap       Perl 6 with TAP (Test::Builder)
+    python-pytest   Python 2 with Pytest
+
+Aliases:
+    coffee          Alias for coffee-mocha
+    node            Alias for node-mocha
+    perl            Alias for perl-tap
+    perl6           Alias for perl-tap
+    python          Alias for python-pytest
+
+...
+}
+
 cmd-env() {
   if [[ -n $1 ]]; then
     export TESTML_INPUT=$1
     set-input-vars
   fi
+
   env | grep '^TESTML_'
 }
 
@@ -128,6 +155,8 @@ get-options() {
 
   if $option_env; then
     cmd='env'
+  elif $option_list; then
+    cmd='list'
   elif $option_version; then
     cmd=version
   elif $option_compile; then
@@ -136,8 +165,8 @@ get-options() {
     cmd=run
   fi
 
-  [[ -n $option_lang ]] &&
-    export TESTML_LANG="$option_lang"
+  [[ -n $option_run ]] &&
+    export TESTML_RUN="$option_run"
 
   true
 }

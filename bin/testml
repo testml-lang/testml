@@ -60,18 +60,19 @@ set-testml-bin() {
     return 0
   fi
 
-  if [[ -n $TESTML_LANG ]]; then
-    TESTML_BIN="testml-$TESTML_LANG"
+  if [[ -n $TESTML_RUN ]]; then
+    TESTML_BIN="testml-$TESTML_RUN"
     can "$TESTML_BIN" ||
-      die "TESTML_LANG=$TESTML_LANG but '$TESTML_BIN' not found"
-    export TESTML_LANG
+      die "TESTML_RUN=$TESTML_RUN but '$TESTML_BIN' not found"
+    export TESTML_RUN
     export TESTML_BIN=$can_path
     return 0
   fi
 
   die "
-Can't determine TestML binary to use.
-Try setting TESTML_LANG or TESTML_BIN.
+Can't determine TestML runner binary to use.
+Try setting TESTML_RUN or TESTML_BIN.
+See 'testml --list' for a list of runners.
 "
 }
 

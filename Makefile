@@ -1,15 +1,22 @@
-lang := perl
+TAP_RUNNERS := perl-tap perl6-tap
+TAP_TESTS := $(TAP_RUNNERS:%=test-%)
+
 test := test/*.tml
 
 .PHONY: test
-test:
-	(. .rc; TESTML_LANG=perl prove -v $(test))
-	./bin/testml -l perl $(test)
-	./bin/testml-perl $(test)
-	(. .rc; TESTML_LANG=perl6 prove -v $(test))
-	./bin/testml -l perl6 $(test)
-	./bin/testml-perl6 $(test)
+test: $(TAP_TESTS)
+
+test-all: $(TAP_TESTS)
+	./test/test-cli.sh
+
+$(TAP_TESTS):
+	(. .rc; TESTML_RUN=$(@:test-%=%) prove -v $(test))
+
+node:
+	git worktree add -f $@ $@
 
 clean:
-	rm -fr test/.testml
-	rm -fr lib/perl6/.precomp
+	rm -fr test/.testml/
+	rm -fr lib/perl6/.precomp/
+	rm -fr node/
+	git worktree prune
