@@ -23,6 +23,8 @@ sub new {
 
   $self->{code} = $testml->{code};
 
+  unshift @{$self->{code}}, '=>', [];
+
   $self->{data} = [
     map {
       TestML::Block->new($_);
@@ -45,8 +47,6 @@ sub test {
   my ($self) = @_;
 
   $self->test_begin;
-
-  unshift @{$self->{code}}, '=>', [];
 
   $self->exec($self->{code});
 

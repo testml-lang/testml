@@ -4,7 +4,7 @@
 
 set -e
 
-runners=(perl-tap perl6-tap)
+runners=(coffee-tap perl-tap perl6-tap)
 
 run() {
   echo '----------------------------------------------------------------------'
@@ -13,8 +13,6 @@ run() {
     eval "$@"
   )
 }
-
-make clean
 
 (
   run './bin/testml'
@@ -44,8 +42,6 @@ make clean
 
 for runner in "${runners[@]}"; do
   (
-    make clean
-
     source .rc
 
     run 'TESTML_RUN=$runner prove -v test/*.tml'

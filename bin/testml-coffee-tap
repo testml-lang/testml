@@ -11,9 +11,9 @@ testml-run-file() {
 }
 
 : "${TESTML_BIN:=testml-coffee-tap}"
-: "${TESTML_LANG:=node}"
+: "${TESTML_LANG:=coffee}"
 : "${TESTML_MODULE:=testml/run/tap}"
-: "${TESTML_LIB:=$TESTML_ROOT/lib/node}"
+: "${TESTML_LIB:=$TESTML_ROOT/lib/coffee}"
 : "${TESTML_BRIDGE:=testml-bridge}"
 export TESTML_{BIN,LANG,MODULE,LIB,BRIDGE}
 
