@@ -46,6 +46,8 @@ sub test {
 
   $self->test_begin;
 
+  unshift @{$self->{code}}, '=>', [];
+
   $self->exec($self->{code});
 
   $self->test_end;
