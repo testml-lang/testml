@@ -1,4 +1,4 @@
-require '../../../../testml-compiler/lib/testml-compiler/prelude'
+# require '../../../../testml-compiler/lib/testml-compiler/prelude'
 
 _ = require 'lodash'
 
