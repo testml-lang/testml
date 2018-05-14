@@ -1,4 +1,9 @@
 ---
+version: 0.0.2
+date:    Mon May 14 15:30:34 PDT 2018
+changes:
+- Support in browser testing
+---
 version: 0.0.1
 date:    Wed May  9 08:04:21 PDT 2018
 changes:

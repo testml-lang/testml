@@ -1,10 +1,10 @@
 =meta: 0.0.2
 
 name: testml
-version: 0.0.1
-abstract: JavaScript TestML Framework
+version: 0.0.2
+abstract: TestML JavaScript Framework
 homepage: http://testml.org
-tag: [testml, compiler, testing, language, acmeism]
+tag: [testml, testing, language, acmeism]
 license: MIT
 copyright: 2018
 
@@ -24,7 +24,7 @@ devel:
 =npm:
   main: ./lib/testml/index.js
   bin:
-    testml-compiler: ./bin/testml
+    testml: ./bin/testml
   dependencies:
     lodash: '>=2.2.2'
   scripts:
