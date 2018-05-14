@@ -58,7 +58,7 @@ function compileTestML() {
   var output
 
   try {
-    output = (new TestML.Compiler).compile(input)
+    output = (new TestMLCompiler.Compiler).compile(input)
   }
   catch(e) {
     output = String(e)

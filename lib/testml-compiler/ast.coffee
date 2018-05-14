@@ -1,6 +1,6 @@
 require('pegex').require 'tree'
 
-class TestML.AST extends Pegex.Tree
+class TestMLCompiler.AST extends Pegex.Tree
   constructor: (args={})->
     super()
     @code = []

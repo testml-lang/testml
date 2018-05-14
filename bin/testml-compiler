@@ -11,7 +11,7 @@ if argv.length != 1
   die "testml-compiler <testml-file-name> | - | --version"
 
 if argv[0] == '--version'
-  say "TestML version '#{TestML.VERSION}'"
+  say "TestML version '#{TestMLCompiler.VERSION}'"
   exit 0
 else if argv[0].match /^-./
   die "Unknown argument '#{argv[0]}'"
@@ -25,7 +25,7 @@ throw "Input file does not exist: '#{input_file}'" \
 
 input_text = read_file input_file
 
-compiler = new TestML.Compiler
+compiler = new TestMLCompiler.Compiler
 
 out compiler.compile input_text, input_file
 

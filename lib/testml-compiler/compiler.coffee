@@ -7,20 +7,20 @@ require('pegex').require 'parser'
 
 parse_testml = (testml_input, testml_file, importer)->
   parser = new Pegex.Parser
-    grammar: new TestML.Grammar
-    receiver: new TestML.AST
+    grammar: new TestMLCompiler.Grammar
+    receiver: new TestMLCompiler.AST
       file: testml_file
       importer: importer
-    debug: Boolean TestML.env.TESTML_COMPILER_DEBUG
+    debug: Boolean TestMLCompiler.env.TESTML_COMPILER_DEBUG
 
   parser.parse testml_input
 
-class TestML.Compiler
+class TestMLCompiler.Compiler
   ast: null
 
   compile: (testml_input, testml_file)->
-    if TestML.env.TESTML_COMPILER_GRAMMAR_PRINT
-      grammar = new TestML.DevGrammar
+    if TestMLCompiler.env.TESTML_COMPILER_GRAMMAR_PRINT
+      grammar = new TestMLCompiler.DevGrammar
       grammar.make_tree()
       say JSON.stringify grammar.tree, null, 2
       exit 0
