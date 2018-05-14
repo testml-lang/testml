@@ -1,0 +1,5 @@
+/node/
+/node_modules/
+/package*
+/lib/perl6/.precomp/
+/test/.testml/

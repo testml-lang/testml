@@ -26,14 +26,20 @@ test-node-tap: node_modules js-files # test-tap
 	(. .rc; TESTML_RUN=$(@:test-%=%) prove -v $(test))
 
 node_modules:
-	npm install --save-dev lodash tap
+	npm install --save-dev lodash
 
 node:
 	git worktree add -f $@ $@
 
+npm: node js-files
+	(cd $<; make clean npm)
+
 js-files: $(JS_FILES)
 
-%.js: %.coffee
+lib/node/%.js: lib/coffee/%.coffee
+	coffee -cp $< > $@
+
+test/%.js: test/%.coffee
 	coffee -cp $< > $@
 
 clean:

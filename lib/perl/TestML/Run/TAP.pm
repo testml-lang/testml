@@ -9,7 +9,7 @@ use Test::Builder;
 sub run {
   my ($class, $testml_file) = @_;
 
-  $class->new($testml_file)->test;
+  $class->new->from_file($testml_file)->test;
 }
 
 sub new {

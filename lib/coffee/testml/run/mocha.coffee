@@ -1,6 +1,6 @@
 require '../../testml/run'
 
-module.exports = Run = class extends TestML.Run
+module.exports = class TestML.Run.Mocha extends TestML.Run
   @run: (file)->
     (new Run file).test()
 

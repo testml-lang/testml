@@ -1,8 +1,6 @@
-# require '../../../../testml-compiler/lib/testml-compiler/prelude'
+require '../testml'
 
-_ = require 'lodash'
-
-global.TestML ||= class
+lodash = require 'lodash'
 
 operator =
   '=='    : 'eq'
@@ -12,21 +10,30 @@ operator =
   '*'     : 'point'
 
 module.exports = class TestML.Run
-  constructor: (testml_file)->
-    testml = JSON.parse @read_file testml_file
+  constructor: (@testml, @bridge)->
+    global._ = lodash if not TestML.browser
 
-    @code = testml.code
+  from_file: (@testml_file)->
+    @testml = JSON.parse @read_file @testml_file
+
+    return @
+
+  initialize: ->
+    @code = @testml.code
 
     @code.unshift '=>', []
 
-    @data = _.map testml.data, (block)=>
+    @data = _.map @testml.data, (block)=>
       new TestML.Block block
 
-    module.paths.unshift process.env.TESTML_INPUT_DIR
+    if not @bridge
+      module.paths.unshift process.env.TESTML_INPUT_DIR
 
-    @bridge = new(require process.env.TESTML_BRIDGE)
+      @bridge = new(require process.env.TESTML_BRIDGE)
 
   test: ->
+    @initialize()
+
     @test_begin()
 
     @exec @code

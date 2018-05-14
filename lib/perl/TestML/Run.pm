@@ -13,38 +13,54 @@ my $operator = {
 };
 
 sub new {
-  my ($class, $testml_file) = @_;
+  my ($class, $testml) = @_;
 
-  my $self = bless {}, $class;
+  return bless {
+    testml => $testml,
+  }, $class;
+}
+
+sub from_file {
+  my ($self, $testml_file) = @_;
 
   $self->{testml_file} = $testml_file;
 
-  my $testml = decode_json $self->read_file($self->{testml_file});
+  $self->{testml} = decode_json $self->read_file($self->{testml_file});
 
-  $self->{code} = $testml->{code};
+  return $self;
+}
+
+sub initialize {
+  my ($self) = @_;
+
+  $self->{code} = $self->{testml}{code};
 
   unshift @{$self->{code}}, '=>', [];
 
   $self->{data} = [
     map {
       TestML::Block->new($_);
-    } @{$testml->{data}}
+    } @{$self->{testml}->{data}}
   ];
 
-  my $bridge_module = $ENV{TESTML_BRIDGE};
-  eval "require $bridge_module; 1" || do {
-    die "Can't find Bridge module for TestML"
-      if $@ =~ /^Can't locate $bridge_module/;
-    die $@;
-  };
+  if (not $self->{bridge}) {
+    my $bridge_module = $ENV{TESTML_BRIDGE};
+    eval "require $bridge_module; 1" || do {
+      die "Can't find Bridge module for TestML"
+        if $@ =~ /^Can't locate $bridge_module/;
+      die $@;
+    };
 
-  $self->{bridge} = $bridge_module->new;
+    $self->{bridge} = $bridge_module->new;
+  }
 
   return $self;
 }
 
 sub test {
   my ($self) = @_;
+
+  $self->initialize;
 
   $self->test_begin;
 
