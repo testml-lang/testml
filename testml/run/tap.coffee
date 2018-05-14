@@ -1,18 +1,19 @@
 require '../../testml/run'
+require '../../testml/tap'
 
-module.exports = Run = class extends TestML.Run
+module.exports = class TestML.Run.TAP extends TestML.Run
   @run: (file)->
-    (new Run file).test()
+    (new @).from_file(file).test()
 
   constructor: ->
     super(arguments...)
 
-    @tap = new require 'tap'
+    @tap = new TestML.TAP
 
   test_begin: ->
 
   test_end: ->
-    @tap.done()
+    @tap.done_testing()
 
   test_eq: (got, want, label)->
-    @tap.equal got, want, label
+    @tap.is_eq got, want, label
