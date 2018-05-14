@@ -7,10 +7,11 @@ class TestML::Run {
 
 use JSON::Tiny;
 
+has Hash $.testml;
 has Str $.testml-file;
 has Array $.code;
 has Array $.data;
-has $.bridge;
+has $.bridge is rw;
 has TestML::Block $.block is rw;
 
 my $operator = {
@@ -21,29 +22,41 @@ my $operator = {
   '*'     => 'point',
 };
 
-method new($testml-file) {
-  return self.bless(:$testml-file);
+method new($testml-file=Nil, $bridge=Nil) {
+  return self.bless:
+    testml-file => $testml-file,
+    bridge => $bridge;
 }
 
-submethod TWEAK {
-  my $testml = from-json slurp $!testml-file;
+method from-file($testml-file) {
+  $!testml-file = $testml-file;
 
-  $!code = $testml<code>;
+  $!testml = from-json slurp $!testml-file;
 
-  $!code.unshift('=>', []);
+  return self;
+}
+
+method initialize {
+  $!code = $.testml<code>;
+
+  $.code.unshift('=>', []);
 
   $!data = [
-    $testml<data>.map: {
+    $.testml<data>.map: {
       TestML::Block.new(|$_);
     }
   ];
 
-  require ::(%*ENV<TESTML_BRIDGE>);
+  if not $.bridge {
+    require ::(%*ENV<TESTML_BRIDGE>);
 
-  $!bridge = ::(%*ENV<TESTML_BRIDGE>).new;
+    $.bridge = ::(%*ENV<TESTML_BRIDGE>).new;
+  }
 }
 
 method test {
+  self.initialize;
+
   self.test-begin;
 
   self.exec: $.code;

@@ -7,7 +7,7 @@ unit class TestML::Run::TAP is TestML::Run;
 # has Test::Builder $.tap = Test::Builder.new;
 
 method run($testml-file) {
-  self.new($testml-file).test;
+  self.new.from-file($testml-file).test;
 }
 
 method test-begin {
