@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+rm -f yaml/*.tml
+
+cp yaml-test-suite/test/*.tml yaml/
+
+grep -r -l '^--- error' yaml/ | xargs rm
+
+grep -r -L '^--- in-json' yaml/ | xargs rm
+
+perl -e 'print "$_\n" for map {s!^yaml/(.*)\.tml$!$1!;$_} @ARGV' yaml/*.tml > yaml/list

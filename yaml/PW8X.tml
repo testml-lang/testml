@@ -1,0 +1,63 @@
+=== Anchors on Empty Scalars
+--- from: NimYAML tests
+--- tags: anchor empty missing
+
+Test showing empty values and missing explicit components.
+
+--- in-yaml
+- &a
+- a
+-
+  &a : a
+  b: &b
+  &c : &a
+-
+  ? &d
+  ? &e
+  : &a
+
+--- in-json
+[
+  null,
+  "a",
+  {
+    "": null,
+    "b": null
+  },
+  {
+    "": null
+  }
+]
+
+--- out-yaml
+- &a
+- a
+- &a : a
+  b: &b
+  &c : &a
+- &d :
+  &e : &a
+
+--- test-event
++STR
++DOC
++SEQ
+=VAL &a :
+=VAL :a
++MAP
+=VAL &a :
+=VAL :a
+=VAL :b
+=VAL &b :
+=VAL &c :
+=VAL &a :
+-MAP
++MAP
+=VAL &d :
+=VAL :
+=VAL &e :
+=VAL &a :
+-MAP
+-SEQ
+-DOC
+-STR

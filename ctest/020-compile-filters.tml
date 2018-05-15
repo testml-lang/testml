@@ -1,0 +1,382 @@
+#!/usr/bin/env testml-boot
+
+Diff = 1
+*input.undent.compile == *output
+
+=== Undent compilation filter
+--- input
+    === Test 1
+    --- foo(<)
+        xxx
+        yyy
+
+    --- end
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx\nyyy\n",
+        "end": ""}}]}
+
+=== Numeric points
+--- input
+    === Test 1
+    --- a: 12345
+    --- b: 3.14
+    --- c: -12345
+    --- d: -3.14
+    --- e: '12345'
+    --- f: "12345"
+    --- g
+    12345
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "a": 12345,
+        "b": 3.14,
+        "c": -12345,
+        "d": -3.14,
+        "e": "12345",
+        "f": "12345",
+        "g": "12345\n"}}]}
+
+=== Empty point
+--- input
+    === Test 1
+    --- foo
+
+    --- bar: 123
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "",
+        "bar": 123}}]}
+
+=== Keep blanks compilation filter
+--- input
+    === Test 1
+    --- foo(+)
+    xxx
+    yyy
+
+
+    --- end
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx\nyyy\n\n\n",
+        "end": ""}}]}
+
+=== Keep comments compilation filter
+--- input
+    === Test 1
+    --- foo(#)
+    # xxx
+    yyy
+    --- bar
+    # xxx
+    yyy
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "# xxx\nyyy\n",
+        "bar": "yyy\n"}}]}
+
+=== Chomp compilation filter
+--- input
+    === Test 1
+    --- foo(-)
+    xxx
+    yyy
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx\nyyy"}}]}
+
+=== Point inheritance
+--- input
+    === Test 1
+    --- foo(-)
+    xxx
+    yyy
+    === Test 2
+    --- ^foo()
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx\nyyy"}},
+    { "label": "Test 2",
+      "point": {
+        "foo": "xxx\nyyy\n"}}]}
+
+=== Point inheritance from different name
+--- input
+    === Test 1
+    --- foo(-)
+    xxx
+    yyy
+
+    === Test 2
+    --- ^bar=foo(+)
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx\nyyy"}},
+    { "label": "Test 2",
+      "point": {
+        "bar": "xxx\nyyy\n\n"}}]}
+
+=== Use auto filters on inherited point
+--- input
+    === Test 1
+    --- foo(+)
+    xxx
+    yyy
+
+    === Test 2
+    --- ^foo
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx\nyyy\n\n"}},
+    { "label": "Test 2",
+      "point": {
+        "foo": "xxx\nyyy\n\n"}}]}
+
+=== Comments removed by default
+--- input
+    === Test 1
+    --- foo
+    # Comment
+     # Not Comment
+    # Comment
+    \# Not Comment
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": " # Not Comment\n# Not Comment\n"}}]}
+
+=== Regex
+--- input
+    === Test 1
+    --- foo(/)
+    this
+      .*
+    that
+    --- bar(/): this.*that
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": ["/","this\n  .*\nthat","x"],
+        "bar": ["/","this.*that"]}}]}
+
+=== List points
+--- input
+    === Test 1
+    --- foo(@)
+    line 1
+    line 2
+    line 3
+    --- bar(@): one two three
+    --- baz(@/)
+    a b c.*$
+    this.*that
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": [["line 1","line 2","line 3"]],
+        "bar": [["one","two","three"]],
+        "baz": [[
+            ["/","a b c.*$"],
+            ["/","this.*that"]]]}}]}
+
+=== Strip blank lines
+--- input
+    === Test 1
+    --- foo(~)
+    line 1
+
+    line 2
+
+
+    line 3
+
+    --- bar(~-)
+    line 1
+
+    line 2
+
+
+    line 3
+
+    --- baz(~@)
+    line 1
+
+    line 2
+
+
+    line 3
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "line 1\nline 2\nline 3\n",
+        "bar": "line 1\nline 2\nline 3",
+        "baz": [["line 1","line 2","line 3"]]}}]}
+
+=== List points
+--- input
+    === Test 1
+    --- foo(@)
+    line 1
+    line 2
+    line 3
+    --- bar(@): one two three
+    --- baz(@/)
+    a b c.*$
+    this.*that
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": [["line 1","line 2","line 3"]],
+        "bar": [["one","two","three"]],
+        "baz": [[
+            ["/","a b c.*$"],
+            ["/","this.*that"]]]}}]}
+
+=== Filters and Inheritance
+--- input
+    === Test 1
+    --- a(~)
+    line 1
+
+    line 2
+
+    line 3
+
+    --- ^b=a
+
+    --- ^c=a()
+
+    --- ^d=a(@)
+
+    --- ^e=d(/)
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "a": "line 1\nline 2\nline 3\n",
+        "b": "line 1\nline 2\nline 3\n",
+        "c": "line 1\n\nline 2\n\nline 3\n",
+        "d": [["line 1","","line 2","","line 3"]],
+        "e": [[
+            ["/","line 1"],
+            ["/",""],
+            ["/","line 2"],
+            ["/",""],
+            ["/","line 3"]]]}}]}
+
+=== Comments and Inheritance
+--- input
+    === Test 1
+    --- a
+    line 1
+    # Comment
+    line 2
+
+    --- ^b=a(#)
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "a": "line 1\nline 2\n",
+        "b": "line 1\n# Comment\nline 2\n"}}]}
+
+=== Don't inherit previous filters unless using ^x=y form
+--- input
+    === Test 1
+    --- regex(/): I like pie
+
+    === Test 2
+    --- ^regex(@/)
+
+    === Test 3
+    --- ^regex(/)
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "regex": ["/","I like pie"]}},
+    { "label": "Test 2",
+      "point": {
+        "regex": [[
+            ["/","I"],
+            ["/","like"],
+            ["/","pie"]]]}},
+    { "label": "Test 3",
+      "point": {
+        "regex": ["/","I like pie"]}}]}
+
+# vim: ft= sw=2:

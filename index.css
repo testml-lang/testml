@@ -1,0 +1,39 @@
+body {
+  font-family: sans-serif;
+  margin: 8px;
+}
+
+#nav {
+  width: 100%;
+  padding-bottom: 5px;
+  font-size: smaller;
+}
+
+button {
+  background-color: yellow;
+}
+
+textarea {
+  font-family: monospace;
+  width: 500px;
+  height: 500px;
+  float: left;
+}
+
+div#mocha {
+  margin: 0;
+  width: 500px;
+  min-height: 500px;
+  border: 0px solid black;
+  float: left;
+}
+
+span.error {
+  font-family: monospace;
+  font-size: 11px;
+}
+
+#explanation {
+  padding-top: 15px;
+  width: 500px;
+}

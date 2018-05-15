@@ -1,0 +1,12 @@
+#!/usr/bin/env testml
+
+"Type is string": 'foo'.Type    == 'str'
+"Type is number": 42.Type       == 'num'
+"Type is regex":  /^x.*$/.Type  == 'regex'
+"Type is bool":   True.Type     == 'bool'
+"Type is null":   Null.Type     == 'null'
+"Type is list":   [1,2,3].Type  == 'list'
+# "Type is error":  Q.Catch.Type  == 'error'
+
+# f = =>
+# "Type is fun":   f.Type         == 'func'

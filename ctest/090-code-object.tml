@@ -1,0 +1,56 @@
+#!/usr/bin/env testml-boot
+
+Diff = 1
+*input.compile == *output
+
+=== Code objects: string, number, regex, point, list, function
+--- input
+a = 'string'
+b = "string\n"
+c = 42
+d = -3.14
+e = /foo\/.*/
+f = *foo
+g = ['this', -42, /.*/, *foo, [], [1], [2, 3]]
+# h = (a, b)=>
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","a","string"],
+    ["=","b","string\n"],
+    ["=","c",42],
+    ["=","d",-3.14],
+    ["=","e",
+      ["/","foo\\/.*"]],
+    ["=","f",
+      ["*","foo"]],
+    ["=","g",
+      [[
+          "this",
+          -42,
+          ["/",".*"],
+          ["*","foo"],
+          [[]],
+          [[1]],
+          [[2,3]]]]]],
+  "data": []}
+
+=== Double quoted strings
+--- input
+a = "one\ntwo\n"
+b = "three\n"
+c = "{a}{b}four\n"
+d = "this\tthat"
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","a","one\ntwo\n"],
+    ["=","b","three\n"],
+    ["=","c",
+      ["$''","{a}{b}four\n"]],
+    ["=","d","this\tthat"]],
+  "data": []}
+
+# vim: ft=:
