@@ -5,6 +5,8 @@ COFFEE_FILES := $(shell find lib/coffee -type f) test/testml-bridge.coffee
 JS_FILES := $(COFFEE_FILES:lib/coffee/%.coffee=lib/node/%.js)
 JS_FILES := $(JS_FILES:test/%.coffee=test/%.js)
 
+WORKTREES := gh-pages node
+
 test := test/*.tml
 
 .PHONY: test
@@ -25,10 +27,13 @@ test-coffee-tap: node_modules # test-tap
 test-node-tap: node_modules js-files # test-tap
 	(. .rc; TESTML_RUN=$(@:test-%=%) prove -v $(test))
 
+html: gh-pages
+	(cd $<; make)
+
 node_modules:
 	npm install --save-dev lodash
 
-node:
+$(WORKTREES):
 	git worktree add -f $@ $@
 
 npm: node js-files
@@ -45,7 +50,7 @@ test/%.js: test/%.coffee
 clean:
 	rm -fr test/.testml/
 	rm -fr lib/perl6/.precomp/
-	rm -fr node/
+	rm -fr $(WORKTREES)
 	rm -fr node_modules/
 	rm -f package*
 	git worktree prune
