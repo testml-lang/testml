@@ -16,9 +16,12 @@ parse_testml = (testml_input, testml_file, importer)->
   parser.parse testml_input
 
 class TestMLCompiler.Compiler
+  constructor: (options={})->
+    {@importer} = options if options.importer?
+
   ast: null
 
-  compile: (testml_input, testml_file)->
+  compile: (testml_input, testml_file='-')->
     if TestMLCompiler.env.TESTML_COMPILER_GRAMMAR_PRINT
       grammar = new TestMLCompiler.DevGrammar
       grammar.make_tree()
