@@ -8,6 +8,8 @@ else
     $(error Fix your errors)
 endif
 
+WORKTREES := gh-pages
+
 test = test/[0-9]*.tml
 debug =
 
@@ -18,6 +20,11 @@ test: node_modules
 test-pegex: node_modules ../pegex-js/npm
 	rm -fr node_modules/pegex
 	(source .rc; NODE_PATH=lib:../pegex-js/npm/lib prove -lv test/)
+
+html: gh-pages
+
+$(WORKTREES):
+	git worktree add -f $@ $@
 
 update-grammar: node_modules
 	( \
@@ -32,3 +39,5 @@ update-grammar: node_modules
 clean: ingy-npm-clean
 	rm -fr node_modules
 	rm -f tmp-grammar
+	rm -fr $(WORKTREES)
+	git worktree prune
