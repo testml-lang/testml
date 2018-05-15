@@ -1,4 +1,9 @@
 ---
+version: 0.0.3
+date:    Tue May 15 11:17:19 PDT 2018
+changes:
+- Fix context bug in run class
+---
 version: 0.0.2
 date:    Mon May 14 15:30:34 PDT 2018
 changes:
