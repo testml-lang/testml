@@ -1,4 +1,9 @@
 ---
+version: 0.0.13
+date:    Tue May 15 14:24:39 PDT 2018
+changes:
+- Allow importer function in compiler constructor
+---
 version: 0.0.12
 date:    Mon May 14 16:07:10 PDT 2018
 changes:
