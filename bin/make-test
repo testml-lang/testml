@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+rm -f test/*.tml
+
+cp ../test/*.tml ../test/testml-bridge.coffee test/
+
+perl -e 'print "$_\n" for map {s!^test/(.*)\.tml$!$1!;$_} @ARGV' test/*.tml > test/list

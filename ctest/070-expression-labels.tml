@@ -1,0 +1,36 @@
+#!/usr/bin/env testml-boot
+
+Diff = 1
+*input.compile == *output
+
+=== Label on assertion
+--- input
+"+ my label":
+  *a == "foo"
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["%()",["*a"],
+      ["==",
+        ["*","a"],
+        "foo",
+        "+ my label"]]],
+  "data": []}
+
+=== Interpolated label
+--- input
+"+ '{*a}' is 'foo'":
+  *a == "foo"
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["%()",["*a"],
+      ["==",
+        ["*","a"],
+        "foo",
+        ["$''","+ '{*a}' is 'foo'"]]]],
+  "data": []}
+
+# vim: ft=:

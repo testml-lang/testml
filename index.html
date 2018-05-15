@@ -1,0 +1,71 @@
+<h2 onClick="window.open('./')">TestML Interactive Demo</h2>
+
+<div id="nav">
+  <span><b>Choose Example:</b></span>&nbsp;
+
+  <select id="example" name="example" title="TestML Examples">
+    <option>TestML Examples</option>
+    <option value="math">Basic Math</option>
+    <option value="import">%Import</option>
+  </select>&nbsp;
+
+  <select id="test" name="test" title="TestML Test Suite Tests">
+    <option>TestML Tests</option>
+  </select>&nbsp;
+
+  <select id="ctest" name="ctest" title="TestML Compiler Test Suite Tests">
+    <option>Compiler Tests</option>
+  </select>&nbsp;
+
+  <select id="yaml" name="yaml" title="YAML Test Suite Tests">
+    <option>YAML Test Suite</option>
+  </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+  <span><b>Choose View:</b></span>&nbsp;
+
+  <input type="radio" name="view" value="tap" checked=true> TAP
+  <input type="radio" name="view" value="mocha"> Mocha
+  <input type="radio" name="view" value="compiler"> Compiler
+</div>
+
+<textarea id="testml"></textarea>
+<textarea id="bridge"></textarea>
+<textarea id="output" readonly="true"></textarea></div>
+<div id="mocha" style="display:none"></div>
+
+<br>
+
+<div id="explanation">
+This is an interactive demo for running TestML programs in JavaScript.<br><br>
+
+In the first box, you enter some TestML and in the next box you enter your
+TestML Bridge Class written in CoffeeScript. Your tests will automatically be
+run and the results will shown on the right.<br><br>
+
+<a href="https://github.com/testml-lang/testml">Fork me on GitHub</a><br><br>
+
+<!-- Check out the
+<a href="https://testml-lang.github.io/testml-compiler/">TestML Compiler</a>!
+<br><br>
+</div> -->
+
+<link href="https://unpkg.com/mocha@5.1.1/mocha.css" rel="stylesheet" type="text/css">
+<link href="index.css" rel="stylesheet" type="text/css">
+
+<script src="https://unpkg.com/testml/lib/testml/browser.js"></script>
+<script src="testml/lib/testml/browser.js"></script>
+
+<script src="https://unpkg.com/testml-compiler/lib/testml-compiler/browser.js"></script>
+<script src="testml-compiler/lib/testml-compiler/browser.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+
+<script src="https://coffeescript.org/v2/browser-compiler/coffeescript.js"></script>
+<script src="https://unpkg.com/lodash/lodash.min.js"></script>
+<script src="https://unpkg.com/mocha/mocha.js"></script>
+<script src="https://unpkg.com/chai/chai.js"></script>
+<script src="https://unpkg.com/js-yaml/dist/js-yaml.min.js"></script>
+<script src="https://unpkg.com/diff/dist/diff.js"></script>
+
+<script src="index.js"></script>

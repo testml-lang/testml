@@ -1,0 +1,177 @@
+#!/usr/bin/env testml-boot
+
+Diff = 1
+*input.undent.compile == *output
+
+=== Undent compilation filter
+--- input
+    === Test 1
+    --- foo(<)
+        xxx
+        yyy
+
+    --- end
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx\nyyy\n",
+        "end": ""}}]}
+
+=== Numeric points
+--- input
+    === Test 1
+    --- a: 12345
+    --- b: 3.14
+    --- c: -12345
+    --- d: -3.14
+    --- e: '12345'
+    --- f: "12345"
+    --- g
+    12345
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "a": 12345,
+        "b": 3.14,
+        "c": -12345,
+        "d": -3.14,
+        "e": "12345",
+        "f": "12345",
+        "g": "12345\n"}}]}
+
+=== Empty point
+--- input
+    === Test 1
+    --- foo
+
+    --- bar: 123
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "",
+        "bar": 123}}]}
+
+=== Keep blanks compilation filter
+--- input
+    === Test 1
+    --- foo(+)
+    xxx
+    yyy
+
+
+    --- end
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx\nyyy\n\n\n",
+        "end": ""}}]}
+
+=== Keep comments compilation filter
+--- input
+    === Test 1
+    --- foo(#)
+    # xxx
+    yyy
+    --- bar
+    # xxx
+    yyy
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "# xxx\nyyy\n",
+        "bar": "yyy\n"}}]}
+
+=== Chomp compilation filter
+--- input
+    === Test 1
+    --- foo(-)
+    xxx
+    yyy
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx\nyyy"}}]}
+
+=== Point inheritance
+--- input
+    === Test 1
+    --- foo(-)
+    xxx
+    yyy
+    === Test 2
+    --- ^foo
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx\nyyy"}},
+    { "label": "Test 2",
+      "point": {
+        "foo": "xxx\nyyy"}}]}
+
+=== Don't use auto filters on inherited point
+--- input
+    === Test 1
+    --- foo(+)
+    xxx
+    yyy
+
+    === Test 2
+    --- ^foo
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx\nyyy\n\n"}},
+    { "label": "Test 2",
+      "point": {
+        "foo": "xxx\nyyy\n\n"}}]}
+
+=== Comments removed by default
+--- input
+    === Test 1
+    --- foo
+    # Comment
+     # Not Comment
+    # Comment
+    \# Not Comment
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": " # Not Comment\n# Not Comment\n"}}]}
+
+
+# vim: ft=:

@@ -1,0 +1,33 @@
+=== Sequence With Same Indentation as Parent Mapping
+--- from: NimYAML tests
+--- tags: mapping sequence
+
+--- in-yaml
+1:
+- 2
+- 3
+4: 5
+
+--- in-json
+{
+  "1": [
+    2,
+    3
+  ],
+  "4": 5
+}
+
+--- test-event
++STR
++DOC
++MAP
+=VAL :1
++SEQ
+=VAL :2
+=VAL :3
+-SEQ
+=VAL :4
+=VAL :5
+-MAP
+-DOC
+-STR
