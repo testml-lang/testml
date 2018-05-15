@@ -1,3 +1,5 @@
+# require '../../../../testml-compiler/lib/testml-compiler/prelude'
+
 require '../testml'
 
 lodash = require 'lodash'
@@ -51,7 +53,7 @@ module.exports = class TestML.Run
       args = _.map args, (a)=>
         if _.isArray a then @exec(a) else a
 
-      args.unshift _.reverse(context)...
+      args.unshift (_.reverse context)...
 
       if call.match /^[a-z]/
         call = call.replace /-/g, '_'
@@ -68,7 +70,7 @@ module.exports = class TestML.Run
       else
         throw "Can't resolve TestML function '#{call}'"
 
-    return if return_ == undefined then [] else return_
+    return if return_ == undefined then [] else [return_]
 
   exec_call: (args...)->
     context = []
@@ -76,7 +78,8 @@ module.exports = class TestML.Run
     for call in args
       context = @exec call, context
 
-    return [context]
+    return context[0] if context.length
+    return
 
   exec_eq: (left, right)->
     got = String @exec(left)[0]

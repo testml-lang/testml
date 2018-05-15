@@ -27,11 +27,9 @@ test-coffee-tap: node_modules # test-tap
 test-node-tap: node_modules js-files # test-tap
 	(. .rc; TESTML_RUN=$(@:test-%=%) prove -v $(test))
 
-html: gh-pages
-	(cd $<; make)
-
 node_modules:
 	npm install --save-dev lodash
+	rm -f package*
 
 $(WORKTREES):
 	git worktree add -f $@ $@
