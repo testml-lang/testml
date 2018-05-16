@@ -1,3 +1,5 @@
+export PATH := $(PWD)/bin:$(PATH)
+
 TAP_RUNNERS := coffee-tap node-tap perl-tap perl6-tap python-tap
 TAP_TESTS := $(TAP_RUNNERS:%=test-%)
 
@@ -16,16 +18,16 @@ test-all: test
 	./test/test-cli.sh
 
 # test-tap:
-# 	(. .rc; TESTML_RUN=$(@:test-%=%) prove -v $(test))
+# 	TESTML_RUN=$(@:test-%=%) prove -v $(test)
 
 test-perl-tap test-perl6-tap test-python-tap:
-	(. .rc; TESTML_RUN=$(@:test-%=%) prove -v $(test))
+	TESTML_RUN=$(@:test-%=%) prove -v $(test)
 
 test-coffee-tap: node_modules # test-tap
-	(. .rc; TESTML_RUN=$(@:test-%=%) prove -v $(test))
+	TESTML_RUN=$(@:test-%=%) prove -v $(test)
 
 test-node-tap: node_modules js-files # test-tap
-	(. .rc; TESTML_RUN=$(@:test-%=%) prove -v $(test))
+	TESTML_RUN=$(@:test-%=%) prove -v $(test)
 
 node_modules:
 	npm install --save-dev lodash
