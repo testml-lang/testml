@@ -20,6 +20,15 @@ module.exports = class TestML.Run
 
     return @
 
+  test: ->
+    @initialize()
+
+    @test_begin()
+
+    @exec @code
+
+    @test_end()
+
   initialize: ->
     @code = @testml.code
 
@@ -33,15 +42,6 @@ module.exports = class TestML.Run
 
       @bridge = new(require process.env.TESTML_BRIDGE)
 
-  test: ->
-    @initialize()
-
-    @test_begin()
-
-    @exec @code
-
-    @test_end()
-
   exec: (expr, context=[])->
     return [expr] unless _.isArray expr
 
@@ -50,8 +50,8 @@ module.exports = class TestML.Run
     if name = operator[call]
       return_ = @["exec_#{name}"](args...)
     else
-      args = _.map args, (a)=>
-        if _.isArray a then @exec(a) else a
+      args = _.map args, (x)=>
+        if _.isArray x then @exec(x)[0] else x
 
       args.unshift (_.reverse context)...
 
@@ -78,7 +78,9 @@ module.exports = class TestML.Run
     for call in args
       context = @exec call, context
 
-    return context[0] if context.length
+    if context.length
+      return context[0]
+
     return
 
   exec_eq: (left, right)->
