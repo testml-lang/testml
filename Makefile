@@ -1,4 +1,4 @@
-TAP_RUNNERS := coffee-tap node-tap perl-tap perl6-tap
+TAP_RUNNERS := coffee-tap node-tap perl-tap perl6-tap python-tap
 TAP_TESTS := $(TAP_RUNNERS:%=test-%)
 
 COFFEE_FILES := $(shell find lib/coffee -type f) test/testml-bridge.coffee
@@ -10,7 +10,7 @@ WORKTREES := gh-pages node
 test := test/*.tml
 
 .PHONY: test
-test: node_modules $(TAP_TESTS)
+test: $(TAP_TESTS)
 
 test-all: test
 	./test/test-cli.sh
@@ -18,7 +18,7 @@ test-all: test
 # test-tap:
 # 	(. .rc; TESTML_RUN=$(@:test-%=%) prove -v $(test))
 
-test-perl-tap test-perl6-tap:
+test-perl-tap test-perl6-tap test-python-tap:
 	(. .rc; TESTML_RUN=$(@:test-%=%) prove -v $(test))
 
 test-coffee-tap: node_modules # test-tap

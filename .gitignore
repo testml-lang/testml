@@ -1,3 +1,4 @@
+*.pyc
 /gh-pages/
 /node/
 /node_modules/

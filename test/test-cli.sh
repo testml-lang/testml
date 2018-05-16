@@ -4,7 +4,7 @@
 
 set -e
 
-runners=(coffee-tap node-tap perl-tap perl6-tap)
+runners=(coffee-tap node-tap perl-tap perl6-tap python-tap)
 
 run() {
   echo '----------------------------------------------------------------------'
