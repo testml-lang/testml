@@ -46,6 +46,7 @@ class TestMLCompiler.Compiler
     lingy = lingy.replace /\[([^\{\[]+?)\]/g, (m, m1)->
       "[#{m1.replace /\n */g, ''}]"
     lingy = lingy.replace /("=>",)\n *(\[[^\n]*\])/g, '$1$2'
+    lingy = lingy.replace /("\$''",)\n */g, '$1'
     lingy = lingy.replace /\n *([\}\]])/g, '$1'
     lingy = lingy.replace /\[\n +"/g, '["'
     lingy = lingy.replace /^( *\["%\(\)",)\n *(\[.*\],)$/mg, '$1$2'

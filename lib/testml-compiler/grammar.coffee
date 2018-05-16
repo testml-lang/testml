@@ -164,7 +164,20 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         ".rgx": "\\*([a-z][\\-\\_a-z0-9]*)"
       },
       "string_object": {
-        ".ref": "xxx"
+        ".any": [
+          {
+            ".ref": "double_string"
+          },
+          {
+            ".ref": "single_string"
+          }
+        ]
+      },
+      "double_string": {
+        ".rgx": "\"((?:[^\\n\\\\\"]|\\\\[\\\\\"0nt])*?)\""
+      },
+      "single_string": {
+        ".rgx": "'((?:[^\\n\\\\']|\\\\[\\\\'])*?)'"
       },
       "number_object": {
         ".rgx": "([0-9]+)"
@@ -258,7 +271,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         ]
       },
       "expression_label": {
-        ".ref": "xxx"
+        ".rgx": "\"((?:[^\\n\\\\\"]|\\\\[\\\\\"0nt])*?)\":\\s*"
       },
       "pick_expression": {
         ".all": [

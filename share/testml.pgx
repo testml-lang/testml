@@ -46,7 +46,8 @@ expression-statement:
   assertion-expression?
   eol
 
-expression-label: xxx
+expression-label:
+  / double-string COLON WS* /
 
 pick-expression:
   LPAREN
@@ -71,7 +72,19 @@ code-object:
 point-object:
   / STAR ( LOWER [\-\_a-z0-9]* ) /
 
-string-object: xxx
+string-object:
+  | double-string
+  | single-string
+
+double-string:
+  / DOUBLE
+    ( (: [^ BREAK BACK DOUBLE] | BACK [ BACK DOUBLE '0nt'])*? )
+    DOUBLE /
+
+single-string:
+  / SINGLE
+    ( (: [^ BREAK BACK SINGLE] | BACK [ BACK SINGLE ])*? )
+    SINGLE /
 
 number-object: /( DIGIT+ )/
 

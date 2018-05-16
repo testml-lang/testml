@@ -46,6 +46,9 @@ class TestMLCompiler.AST extends Pegex.Tree
     [operator, variable, expression]
 
   got_expression_statement: (got)->
+    if _.isPlainObject got[0]
+      label = got.shift()
+
     pick = {}
     if _.isArray(got[0]) and got[0][0] == '()'
       pick = got.shift().pick
@@ -59,11 +62,20 @@ class TestMLCompiler.AST extends Pegex.Tree
     else
       statement = left
 
+    if label
+      statement.push label.label
+
     pick = _.keys pick
     if pick.length > 0
       statement = ['()', pick, statement]
 
     statement
+
+  got_expression_label: (got)->
+    if got.match /(?:\\\\|\\\{|.)*\{/
+      return label: ["$''", got]
+
+    return label: got
 
   got_pick_expression: (got)->
     got = got[0]
