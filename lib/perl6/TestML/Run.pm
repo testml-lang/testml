@@ -36,6 +36,16 @@ method from-file($testml-file) {
   return self;
 }
 
+method test {
+  self.initialize;
+
+  self.test-begin;
+
+  self.exec: $.code;
+
+  self.test-end;
+}
+
 method initialize {
   $!code = $.testml<code>;
 
@@ -52,16 +62,6 @@ method initialize {
 
     $.bridge = ::(%*ENV<TESTML_BRIDGE>).new;
   }
-}
-
-method test {
-  self.initialize;
-
-  self.test-begin;
-
-  self.exec: $.code;
-
-  self.test-end;
 }
 
 method exec($expr, $context=[]) {

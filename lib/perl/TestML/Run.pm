@@ -30,6 +30,18 @@ sub from_file {
   return $self;
 }
 
+sub test {
+  my ($self) = @_;
+
+  $self->initialize;
+
+  $self->test_begin;
+
+  $self->exec($self->{code});
+
+  $self->test_end;
+}
+
 sub initialize {
   my ($self) = @_;
 
@@ -55,18 +67,6 @@ sub initialize {
   }
 
   return $self;
-}
-
-sub test {
-  my ($self) = @_;
-
-  $self->initialize;
-
-  $self->test_begin;
-
-  $self->exec($self->{code});
-
-  $self->test_end;
 }
 
 sub exec {
