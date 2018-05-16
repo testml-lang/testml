@@ -3,9 +3,9 @@ TestML
 
 An Acmeist Software Testing Language
 
-# Status
+# TestML Background
 
-TestML ideas started back in 2005. The Perl module Test::Base, used the same
+TestML ideas started back in 2004. The Perl module Test::Base, used the same
 data definition syntax that is still used today.
 
 In 2009, an imperative assertion syntax was added, that could be run in any
@@ -38,15 +38,17 @@ npm install -g testml-compiler
 
 To implement TestML, 2 things need to happen:
 
-* Implement all the language features into the TestML Compiler
+* Implement all the TestML language features into the TestML Compiler
 * Implement the Runtime in each programming language / test framework
 
 To date, the basic data language and the minimal assertion syntax can compile.
 Runtime support is as follows:
 
-* Perl(5) - Complete. Runs all features presented by the compiler.
+* CoffeeScript - Complete. Runs all features presented by the compiler.
+* JavaScript - Complete.
+* Perl(5) - Complete.
 * Perl 6 - Complete.
-* CoffeeScript (JavaScript) - Started. In progress.
+* Python(2) - Complete.
 
 # Synopsis
 
