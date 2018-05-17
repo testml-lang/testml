@@ -1,6 +1,7 @@
 require 'testml/bridge'
 
-module.exports = class TestMLBridge extends TestML.Bridge
+module.exports =
+class TestMLBridge extends TestML.Bridge
   add: (a, b)->
     a + b
 

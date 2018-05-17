@@ -1,6 +1,5 @@
 use strict; use warnings;
 package TestMLBridge;
-use TestML::Bridge;
 use base 'TestML::Bridge';
 
 sub add {

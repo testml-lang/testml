@@ -40,6 +40,9 @@ node_modules:
 $(WORKTREES):
 	git worktree add -f $@ $@
 
+gh-pages-test: gh-pages
+	make -C $< test
+
 npm: node js-files
 	(cd $<; make clean npm)
 
