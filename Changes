@@ -1,4 +1,9 @@
 ---
+version: 0.0.15
+date:    Thu May 17 07:51:20 PDT 2018
+changes:
+- Support numeric point values
+---
 version: 0.0.14
 date:    Wed May 16 15:35:03 PDT 2018
 changes:
