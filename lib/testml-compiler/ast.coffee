@@ -173,19 +173,29 @@ class TestMLCompiler.AST extends Pegex.Tree
   apply_filters: (value, expr)->
     return value if _.isNumber value
 
-    value = value.replace /^#.*\n/gm, ''
+    filters = {}
+    if m = expr.match /\((.*?)\)/
+      list = m[1].split ''
+      for item in list
+        throw "Unsupported point filter: '#{item}'" \
+          unless item.match /^[\<\+\-\#]$/
+        filters[item] = true
+
+    if not filters['#']
+      value = value.replace /^#.*\n/gm, ''
 
     value = value.replace /^\\/gm, ''
 
-    if value.match /\n/
-      value = value.replace /\n*$/, '\n'
+    if not filters['+']
+      if value.match /\n/
+        value = value.replace /\n*$/, '\n'
+        value = '' if value == '\n'
 
-    return value unless expr
-
-    if expr == '(<)'
+    if filters['<']
       value = value.replace /^    /gm, ''
-    else
-      throw "Unsupported point filter: '#{expr}'"
+
+    if filters['-']
+      value = value.replace /\n$/, ''
 
     value
 

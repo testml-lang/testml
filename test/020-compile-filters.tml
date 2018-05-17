@@ -21,7 +21,6 @@ Diff = 1
         "foo": "xxx\nyyy\n",
         "end": ""}}]}
 
-
 === Numeric points
 --- input
     === Test 1
@@ -47,5 +46,74 @@ Diff = 1
         "e": "12345",
         "f": "12345",
         "g": "12345\n"}}]}
+
+=== Empty point
+--- input
+    === Test 1
+    --- foo
+
+    --- bar: 123
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "",
+        "bar": 123}}]}
+
+=== Keep blanks compilation filter
+--- input
+    === Test 1
+    --- foo(+)
+    xxx
+    yyy
+
+
+    --- end
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx\nyyy\n\n\n",
+        "end": ""}}]}
+
+=== Keep comments compilation filter
+--- input
+    === Test 1
+    --- foo(#)
+    # xxx
+    yyy
+    --- bar
+    # xxx
+    yyy
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "# xxx\nyyy\n",
+        "bar": "yyy\n"}}]}
+
+=== Chomp compilation filter
+--- input
+    === Test 1
+    --- foo(-)
+    xxx
+    yyy
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx\nyyy"}}]}
 
 # vim: ft=:
