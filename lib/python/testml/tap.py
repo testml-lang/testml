@@ -9,6 +9,7 @@ class TAP:
 
     if got == want:
       print "ok %d - %s" % (self.count, label)
+
     else:
       print "not ok %d - %s" % (self.count, label)
 
@@ -17,15 +18,19 @@ class TAP:
       else:
         print >> sys.stderr, "#   Failed test"
 
-      got = re.sub(r'^', '# ', got)
-      got = re.sub(r'^\#\ ', '', got)
-      got = re.sub(r'\n$', "\n# ", got)
-      print >> sys.stderr, "#          got: '%s'" % got
+      if isinstance(got, basestring):
+        got = re.sub(r'^', '# ', got)
+        got = re.sub(r'^\#\ ', '', got)
+        got = re.sub(r'\n$', "\n# ", got)
+        got = "'%s'" % got
+      print >> sys.stderr, "#          got: %s" % got
 
-      want = re.sub(r'^', '# ', want)
-      want = re.sub(r'^\#\ ', '', want)
-      want = re.sub(r'\n$', "\n# ", want)
-      print >> sys.stderr, "#     expected: '%s'" % want
+      if isinstance(want, basestring):
+        want = re.sub(r'^', '# ', want)
+        want = re.sub(r'^\#\ ', '', want)
+        want = re.sub(r'\n$', "\n# ", want)
+        want = "'%s'" % want
+      print >> sys.stderr, "#     expected: %s" % want
 
   def done_testing(self):
     print "1..%s" % self.count

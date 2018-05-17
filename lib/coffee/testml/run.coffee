@@ -84,9 +84,9 @@ module.exports = class TestML.Run
     return
 
   exec_eq: (left, right)->
-    got = String @exec(left)[0]
+    got = @exec(left)[0]
 
-    want = String @exec(right)[0]
+    want = @exec(right)[0]
 
     @test_eq got, want, @block.label
 

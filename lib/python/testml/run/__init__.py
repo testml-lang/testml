@@ -103,9 +103,9 @@ class TestMLRun:
     return
 
   def exec_eq(self, left, right):
-    got = str(self.exec_(left)[0])
+    got = self.exec_(left)[0]
 
-    want = str(self.exec_(right)[0])
+    want = self.exec_(right)[0]
 
     self.test_eq(got, want, self.block.label)
 

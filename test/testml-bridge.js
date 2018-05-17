@@ -6,7 +6,7 @@
 
   module.exports = TestMLBridge = class TestMLBridge extends TestML.Bridge {
     add(a, b) {
-      return Number(a) + Number(b);
+      return a + b;
     }
 
     sub(a, b) {
