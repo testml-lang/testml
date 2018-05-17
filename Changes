@@ -1,4 +1,9 @@
 ---
+version: 0.0.17
+date:    Thu May 17 11:11:53 PDT 2018
+changes:
+- Don't use auto filters on inherited point
+---
 version: 0.0.16
 date:    Thu May 17 10:55:38 PDT 2018
 changes:
