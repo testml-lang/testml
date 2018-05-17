@@ -30,15 +30,19 @@ module.exports = class TestML.TAP
       else
         @err "#   Failed test"
 
-      got = got.replace /^/mg, '# '
-      got = got.replace /^\#\ /, ''
-      got = got.replace /\n$/, "\n# "
-      @err "#          got: '#{got}'"
+      if _.isString got
+        got = got.replace /^/mg, '# '
+        got = got.replace /^\#\ /, ''
+        got = got.replace /\n$/, "\n# "
+        got = "'#{got}'"
+      @err "#          got: #{got}"
 
-      want = want.replace /^/mg, '# '
-      want = want.replace /^\#\ /, ''
-      want = want.replace /\n$/, "\n# "
-      @err "#     expected: '#{want}'"
+      if _.isString want
+        want = want.replace /^/mg, '# '
+        want = want.replace /^\#\ /, ''
+        want = want.replace /\n$/, "\n# "
+        want = "'#{want}'"
+      @err "#     expected: #{want}"
 
   done_testing: ->
     @out "1..#{@count}"
