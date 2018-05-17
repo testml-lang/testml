@@ -1,4 +1,9 @@
 ---
+version: 0.0.5
+date:    Thu May 17 14:09:12 PDT 2018
+changes:
+- Support dynamic labels
+---
 version: 0.0.4
 date:    Thu May 17 08:32:47 PDT 2018
 changes:
