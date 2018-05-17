@@ -1,4 +1,9 @@
 ---
+version: 0.0.4
+date:    Thu May 17 08:32:47 PDT 2018
+changes:
+- Polymorphic == assertions (strings and numbers so far)
+---
 version: 0.0.3
 date:    Tue May 15 11:17:19 PDT 2018
 changes:
