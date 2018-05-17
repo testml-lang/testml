@@ -116,4 +116,26 @@ Diff = 1
       "point": {
         "foo": "xxx\nyyy"}}]}
 
+=== Point inheritance
+--- input
+    === Test 1
+    --- foo(-)
+    xxx
+    yyy
+    === Test 2
+    --- ^foo
+    xxx
+    yyy
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx\nyyy"}},
+    { "label": "Test 2",
+      "point": {
+        "foo": "xxx\nyyy"}}]}
+
 # vim: ft=:

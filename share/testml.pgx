@@ -146,6 +146,7 @@ point-definition:
 
 point-single: /
   point-marker +
+  ( CARET? )
   ( point-name )
   ( NS* )
   COLON + ( ANY*? -)
@@ -155,6 +156,7 @@ point-single: /
 
 point-multi: /
   point-marker +
+  ( CARET? )
   ( point-name )
   ( NS* ) -
   EOL

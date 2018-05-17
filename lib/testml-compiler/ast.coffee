@@ -5,6 +5,7 @@ class TestMLCompiler.AST extends Pegex.Tree
     super()
     @code = []
     @data = []
+    @points = {}
     {@file, @importer} = args
 
   final: ->
@@ -23,7 +24,7 @@ class TestMLCompiler.AST extends Pegex.Tree
           statement[0] = '%()'
         got.code.push statement
 
-    got.data.push (@process_data @data)...
+    got.data.push (@make_data @data)...
 
     got
 
@@ -141,11 +142,11 @@ class TestMLCompiler.AST extends Pegex.Tree
   got_block_definition: ([label, user, points])->
     point = {}
     for p in points
-      [name, expr, value, extra] = p
+      [inherit, name, expr, value, extra] = p
       if name.match /^(?:HEAD|LAST|ONLY|SKIP|TODO)$/
         point[name] = true
       else
-        point[name] = @apply_filters(value, expr)
+        point[name] = @make_point(name, value, inherit, expr)
 
     @data ||= []
 
@@ -154,7 +155,7 @@ class TestMLCompiler.AST extends Pegex.Tree
       point: point
 
   got_point_single: (got)->
-    value = got[2]
+    value = got[3]
     if value.match /^-?\d+(\.\d+)?$/
       value = Number value
     else if m = value.match /^'(.*)'\s*$/
@@ -162,7 +163,7 @@ class TestMLCompiler.AST extends Pegex.Tree
     else if m = value.match /^"(.*)"\s*$/
       value = m[1]
 
-    got[2] = value
+    got[3] = value
 
     got
 
@@ -170,16 +171,22 @@ class TestMLCompiler.AST extends Pegex.Tree
     return
 
 #------------------------------------------------------------------------------
-  apply_filters: (value, expr)->
+  make_point: (name, value, inherit, expr)->
     return value if _.isNumber value
 
+    if inherit
+      value = @points[name] || ''
+
     filters = {}
-    if m = expr.match /\((.*?)\)/
+    if m = expr.match /^\((.*?)\)/
       list = m[1].split ''
       for item in list
         throw "Unsupported point filter: '#{item}'" \
           unless item.match /^[\<\+\-\#]$/
         filters[item] = true
+
+    expr = expr.replace /^\((.*?)\)/, ''
+    throw "Unsupported point syntax: '#{expr}'" if expr
 
     if not filters['#']
       value = value.replace /^#.*\n/gm, ''
@@ -188,7 +195,7 @@ class TestMLCompiler.AST extends Pegex.Tree
 
     if not filters['+']
       if value.match /\n/
-        value = value.replace /\n*$/, '\n'
+        value = value.replace /\n+$/, '\n'
         value = '' if value == '\n'
 
     if filters['<']
@@ -197,9 +204,11 @@ class TestMLCompiler.AST extends Pegex.Tree
     if filters['-']
       value = value.replace /\n$/, ''
 
+    @points[name] = value
+
     value
 
-  process_data: (data)->
+  make_data: (data)->
     blocks = []
 
     for block in data
