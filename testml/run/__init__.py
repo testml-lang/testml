@@ -6,6 +6,7 @@ operator = {
   '=='    : 'eq',
   '.'     : 'call',
   '=>'    : 'func',
+  "$''"   : 'get-string',
   '%()'   : 'pickloop',
   '*'     : 'point',
 }
@@ -57,7 +58,9 @@ class TestMLRun:
     call = args.pop(0)
     name = operator.get(call)
     if name:
-      return_ = getattr(self, 'exec_' + name)(*args)
+      call = 'exec_' + name
+      call = re.sub(r'-', '_', call)
+      return_ = getattr(self, call)(*args)
     else:
       args = list(map(
         (lambda x: self.exec_(x)[0] if is_list(x) else x),
@@ -102,16 +105,33 @@ class TestMLRun:
 
     return
 
-  def exec_eq(self, left, right):
+  def exec_eq(self, left, right, label=''):
     got = self.exec_(left)[0]
 
     want = self.exec_(right)[0]
 
-    self.test_eq(got, want, self.block.label)
+    label = self.get_label(label)
+
+    self.test_eq(got, want, label)
 
   def exec_func(self, signature, *statements):
     for statement in statements:
       self.exec_(statement)
+
+  def exec_get_string(self, string):
+    string = re.sub(
+      r'\{([\-\w+])\}',
+      lambda m: self.vars.get(m.group(1), '').__repr__(),
+      string,
+    )
+
+    string = re.sub(
+      r'\{\*([\-\w+])\}',
+      lambda m: self.block.point.get(m.group(1), '').__repr__(),
+      string
+    )
+
+    return string
 
   def exec_pickloop(self, list_, expr):
     for block in self.data:
@@ -135,6 +155,21 @@ class TestMLRun:
 
   def exec_point(self, name):
     return self.block.point[name]
+
+  #----------------------------------------------------------------------------
+  def get_label(self, label_expr=''):
+    label = self.exec_(label_expr)[0]
+
+    block_label = self.block.label
+
+    if label:
+      label = re.sub(r'^\+', block_label, label)
+      label = re.sub(r'\+$', block_label, label)
+      label = re.sub(r'\{\+\}', block_label, label)
+    else:
+      label = block_label
+
+    return label
 
 class TestMLBlock:
   def __init__(self, obj):
