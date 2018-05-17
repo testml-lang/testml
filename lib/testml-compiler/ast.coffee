@@ -153,11 +153,26 @@ class TestMLCompiler.AST extends Pegex.Tree
       label: label
       point: point
 
+  got_point_single: (got)->
+    value = got[2]
+    if value.match /^-?\d+(\.\d+)?$/
+      value = Number value
+    else if m = value.match /^'(.*)'\s*$/
+      value = m[1]
+    else if m = value.match /^"(.*)"\s*$/
+      value = m[1]
+
+    got[2] = value
+
+    got
+
   got_comment_lines: (got)->
     return
 
 #------------------------------------------------------------------------------
   apply_filters: (value, expr)->
+    return value if _.isNumber value
+
     value = value.replace /^#.*\n/gm, ''
 
     value = value.replace /^\\/gm, ''

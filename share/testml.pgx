@@ -135,10 +135,10 @@ block-heading:
   / block-marker (: + ( ANY*? ) -)?  EOL /
 
 user-defined:
-  point-lines
+  /( point-lines )/
 
 point-lines:
-  / ( (: ANY* EOL)*? ) point-boundary /
+  /(: ANY* EOL)*? point-boundary/
 
 point-definition:
   | point-single
@@ -150,7 +150,7 @@ point-single: /
   ( NS* )
   COLON + ( ANY*? -)
   EOL
-  point-lines
+  ( point-lines )
 /
 
 point-multi: /
@@ -158,7 +158,7 @@ point-multi: /
   ( point-name )
   ( NS* ) -
   EOL
-  point-lines
+  ( point-lines )
 /
 
 #------------------------------------------------------------------------------

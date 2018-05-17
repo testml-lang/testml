@@ -372,10 +372,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         ".rgx": "===(?:[\\ \\t]+(.*?)[\\ \\t]*)?\\r?\\n"
       },
       "user_defined": {
-        ".ref": "point_lines"
-      },
-      "point_lines": {
-        ".rgx": "((?:.*\\r?\\n)*?)(?=\\-\\-\\-|===|$)"
+        ".rgx": "((?:.*\\r?\\n)*?(?=\\-\\-\\-|===|$))"
       },
       "point_definition": {
         ".any": [
@@ -388,9 +385,9 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         ]
       },
       "point_single": {
-        ".rgx": "\\-\\-\\-[\\ \\t]+((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*|(?:HEAD|LAST|ONLY|SKIP|TODO)))(\\S*):[\\ \\t]+(.*?[\\ \\t]*)\\r?\\n((?:.*\\r?\\n)*?)(?=\\-\\-\\-|===|$)"
+        ".rgx": "\\-\\-\\-[\\ \\t]+((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*|(?:HEAD|LAST|ONLY|SKIP|TODO)))(\\S*):[\\ \\t]+(.*?[\\ \\t]*)\\r?\\n((?:.*\\r?\\n)*?(?=\\-\\-\\-|===|$))"
       },
       "point_multi": {
-        ".rgx": "\\-\\-\\-[\\ \\t]+((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*|(?:HEAD|LAST|ONLY|SKIP|TODO)))(\\S*)[\\ \\t]*\\r?\\n((?:.*\\r?\\n)*?)(?=\\-\\-\\-|===|$)"
+        ".rgx": "\\-\\-\\-[\\ \\t]+((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*|(?:HEAD|LAST|ONLY|SKIP|TODO)))(\\S*)[\\ \\t]*\\r?\\n((?:.*\\r?\\n)*?(?=\\-\\-\\-|===|$))"
       }
     }
