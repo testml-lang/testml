@@ -8,6 +8,7 @@ my $operator = {
   '=='    => 'eq',
   '.'     => 'call',
   '=>'    => 'func',
+  "\$''"  => 'get-string',
   '%()'   => 'pickloop',
   '*'     => 'point',
 };
@@ -81,6 +82,7 @@ sub exec {
   my $call = shift @args;
   if (my $name = $operator->{$call}) {
     $call = "exec_$name";
+    $call =~ s/-/_/g;
     @return = $self->$call(@args);
   }
   else {
@@ -126,13 +128,15 @@ sub exec_call {
 }
 
 sub exec_eq {
-  my ($self, $left, $right) = @_;
+  my ($self, $left, $right, $label) = @_;
 
   my $got = $self->exec($left)->[0];
 
   my $want = $self->exec($right)->[0];
 
-  $self->test_eq($got, $want, $self->{block}->label);
+  $label = $self->get_label($label);
+
+  $self->test_eq($got, $want, $label);
 }
 
 sub exec_func {
@@ -144,6 +148,22 @@ sub exec_func {
   }
 
   return;
+}
+
+sub exec_get_string {
+    my ($self, $string) = @_;
+
+    $string =~ s{\{([\-\w+])\}} {
+        $self->vars->{$1} || ''
+    }gex;
+
+    $string =~ s{\{\*([\-\w]+)\}} {
+        $self->{block}->point->{$1} || ''
+    }gex;
+
+    $string =~ s{\{[^\}]*\}} {}g;
+
+    return $string;
 }
 
 sub exec_pickloop {
@@ -171,6 +191,7 @@ sub exec_point {
   $self->{block}{point}{$name};
 }
 
+#------------------------------------------------------------------------------
 sub read_file {
   my ($self, $file) = @_;
 
@@ -185,8 +206,28 @@ sub read_file {
   return $input;
 }
 
+sub get_label {
+  my ($self, $label_expr) = @_;
+
+  $label_expr //= '';
+
+  my $label = $self->exec($label_expr)->[0];
+
+  my $block_label = $self->{block}->label;
+
+  if ($label) {
+    $label =~ s/^\+/$block_label/;
+    $label =~ s/\+$/$block_label/;
+    $label =~ s/\{\+\}/$block_label/;
+  }
+  else {
+    $label = $block_label;
+  }
+
+  return $label;
+}
+
 package TestML::Block;
-# use XXX;
 
 sub new {
   my ($class, $data) = @_;
@@ -194,10 +235,7 @@ sub new {
   return bless $data, $class;
 }
 
-sub label {
-  my ($self) = @_;
-
-  return $self->{label};
-}
+sub label { return $_[0]->{label} }
+sub point { return $_[0]->{point} }
 
 1;

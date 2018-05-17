@@ -18,6 +18,7 @@ my $operator = {
   '=='    => 'eq',
   '.'     => 'call',
   '=>'    => 'func',
+  "\$''"  => 'get-string',
   '%()'   => 'pickloop',
   '*'     => 'point',
 };
@@ -71,7 +72,8 @@ method exec($expr, $context=[]) {
   my @return;
   my $call = @args.shift;
   if my $name = $operator{$call} {
-    @return = self."exec-$name"(|@args);
+    $call = "exec-$name";
+    @return = self."$call"(|@args);
   }
   else {
     @args = @args.map: {
@@ -109,12 +111,14 @@ method exec-call(*@args) {
   return |$context;
 }
 
-method exec-eq($left, $right) {
+method exec-eq($left, $right, $label-expr='') {
   my $got = self.exec($left)[0];
 
   my $want = self.exec($right)[0];
 
-  self.test-eq($got, $want, $.block.label);
+  my $label = self.get-label($label-expr);
+
+  self.test-eq($got, $want, $label);
 }
 
 method exec-func(*@args) {
@@ -123,6 +127,18 @@ method exec-func(*@args) {
   for @args -> $statement {
     self.exec($statement);
   }
+}
+
+method exec-get-string($original) {
+  my $string = $original;
+
+  $string ~~ s/\{(<[\w\-]>+)\}/{$.vars{$0}}/;
+
+  $string ~~ s:g/\{\*(<[\w\-]>+)\}/{$.block.point{$0}}/;
+
+  $string ~~ s:g/\{.*?\}//;     #: vim hack
+
+  $string;
 }
 
 method exec-pickloop($list, $expr) {
@@ -144,6 +160,24 @@ method exec-pickloop($list, $expr) {
 
 method exec-point($name) {
   $.block.point{$name};
+}
+
+#------------------------------------------------------------------------------
+method get-label($label-expr='') {
+  my $label = self.exec($label-expr)[0];
+
+  my $block-label = $.block.label;
+
+  if $label {
+    $label ~~ s/^\+/$block-label/;
+    $label ~~ s/\+$/$block-label/;
+    $label ~~ s/\{\+\}/$block-label/;
+  }
+  else {
+    $label = $block-label;
+  }
+
+  return $label;
 }
 
 } # class TestML::Run

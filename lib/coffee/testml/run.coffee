@@ -8,6 +8,7 @@ operator =
   '=='    : 'eq'
   '.'     : 'call'
   '=>'    : 'func'
+  "$''"   : 'get-string'
   '%()'   : 'pickloop'
   '*'     : 'point'
 
@@ -48,7 +49,8 @@ module.exports = class TestML.Run
     args = _.clone expr
     call = args.shift()
     if name = operator[call]
-      return_ = @["exec_#{name}"](args...)
+      call = "exec_#{name}".replace /-/g, '_'
+      return_ = @[call](args...)
     else
       args = _.map args, (x)=>
         if _.isArray x then @exec(x)[0] else x
@@ -83,16 +85,25 @@ module.exports = class TestML.Run
 
     return
 
-  exec_eq: (left, right)->
+  exec_eq: (left, right, label)->
     got = @exec(left)[0]
 
     want = @exec(right)[0]
 
-    @test_eq got, want, @block.label
+    label = @get_label(label)
+
+    @test_eq got, want, label
 
   exec_func: (signature, statements...)->
     for statement in statements
       @exec statement
+
+  exec_get_string: (string)->
+    string = string.replace /\{([\-\w+])\}/g, (m, name)=>
+      @vars[name] || ''
+
+    string = string.replace /\{\*([\-\w+])\}/g, (m, name)=>
+      @block.point[name] || ''
 
   exec_pickloop: (list, expr)->
     for block in @data
@@ -117,6 +128,7 @@ module.exports = class TestML.Run
   exec_point: (name)->
     @block.point[name]
 
+  #----------------------------------------------------------------------------
   read_file: (file_path)->
     fs = require 'fs'
 
@@ -124,6 +136,20 @@ module.exports = class TestML.Run
       fs.readFileSync('/dev/stdin').toString()
     else
       fs.readFileSync(file_path).toString()
+
+  get_label: (label_expr='')->
+    label = @exec(label_expr)[0]
+
+    block_label = @block.label
+
+    if label
+      label = label.replace /^\+/, block_label
+      label = label.replace /\+$/, block_label
+      label = label.replace /\{\+\}/, block_label
+    else
+      label = block_label
+
+    label
 
 TestML.Block = class
   constructor: ({@label, @point})->

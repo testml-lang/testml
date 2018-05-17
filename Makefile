@@ -15,8 +15,7 @@ test := test/*.tml
 .PHONY: test
 test: $(TAP_TESTS) test-out
 
-test-all: test
-	./test/test-cli.sh
+test-all: test test-out
 
 # test-tap:
 # 	TESTML_RUN=$(@:test-%=%) prove -v $(test)

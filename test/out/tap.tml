@@ -1,10 +1,11 @@
 #!/usr/bin/env testml-pl5
 
-prove(*testml) == *tap-out
+"prove -v {*testml}":
+  prove(*testml) == *output
 
-=== prove -v test/010-math.tml
+===
 --- testml: test/010-math.tml
---- tap-out
+--- output
 test/010-math.tml ..
 ok 1 - Test 1
 ok 2 - Test 2
@@ -15,6 +16,17 @@ ok 6 - Test 2
 ok 7 - Test 1
 ok 8 - Test 2
 1..8
+ok
+All tests successful.
+Result: PASS
+
+===
+--- testml: test/030-assertion-label.tml
+--- output
+test/030-assertion-label.tml ..
+ok 1 - Test 1: 1 + 2 == 3
+ok 2 - Test 2: 4 + 5 == 9
+1..2
 ok
 All tests successful.
 Result: PASS
