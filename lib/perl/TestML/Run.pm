@@ -11,6 +11,7 @@ my $operator = {
   "\$''"  => 'get-string',
   '%()'   => 'pickloop',
   '*'     => 'point',
+  '='     => 'set-var',
 };
 
 sub new {
@@ -26,7 +27,7 @@ sub from_file {
 
   $self->{testml_file} = $testml_file;
 
-  $self->{testml} = decode_json $self->read_file($self->{testml_file});
+  $self->{testml} = decode_json $self->_read_file($self->{testml_file});
 
   return $self;
 }
@@ -101,8 +102,8 @@ sub exec {
     elsif ($call =~ /^[A-Z]/) {
       $call = lc $call;
       die "Unknown TestML Standard Library function: '$call'"
-        unless $self->stdlib->can($call);
-      @return = $self->{stdlib}->$call(@args);
+        unless $self->_stdlib->can($call);
+      @return = $self->_stdlib->$call(@args);
     }
     else {
       die "Can't resolve TestML function '$call'";
@@ -134,7 +135,7 @@ sub exec_eq {
 
   my $want = $self->exec($right)->[0];
 
-  $label = $self->get_label($label);
+  $label = $self->_get_label($label);
 
   $self->test_eq($got, $want, $label);
 }
@@ -191,22 +192,35 @@ sub exec_point {
   $self->{block}{point}{$name};
 }
 
-#------------------------------------------------------------------------------
-sub read_file {
-  my ($self, $file) = @_;
+sub exec_set_var {
+  my ($self, $name, $expr) = @_;
 
-  open INPUT, $file
-    or die "Can't open '$file' for input";
-
-  local $/;
-  my $input = <INPUT>;
-
-  close INPUT;
-
-  return $input;
+  $self->setv($name, $self->exec($expr)->[0]);
 }
 
-sub get_label {
+#------------------------------------------------------------------------------
+sub getv {
+  my ($self, $name) = @_;
+
+  return $self->{vars}{$name};
+}
+
+sub setv {
+  my ($self, $name, $value) = @_;
+
+  $self->{vars}{$name} = $value;
+}
+
+sub getp {
+  my ($self, $name) = @_;
+
+  return unless $self->{block};
+
+  return unless $self->{block}->point->{$name};
+}
+
+#------------------------------------------------------------------------------
+sub _get_label {
   my ($self, $label_expr) = @_;
 
   $label_expr //= '';
@@ -227,6 +241,33 @@ sub get_label {
   return $label;
 }
 
+sub _stdlib {
+  my ($self) = @_;
+
+  $self->{stdlib} //= do {
+    require TestML::StdLib;
+
+    TestML::StdLib->new;
+  };
+
+  $self->{stdlib};
+}
+
+sub _read_file {
+  my ($self, $file) = @_;
+
+  open INPUT, $file
+    or die "Can't open '$file' for input";
+
+  local $/;
+  my $input = <INPUT>;
+
+  close INPUT;
+
+  return $input;
+}
+
+#------------------------------------------------------------------------------
 package TestML::Block;
 
 sub new {

@@ -33,7 +33,30 @@ sub test_end {
 sub test_eq {
   my ($self, $got, $want, $label) = @_;
 
-  $self->{tap}->is_eq($got, $want, $label);
+  if ($got ne $want and
+      $want =~ /\n/ and (
+        $self->getv('Diff') or
+        $self->getp('DIFF')
+      )
+  ) {
+    require Text::Diff;
+
+    $self->{tap}->ok(0, $label);
+
+    my $diff = Text::Diff::diff(
+      \$want,
+      \$got,
+      {
+        FILENAME_A => 'want',
+        FILENAME_B => 'got',
+      }
+    );
+
+    $self->{tap}->diag($diff);
+  }
+  else {
+    $self->{tap}->is_eq($got, $want, $label);
+  }
 }
 
 1;
