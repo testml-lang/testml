@@ -5,12 +5,8 @@ use base 'TestML::Bridge';
 
 use Capture::Tiny 'capture_merged';
 
-sub prove {
-  my ($self, $testml_file) = @_;
-
-  my $output = capture_merged {
-    system "prove -v $testml_file";
-  };
+sub _clean {
+  my ($output) = @_;
 
   $output =~ s/\ +$//mg;
   $output =~ s/^Files=.*\n//m;
@@ -18,16 +14,20 @@ sub prove {
   return $output;
 }
 
-sub run_cli {
-  my ($self, $runner, $testml_file) = @_;
+sub prove {
+  my ($self, $testml_file) = @_;
 
-  my $output = capture_merged {
-    system "$runner $testml_file";
+  _clean capture_merged {
+    system "prove -v $testml_file";
   };
+}
 
-  $output =~ s/\ +$//mg;
+sub run_command {
+  my ($self, $command) = @_;
 
-  return $output;
+  _clean capture_merged {
+    system "$command";
+  };
 }
 
 1;
