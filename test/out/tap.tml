@@ -1,0 +1,20 @@
+#!/usr/bin/env testml-pl5
+
+prove(*testml) == *tap-out
+
+=== prove -v test/010-math.tml
+--- testml: test/010-math.tml
+--- tap-out
+test/010-math.tml ..
+ok 1 - Test 1
+ok 2 - Test 2
+ok 3 - Test 1
+ok 4 - Test 2
+ok 5 - Test 1
+ok 6 - Test 2
+ok 7 - Test 1
+ok 8 - Test 2
+1..8
+ok
+All tests successful.
+Result: PASS

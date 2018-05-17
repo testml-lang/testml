@@ -22,4 +22,6 @@ export TESTML_{BIN,LANG,MODULE,LIB,BRIDGE}
 [[ -n $TESTML_SOURCED ]] ||
   source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
 
+testml_runner_sourced=true
+
 [[ $0 != "${BASH_SOURCE[0]}" ]] || testml-run "$@"

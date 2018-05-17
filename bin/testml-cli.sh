@@ -58,7 +58,6 @@ cmd-run() {
     compile-testml
 
     if [[ -z $testml_runner_sourced ]]; then
-      testml_runner_sourced=true
       source "$TESTML_BIN"
     fi
 

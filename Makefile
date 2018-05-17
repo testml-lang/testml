@@ -1,4 +1,5 @@
-export PATH := $(PWD)/bin:$(PATH)
+export TESTML_ROOT := $(PWD)
+export PATH := $(TESTML_ROOT)/bin:$(PATH)
 
 TAP_RUNNERS := coffee-tap node-tap perl-tap perl6-tap python-tap
 TAP_TESTS := $(TAP_RUNNERS:%=test-%)
@@ -12,7 +13,7 @@ WORKTREES := gh-pages node
 test := test/*.tml
 
 .PHONY: test
-test: $(TAP_TESTS)
+test: $(TAP_TESTS) test-out
 
 test-all: test
 	./test/test-cli.sh
@@ -28,6 +29,9 @@ test-coffee-tap: node_modules # test-tap
 
 test-node-tap: node_modules js-files # test-tap
 	TESTML_RUN=$(@:test-%=%) prove -v $(test)
+
+test-out:
+	prove -v test/out/*.tml
 
 node_modules:
 	npm install --save-dev lodash
@@ -48,9 +52,10 @@ test/%.js: test/%.coffee
 	coffee -cp $< > $@
 
 clean:
-	rm -fr test/.testml/
+	rm -fr test/.testml/ test/out/.testml/
 	rm -fr lib/perl6/.precomp/
 	rm -fr $(WORKTREES)
 	rm -fr node_modules/
 	rm -f package*
+	find . -name '*.pyc' | xargs rm
 	git worktree prune

@@ -41,7 +41,6 @@ getopt() {
       fi
     fi
   done <<<"$opt_spec"
-  set +x
 
   while [ $# -gt 0 ]; do
     local option="$1"; shift
