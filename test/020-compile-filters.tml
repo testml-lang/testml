@@ -124,8 +124,6 @@ Diff = 1
     yyy
     === Test 2
     --- ^foo
-    xxx
-    yyy
 
 --- output
 { "testml": "0.3.0",
@@ -137,5 +135,26 @@ Diff = 1
     { "label": "Test 2",
       "point": {
         "foo": "xxx\nyyy"}}]}
+
+=== Don't use auto filters on inherited point
+--- input
+    === Test 1
+    --- foo(+)
+    xxx
+    yyy
+
+    === Test 2
+    --- ^foo
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx\nyyy\n\n"}},
+    { "label": "Test 2",
+      "point": {
+        "foo": "xxx\nyyy\n\n"}}]}
 
 # vim: ft=:

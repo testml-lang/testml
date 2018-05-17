@@ -188,15 +188,16 @@ class TestMLCompiler.AST extends Pegex.Tree
     expr = expr.replace /^\((.*?)\)/, ''
     throw "Unsupported point syntax: '#{expr}'" if expr
 
-    if not filters['#']
-      value = value.replace /^#.*\n/gm, ''
+    if not inherit
+      if not filters['#']
+        value = value.replace /^#.*\n/gm, ''
 
-    value = value.replace /^\\/gm, ''
+      value = value.replace /^\\/gm, ''
 
-    if not filters['+']
-      if value.match /\n/
-        value = value.replace /\n+$/, '\n'
-        value = '' if value == '\n'
+      if not filters['+']
+        if value.match /\n/
+          value = value.replace /\n+$/, '\n'
+          value = '' if value == '\n'
 
     if filters['<']
       value = value.replace /^    /gm, ''
