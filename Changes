@@ -1,4 +1,9 @@
 ---
+version: 0.0.7
+date:    Fri May 18 13:26:17 PDT 2018
+changes:
+- Fix bug in Diff
+---
 version: 0.0.6
 date:    Fri May 18 10:24:37 PDT 2018
 changes:
