@@ -1,4 +1,9 @@
 ---
+version: 0.0.6
+date:    Fri May 18 10:24:37 PDT 2018
+changes:
+- Diff support
+---
 version: 0.0.5
 date:    Thu May 17 14:09:12 PDT 2018
 changes:

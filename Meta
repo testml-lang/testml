@@ -1,7 +1,7 @@
 =meta: 0.0.2
 
 name: testml
-version: 0.0.5
+version: 0.0.6
 abstract: TestML JavaScript Framework
 homepage: http://testml.org
 tag: [testml, testing, language, acmeism]
@@ -27,5 +27,6 @@ devel:
     testml: ./bin/testml
   dependencies:
     lodash: '>=2.2.2'
+    diff: '>=3.5.0'
   scripts:
     test: (source .rc; prove -v test)
