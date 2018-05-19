@@ -1,4 +1,9 @@
 ---
+version: 0.0.8
+date:    Fri May 18 13:26:17 PDT 2018
+changes:
+- Refactoring and bug fixes
+---
 version: 0.0.7
 date:    Fri May 18 13:26:17 PDT 2018
 changes:
