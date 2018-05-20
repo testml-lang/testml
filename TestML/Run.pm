@@ -1,18 +1,13 @@
+#------------------------------------------------------------------------------
 class TestML::Block {
   has $.label;
   has $.point;
 }
 
+#------------------------------------------------------------------------------
 class TestML::Run {
 
 use JSON::Tiny;
-
-has Hash $.testml;
-has Str $.testml-file;
-has Array $.code;
-has Array $.data;
-has $.bridge is rw;
-has TestML::Block $.block is rw;
 
 my $operator = {
   '=='    => 'eq',
@@ -21,18 +16,39 @@ my $operator = {
   "\$''"  => 'get-string',
   '%()'   => 'pickloop',
   '*'     => 'point',
+  '='     => 'set-var',
 };
 
-method new($testml-file=Nil, $bridge=Nil) {
-  return self.bless:
-    testml-file => $testml-file,
-    bridge => $bridge;
+has Str $!file;
+has Str $!version;
+has Array $!code;
+has Array $!data;
+
+has $!bridge;
+has $!stdlib;
+has $!vars;
+
+has TestML::Block $.block;
+
+method new(:$file='', :$testml={}, :$bridge, :$stdlib) {
+  my $self = self.bless:
+    file => $file,
+    bridge => $bridge,
+    stdlib => $stdlib,
+    vars => {};
+
+  $!version = $testml<testml> if $testml<testml>;
+  $!code = $testml<code> if $testml<code>;
+  $!data = $testml<data> if $testml<data>;
+
+  return $self;
 }
 
-method from-file($testml-file) {
-  $!testml-file = $testml-file;
+method from-file($file) {
+  $!file = $file;
 
-  $!testml = from-json slurp $!testml-file;
+  my $testml = from-json slurp $!file;
+  ($!version, $!code, $!data) = $testml<testml code data>;
 
   return self;
 }
@@ -42,37 +58,38 @@ method test {
 
   self.test-begin;
 
-  self.exec: $.code;
+  self.exec: $!code;
 
   self.test-end;
+
+  return;
 }
 
-method initialize {
-  $!code = $.testml<code>;
-
-  $.code.unshift('=>', []);
-
-  $!data = [
-    $.testml<data>.map: {
-      TestML::Block.new(|$_);
-    }
-  ];
-
-  if not $.bridge {
-    require ::(%*ENV<TESTML_BRIDGE>);
-
-    $.bridge = ::(%*ENV<TESTML_BRIDGE>).new;
-  }
+#------------------------------------------------------------------------------
+method getp($name) {
+  return unless $.block;
+  return $.block.point{$name};
 }
 
+method getv($name) {
+  return $!vars{$name};
+}
+
+method setv($name, $value) {
+  $!vars{$name} = $value;
+  return;
+}
+
+#------------------------------------------------------------------------------
 method exec($expr, $context=[]) {
   return [$expr] unless $expr ~~ Array;
 
   my @args = @$expr.clone;
   my @return;
   my $call = @args.shift;
-  if my $name = $operator{$call} {
-    $call = "exec-$name";
+  my $name = $call;
+  if my $opname = $operator{$call} {
+    $call = "exec-$opname";
     @return = self."$call"(|@args);
   }
   else {
@@ -83,18 +100,18 @@ method exec($expr, $context=[]) {
     @args.unshift($_) for $context.reverse;
 
     if $call ~~ /^<[a..z]>/ {
-      die "Can't find bridge function: '$call'"
-        unless $.bridge.can($call);
-      @return = $.bridge."$call"(|@args);
+      die "Can't find bridge function: '$name'"
+        unless $!bridge.can($call);
+      @return = $!bridge."$call"(|@args);
     }
     elsif ($call ~~ /^<[A..Z]>/) {
       $call = $call.lc;
-      die "Unknown TestML Standard Library function: '$call'"
-        unless $.stdlib.can($call);
-      @return = $.stdlib."$call"(|@args);
+      die "Unknown TestML Standard Library function: '$name'"
+        unless $!stdlib.can($call);
+      @return = $!stdlib."$call"(|@args);
     }
     else {
-      die "Can't resolve TestML function '$call'";
+      die "Can't resolve TestML function '$name'";
     }
   }
 
@@ -119,14 +136,16 @@ method exec-eq($left, $right, $label-expr='') {
   my $label = self.get-label($label-expr);
 
   self.test-eq($got, $want, $label);
+
+  return;
 }
 
-method exec-func(*@args) {
-  my $signature = @args.shift;
-
+method exec-func($signature, *@args) {
   for @args -> $statement {
     self.exec($statement);
   }
+
+  return;
 }
 
 method exec-get-string($original) {
@@ -136,33 +155,64 @@ method exec-get-string($original) {
 
   $string ~~ s:g/\{\*(<[\w\-]>+)\}/{$.block.point{$0}}/;
 
-  $string ~~ s:g/\{.*?\}//;     #: vim hack
-
-  $string;
+  return $string;
 }
 
 method exec-pickloop($list, $expr) {
-  outer: for |$.data -> $block {
+  for |$!data -> $block {
+    my $pick = True;
     for |$list -> $point {
-      if $point ~~ /^\*/ {
-        next outer unless $block.point{substr($point, 1)}:exists;
-      }
-      elsif $point ~~ /^\!\*/ {
-        next outer if $block.point{substr($point, 2)}:exists;
+      if ($point ~~ /^\*/ and not $block.point{substr($point, 1)}:exists) or
+         ($point ~~ /^\!\*/ and $block.point{substr($point, 2)}:exists) {
+        $pick = False;
+        last;
       }
     }
-    $.block = $block;
-    self.exec($expr);
+
+    if $pick {
+      $!block = $block;
+      self.exec($expr);
+    }
   }
 
-  $.block = Nil;
+  $!block = Nil;
+
+  return;
 }
 
 method exec-point($name) {
-  $.block.point{$name};
+  return $.block.point{$name};
+}
+
+method exec-set-var($name, $expr) {
+  self.setv($name, self.exec($expr)[0]);
+
+  return;
 }
 
 #------------------------------------------------------------------------------
+method initialize {
+  $!code.unshift('=>', []);
+
+  $!data = [
+    $!data.map: {
+      TestML::Block.new(|$_);
+    }
+  ];
+
+  if not $!bridge {
+    require ::(%*ENV<TESTML_BRIDGE>);
+    $!bridge = ::(%*ENV<TESTML_BRIDGE>).new;
+  }
+
+  if not $!stdlib {
+    require TestML::StdLib;
+    $!stdlib = TestML::StdLib.new;
+  }
+
+  return;
+}
+
 method get-label($label-expr='') {
   my $label = self.exec($label-expr)[0];
 
@@ -181,3 +231,5 @@ method get-label($label-expr='') {
 }
 
 } # class TestML::Run
+
+# vim: set ft=perl6 sw=2:
