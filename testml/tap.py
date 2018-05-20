@@ -4,17 +4,31 @@ class TAP:
   def __init__(self):
     self.count = 0
 
-  def is_eq(self, got, want, label):
+  def passed(self, label):
     self.count += 1
+    print "ok %d - %s" % (self.count, label)
 
-    if got == want:
-      print "ok %d - %s" % (self.count, label)
+  def failed(self, label):
+    self.count += 1
+    print "not ok %d - %s" % (self.count, label)
+
+  def ok(self, ok, label):
+    if ok:
+      self.passed(label)
 
     else:
-      print "not ok %d - %s" % (self.count, label)
+      self.failed(label)
+
+  def is_eq(self, got, want, label):
+    if got == want:
+      self.passed(label)
+
+    else:
+      self.failed(label)
 
       if label:
         print >> sys.stderr, "#   Failed test '%s'" % label
+
       else:
         print >> sys.stderr, "#   Failed test"
 
@@ -32,5 +46,10 @@ class TAP:
         want = "'%s'" % want
       print >> sys.stderr, "#     expected: %s" % want
 
+  def diag(self, msg):
+    print >> sys.stderr, re.sub(r'^', '# ', msg, flags=re.M)
+
   def done_testing(self):
     print "1..%s" % self.count
+
+# vim: ft=python sw=2:
