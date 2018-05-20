@@ -2,8 +2,11 @@ require 'testml/bridge'
 
 module.exports =
 class TestMLBridge extends TestML.Bridge
-  add: (a, b)->
-    a + b
+  add: (x, y)->
+    x + y
 
-  sub: (a, b)->
-    a - b
+  sub: (x, y)->
+    x - y
+
+  cat: (x, y)->
+    x + y

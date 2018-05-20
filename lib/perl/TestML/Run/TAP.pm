@@ -4,17 +4,16 @@ package TestML::Run::TAP;
 use base 'TestML::Run';
 
 use Test::Builder;
-# use XXX;
 
 sub run {
-  my ($class, $testml_file) = @_;
-
-  $class->new->from_file($testml_file)->test;
+  my ($class, $file) = @_;
+  $class->new->from_file($file)->test;
+  return;
 }
 
 sub new {
-  my $class = shift;
-  my $self = $class->SUPER::new(@_);
+  my ($class, @params) = @_;
+  my $self = $class->SUPER::new(@params);
 
   $self->{tap} = Test::Builder->new;
 
@@ -54,9 +53,12 @@ sub test_eq {
 
     $self->{tap}->diag($diff);
   }
+
   else {
     $self->{tap}->is_eq($got, $want, $label);
   }
 }
 
 1;
+
+# vim: ft=perl sw=2:

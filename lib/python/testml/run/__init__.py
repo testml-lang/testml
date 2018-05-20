@@ -9,17 +9,29 @@ operator = {
   "$''"   : 'get-string',
   '%()'   : 'pickloop',
   '*'     : 'point',
+  '='     : 'set-var'
 }
 
 class TestMLRun:
-  def __init__(self, testml=None, bridge=None):
-    self.testml = testml
-    self.bridge = bridge
+  def __init__(self, **params):
+    testml = params.get('testml', {})
 
-  def from_file(self, testml_file):
-    self.testml_file = testml_file
+    self.file = params.get('file')
+    self.version = testml.get('testml')
+    self.code = testml.get('code')
+    self.data = testml.get('data')
+    self.bridge = params.get('bridge')
+    self.stdlib = params.get('stdlib')
+    self.vars = {}
 
-    self.testml = json.loads(open(testml_file).read())
+  def from_file(self, file):
+    self.file = file
+
+    testml = json.loads(open(file).read())
+
+    self.version = testml.get('testml')
+    self.code = testml.get('code')
+    self.data = testml.get('data')
 
     return self
 
@@ -32,35 +44,29 @@ class TestMLRun:
 
     self.test_end()
 
-  def initialize(self):
-    self.code = self.testml['code']
+  #----------------------------------------------------------------------------
+  def getp(self, name):
+    if not self.block:
+      return
+    return self.block.point[name]
 
-    self.code.insert(0, [])
-    self.code.insert(0, '=>')
+  def getv(self, name):
+    return self.vars[name]
 
-    self.data = list(map(
-      (lambda x: TestMLBlock(x)),
-      self.testml['data']))
+  def setv(self, name, value):
+    self.vars[name] = value
 
-    if not self.bridge:
-      sys.path.insert(0, os.environ['TESTML_INPUT_DIR'])
-
-      bridge_module = __import__(os.environ['TESTML_BRIDGE'])
-
-      self.bridge = (bridge_module.TestMLBridge)()
-
+  #----------------------------------------------------------------------------
   def exec_(self, expr, context=[]):
-    # print 'exec)', expr, 'context(%s)' % context
-    if not is_list(expr):
-      return [expr]
+    if not is_list(expr): return [expr]
 
     args = list(expr)
-    call = args.pop(0)
-    name = operator.get(call)
-    if name:
-      call = 'exec_' + name
-      call = re.sub(r'-', '_', call)
+    name = call = args.pop(0)
+    opname = operator.get(call)
+    if opname:
+      call = re.sub(r'-', '_', 'exec_' + opname)
       return_ = getattr(self, call)(*args)
+
     else:
       args = list(map(
         (lambda x: self.exec_(x)[0] if is_list(x) else x),
@@ -75,20 +81,18 @@ class TestMLRun:
         call = re.sub(r'-', '_', call)
         method = getattr(self.bridge, call)
         if not method:
-          die("Can't find bridge function: '%s'" % call)
+          die("Can't find bridge function: '%s'" % name)
         return_ = method(*args)
 
       elif re.search(r'^[A-Z]', call):
         call = call.lower()
         method = getattr(self.stdlib, call)
         if not method:
-          die("Can't find TestML Standard Library function: '%s'" % call)
+          die("Can't find TestML Standard Library function: '%s'" % name)
         return_ = method(*args)
 
       else:
-        die("Can't resolve TestML function '%s'" % call)
-
-    # print 'after)', expr, ' => ', [] if return_ is None else [return_]
+        die("Can't resolve TestML function '%s'" % name)
 
     return [] if return_ is None else [return_]
 
@@ -96,21 +100,16 @@ class TestMLRun:
     context = []
 
     for call in args:
-      # print 'call)', call, 'context(%s)' % context
       context = self.exec_(call, context)
-      # print 'context)', context
 
-    if len(context):
-      return context[0]
+    if len(context): return context[0]
 
-    return
-
-  def exec_eq(self, left, right, label=''):
+  def exec_eq(self, left, right, label_expr=''):
     got = self.exec_(left)[0]
 
     want = self.exec_(right)[0]
 
-    label = self.get_label(label)
+    label = self.get_label(label_expr)
 
     self.test_eq(got, want, label)
 
@@ -137,15 +136,10 @@ class TestMLRun:
     for block in self.data:
       pick = True
       for point in list_:
-        if re.match(r'\*', point):
-          if not block.point.get(point[1:]):
-            pick = False
-            break
-
-        elif re.match(r'\!\*', point):
-          if block.point.get(point[2:]):
-            pick = False
-            break
+        if (re.match(r'\*', point) and not block.point.get(point[1:])) or \
+           (re.match(r'\!\*', point) and block.point.get(point[2:])):
+          pick = False
+          break
 
       if pick:
         self.block = block
@@ -156,7 +150,26 @@ class TestMLRun:
   def exec_point(self, name):
     return self.block.point[name]
 
+  def exec_set_var(self, name, expr):
+    self.vars[name] = self.exec_(expr)[0]
+
   #----------------------------------------------------------------------------
+  def initialize(self):
+    self.code.insert(0, [])
+    self.code.insert(0, '=>')
+
+    self.data = list(map(
+      (lambda x: TestMLBlock(x)),
+      self.data))
+
+    if not self.bridge:
+      bridge_module = __import__(os.environ['TESTML_BRIDGE'])
+      self.bridge = (bridge_module.TestMLBridge)()
+
+    if not self.stdlib:
+      from testml.stdlib import StdLib
+      self.stdlib = StdLib()
+
   def get_label(self, label_expr=''):
     label = self.exec_(label_expr)[0]
 
@@ -171,7 +184,10 @@ class TestMLRun:
 
     return label
 
+#------------------------------------------------------------------------------
 class TestMLBlock:
   def __init__(self, obj):
     self.label = obj['label']
     self.point = obj['point']
+
+# vim: ft=python sw=2:

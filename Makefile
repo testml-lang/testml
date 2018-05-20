@@ -1,8 +1,8 @@
 export TESTML_ROOT := $(PWD)
 export PATH := $(TESTML_ROOT)/bin:$(PATH)
 
-TAP_RUNNERS := coffee-tap node-tap perl-tap perl6-tap python-tap
-TAP_TESTS := $(TAP_RUNNERS:%=test-%)
+TAP_RUN := coffee node perl perl6 python
+TAP_TESTS := $(TAP_RUN:%=test-%-tap)
 
 COFFEE_FILES := $(shell find lib/coffee -type f) test/testml-bridge.coffee
 JS_FILES := $(COFFEE_FILES:lib/coffee/%.coffee=lib/node/%.js)
@@ -13,7 +13,7 @@ WORKTREES := gh-pages node
 test := test/*.tml
 
 .PHONY: test
-test: $(TAP_TESTS) test-out
+test: $(TAP_TESTS)
 
 test-all: test test-out
 
@@ -33,7 +33,7 @@ test-out:
 	prove -v test/out/*.tml
 
 node_modules:
-	npm install --save-dev lodash
+	npm install --save-dev lodash diff
 	rm -f package*
 
 $(WORKTREES):

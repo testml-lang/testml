@@ -3,15 +3,21 @@ package TestMLBridge;
 use base 'TestML::Bridge';
 
 sub add {
-  my ($self, $a, $b) = @_;
+  my ($self, $x, $y) = @_;
 
-  return $a + $b;
+  $x + $y;
 }
 
 sub sub {
-  my ($self, $a, $b) = @_;
+  my ($self, $x, $y) = @_;
 
-  return $a - $b;
+  $x - $y;
+}
+
+sub cat {
+  my ($self, $x, $y) = @_;
+
+  $x . $y;
 }
 
 1;

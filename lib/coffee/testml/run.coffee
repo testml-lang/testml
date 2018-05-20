@@ -11,13 +11,27 @@ operator =
   "$''"   : 'get-string'
   '%()'   : 'pickloop'
   '*'     : 'point'
+  '='     : 'set-var'
 
-module.exports = class TestML.Run
-  constructor: (@testml, @bridge)->
+module.exports =
+class TestML.Run
+  constructor: (params={})->
+    {@file, testml={}, @bridge, @stdlib} = params
+    {testml, @code, @data} = testml
+    @version = testml
+    @vars = {}
+
     global._ = lodash if not TestML.browser
+    return
 
-  from_file: (@testml_file)->
-    @testml = JSON.parse @read_file @testml_file
+  from_file: (@file)->
+    fs = require 'fs'
+
+    {testml, @code, @data} = JSON.parse if @file == '-' \
+      then fs.readFileSync('/dev/stdin').toString() \
+      else fs.readFileSync(@file).toString()
+
+    @version = testml
 
     return @
 
@@ -30,27 +44,30 @@ module.exports = class TestML.Run
 
     @test_end()
 
-  initialize: ->
-    @code = @testml.code
+    return
 
-    @code.unshift '=>', []
+  #----------------------------------------------------------------------------
+  getp: (name)->
+    return unless @block
+    return @block.point[name]
 
-    @data = _.map @testml.data, (block)=>
-      new TestML.Block block
+  getv: (name)->
+    return @vars[name]
 
-    if not @bridge
-      module.paths.unshift process.env.TESTML_INPUT_DIR
+  setv: (name, value)->
+    @vars[name] = value
+    return
 
-      @bridge = new(require process.env.TESTML_BRIDGE)
-
+  #----------------------------------------------------------------------------
   exec: (expr, context=[])->
     return [expr] unless _.isArray expr
 
     args = _.clone expr
-    call = args.shift()
-    if name = operator[call]
-      call = "exec_#{name}".replace /-/g, '_'
+    name = call = args.shift()
+    if opname = operator[call]
+      call = "exec_#{opname}".replace /-/g, '_'
       return_ = @[call](args...)
+
     else
       args = _.map args, (x)=>
         if _.isArray x then @exec(x)[0] else x
@@ -59,18 +76,18 @@ module.exports = class TestML.Run
 
       if call.match /^[a-z]/
         call = call.replace /-/g, '_'
-        throw "Can't find bridge function: '#{call}'" \
-          unless @bridge[call]
+        throw "Can't find bridge function: '#{name}'" \
+          unless @bridge?[call]
         return_ = @bridge[call](args...)
 
       else if call.match /^[A-Z]/
         call = _.lowerCase call
-        throw "Unknown TestML Standard Library function: '#{call}'" \
-          unless @stdlib.can($call)
+        throw "Unknown TestML Standard Library function: '#{name}'" \
+          unless @stdlib[call]
         return_ = @stdlib[call](args...)
 
       else
-        throw "Can't resolve TestML function '#{call}'"
+        throw "Can't resolve TestML function '#{name}'"
 
     return if return_ == undefined then [] else [return_]
 
@@ -80,23 +97,25 @@ module.exports = class TestML.Run
     for call in args
       context = @exec call, context
 
-    if context.length
-      return context[0]
+    return unless context.length
+    return context[0]
 
-    return
-
-  exec_eq: (left, right, label)->
+  exec_eq: (left, right, label_expr)->
     got = @exec(left)[0]
 
     want = @exec(right)[0]
 
-    label = @get_label(label)
+    label = @get_label(label_expr)
 
     @test_eq got, want, label
+
+    return
 
   exec_func: (signature, statements...)->
     for statement in statements
       @exec statement
+
+    return
 
   exec_get_string: (string)->
     string = string.replace /\{([\-\w+])\}/g, (m, name)=>
@@ -105,19 +124,16 @@ module.exports = class TestML.Run
     string = string.replace /\{\*([\-\w+])\}/g, (m, name)=>
       @block.point[name] || ''
 
+    return string
+
   exec_pickloop: (list, expr)->
     for block in @data
       pick = true
       for point in list
-        if point.match /^\*/
-          if ! block.point[point[1..]]?
-            pick = false
-            break
-
-        else if point.match /^\!\*/
-          if block.point[point[2..]]?
-            pick = false
-            break
+        if (point.match(/^\*/) and ! block.point[point[1..]]?) or
+           (point.match(/^\!\*/) and block.point[point[2..]]?)
+          pick = false
+          break
 
       if pick
         @block = block
@@ -125,17 +141,29 @@ module.exports = class TestML.Run
 
     @block = undefined
 
+    return
+
   exec_point: (name)->
-    @block.point[name]
+    return @block.point[name]
+
+  exec_set_var: (name, expr)->
+    @setv(name, @exec(expr)[0])
+    return
 
   #----------------------------------------------------------------------------
-  read_file: (file_path)->
-    fs = require 'fs'
+  initialize: ->
+    @code.unshift '=>', []
 
-    if file_path == '-'
-      fs.readFileSync('/dev/stdin').toString()
-    else
-      fs.readFileSync(file_path).toString()
+    @data = _.map @data, (block)=>
+      new TestML.Block block
+
+    if not @bridge
+      @bridge = new(require process.env.TESTML_BRIDGE)
+
+    if not @stdlib
+      @stdlib = new(require '../testml/stdlib')
+
+    return
 
   get_label: (label_expr='')->
     label = @exec(label_expr)[0]
@@ -149,7 +177,10 @@ module.exports = class TestML.Run
     else
       label = block_label
 
-    label
+    return label
 
+#------------------------------------------------------------------------------
 TestML.Block = class
   constructor: ({@label, @point})->
+
+# vim: set ft=coffee sw=2:

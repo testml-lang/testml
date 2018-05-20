@@ -2,10 +2,14 @@ use TestML::Bridge;
 
 unit class TestMLBridge is TestML::Bridge;
 
-method add($a, $b) {
-  $a + $b;
+method add($x, $y) {
+  $x + $y;
 }
 
-method sub($a, $b) {
-  $a - $b;
+method sub($x, $y) {
+  $x - $y;
+}
+
+method cat($x, $y) {
+  $x ~ $y;
 }
