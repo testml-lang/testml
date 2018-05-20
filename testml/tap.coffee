@@ -1,11 +1,9 @@
-require '../testml'
-
-module.exports = class TestML.TAP
+class TestML.TAP
   constructor: ->
     @count = 0
-    @output = ''
 
     if TestML.browser
+      @output = ''
       @out = (text)->
         @output += text + "\n"
       @err = (text)->
@@ -17,16 +15,29 @@ module.exports = class TestML.TAP
       @err = (text)->
         process.stderr.write String(text) + "\n"
 
-  is_eq: (got, want, label)->
-    @count++
+  pass: (label)->
+    @out "ok #{++@count} - #{label}"
 
-    if got == want
-      @out "ok #{@count} - #{label}"
+  fail: (label)->
+    @out "not ok #{++@count} - #{label}"
+
+  ok: (ok, label)->
+    if ok
+      @pass label
+
     else
-      @out "not ok #{@count} - #{label}"
+      @fail label
+
+  is_eq: (got, want, label)->
+    if got == want
+      @pass label
+
+    else
+      @fail label
 
       if label
         @err "#   Failed test '#{label}'"
+
       else
         @err "#   Failed test"
 
@@ -44,5 +55,10 @@ module.exports = class TestML.TAP
         want = "'#{want}'"
       @err "#     expected: #{want}"
 
+  diag: (msg)->
+    @err msg.replace /^/mg, '# '
+
   done_testing: ->
     @out "1..#{@count}"
+
+# vim: ft=coffee sw=2:
