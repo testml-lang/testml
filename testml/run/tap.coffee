@@ -8,13 +8,21 @@ module.exports = class TestML.Run.TAP extends TestML.Run
 
   constructor: (params={})->
     super(params)
+
+    {@output} = params
+
     @tap = new TestML.TAP
+
     return
 
   test_begin: ->
 
   test_end: ->
     @tap.done_testing()
+
+    if TestML.browser and @output
+      @output.value = @tap.output
+
     return
 
   test_eq: (got, want, label)->
