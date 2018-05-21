@@ -157,4 +157,21 @@ Diff = 1
       "point": {
         "foo": "xxx\nyyy\n\n"}}]}
 
+=== Comments removed by default
+--- input
+    === Test 1
+    --- foo
+    # Comment
+     # Not Comment
+    # Comment
+    \# Not Comment
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": " # Not Comment\n# Not Comment\n"}}]}
+
+
 # vim: ft=:
