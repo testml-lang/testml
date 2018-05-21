@@ -143,7 +143,7 @@ class TestMLCompiler.AST extends Pegex.Tree
     point = {}
     for p in points
       [inherit, name, expr, value, extra] = p
-      if name.match /^(?:HEAD|LAST|ONLY|SKIP|TODO)$/
+      if name.match /^(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF)$/
         point[name] = true
       else
         point[name] = @make_point(name, value, inherit, expr)

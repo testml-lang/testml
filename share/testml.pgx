@@ -197,7 +197,7 @@ identifier-user:
   / LOWER ALNUM* (: DASH ALNUM+)* /
 
 pseudo-point-name:
-  /(:HEAD|LAST|ONLY|SKIP|TODO)/
+  /(:HEAD|LAST|ONLY|SKIP|TODO|DIFF)/
 
 module-name: /( NS+ )/
 

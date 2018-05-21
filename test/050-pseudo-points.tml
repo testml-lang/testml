@@ -74,4 +74,19 @@ Diff = 1
     { "label": "Test 3",
       "point": {}}]}
 
+
+
+=== Test DIFF
+--- input
+    === Test 1
+    --- DIFF
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "DIFF": true}}]}
+
 # vim: ft=:
