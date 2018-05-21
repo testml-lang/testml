@@ -115,11 +115,11 @@ assertion-eq:
   code-expression
 
 assertion-has:
-  /+ ('==') +/
+  /+ ('~~') +/
   code-expression
 
 assertion-like:
-  /+ ('==') +/
+  /+ ('=~') +/
   code-expression
 
 #------------------------------------------------------------------------------

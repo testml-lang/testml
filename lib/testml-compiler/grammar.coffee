@@ -333,7 +333,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
       "assertion_has": {
         ".all": [
           {
-            ".rgx": "[\\ \\t]+(==)[\\ \\t]+"
+            ".rgx": "[\\ \\t]+(\\~\\~)[\\ \\t]+"
           },
           {
             ".ref": "code_expression"
@@ -343,7 +343,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
       "assertion_like": {
         ".all": [
           {
-            ".rgx": "[\\ \\t]+(==)[\\ \\t]+"
+            ".rgx": "[\\ \\t]+(=\\~)[\\ \\t]+"
           },
           {
             ".ref": "code_expression"
