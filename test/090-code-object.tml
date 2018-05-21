@@ -1,0 +1,32 @@
+#!/usr/bin/env testml-boot
+
+Diff = 1
+*input.compile == *output
+
+=== Code objects: string, number, regex, point, array, function
+--- input
+a = 'string'
+b = "string\n"
+c = 42
+d = -3.14
+e = /foo\/.*/
+f = *foo
+# g = ['this', -42, /.*/, *foo, []]
+# h = (a, b)=>
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","a","string"],
+    ["=","b","string\n"],
+    ["=","c",42],
+    ["=","d",-3.14],
+    ["=",
+      "e",
+      ["/","foo\\/.*"]],
+    ["=",
+      "f",
+      ["*","foo"]]],
+  "data": []}
+
+# vim: ft=:
