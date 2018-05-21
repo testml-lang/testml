@@ -11,6 +11,7 @@ window.module = {}
 # include npm/lib/testml/run.js
 # include npm/lib/testml/tap.js
 # include npm/lib/testml/run/tap.js
+# include npm/lib/testml/run/mocha.js
 # include npm/lib/testml/bridge.js
 # include npm/lib/testml/stdlib.js
 ```

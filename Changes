@@ -1,4 +1,9 @@
 ---
+version: 0.0.9
+date:    Sun May 20 21:26:15 PDT 2018
+changes:
+- Support JS Mocha framework in browser usage
+---
 version: 0.0.8
 date:    Fri May 18 13:26:17 PDT 2018
 changes:
