@@ -156,6 +156,9 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
             ".ref": "number_object"
           },
           {
+            ".ref": "regex_object"
+          },
+          {
             ".ref": "call_object"
           }
         ]
@@ -180,7 +183,10 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         ".rgx": "'((?:[^\\n\\\\']|\\\\[\\\\'])*?)'"
       },
       "number_object": {
-        ".rgx": "([0-9]+)"
+        ".rgx": "(\\-?[0-9]+(?:\\.[0-9]+)?)"
+      },
+      "regex_object": {
+        ".rgx": "/((?:[^\\n\\\\/]|\\\\[\\\\/ntwds\\{\\}\\[\\]\\?\\*\\+])*?)/"
       },
       "call_object": {
         ".all": [

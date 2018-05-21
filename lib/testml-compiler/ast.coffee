@@ -112,8 +112,15 @@ class TestMLCompiler.AST extends Pegex.Tree
     object.pick = "*#{got}": true
     object
 
+  got_double_string: (got)->
+    got.replace /\\n/g, '\n'
+       .replace /\\t/g, '\t'
+
   got_number_object: (got)->
     Number got
+
+  got_regex_object: (got)->
+    ['/', got]
 
   got_call_object: (got)->
     [name, args] = got
