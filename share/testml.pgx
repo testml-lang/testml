@@ -68,7 +68,7 @@ code-object:
   | string-object
   | number-object
   | regex-object
-#   | array-object
+  | list-object
   | call-object
 
 point-object:
@@ -88,16 +88,15 @@ single-string:
     ( (: [^ BREAK BACK SINGLE] | BACK [ BACK SINGLE ])*? )
     SINGLE /
 
+number-object: /( DASH? DIGIT+ (: DOT DIGIT+)? )/
+
 regex-object:
   / SLASH
     ( (: [^ BREAK BACK SLASH] | BACK [ BACK SLASH 'ntwds{}[]?*+'])*? )
     SLASH /
 
-number-object: /( DASH? DIGIT+ (: DOT DIGIT+)? )/
-
-function-call:
-  .call-operator
-  call-object
+list-object:
+  '[' ( code-object ( /- ',' -/ code-object )* )? ']'
 
 call-object:
   call-name
@@ -111,6 +110,10 @@ call-arguments:
     code-expression (/ COMMA -/ code-expression)*
   )?
   RPAREN
+
+function-call:
+  .call-operator
+  call-object
 
 assertion-expression:
   | assertion-eq

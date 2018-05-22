@@ -159,6 +159,9 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
             ".ref": "regex_object"
           },
           {
+            ".ref": "list_object"
+          },
+          {
             ".ref": "call_object"
           }
         ]
@@ -187,6 +190,35 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
       },
       "regex_object": {
         ".rgx": "/((?:[^\\n\\\\/]|\\\\[\\\\/ntwds\\{\\}\\[\\]\\?\\*\\+])*?)/"
+      },
+      "list_object": {
+        ".all": [
+          {
+            ".rgx": "\\["
+          },
+          {
+            ".all": [
+              {
+                ".ref": "code_object"
+              },
+              {
+                ".all": [
+                  {
+                    ".rgx": "[\\ \\t]*,[\\ \\t]*"
+                  },
+                  {
+                    ".ref": "code_object"
+                  }
+                ],
+                "+min": 0
+              }
+            ],
+            "+max": 1
+          },
+          {
+            ".rgx": "\\]"
+          }
+        ]
       },
       "call_object": {
         ".all": [

@@ -3,7 +3,7 @@
 Diff = 1
 *input.compile == *output
 
-=== Code objects: string, number, regex, point, array, function
+=== Code objects: string, number, regex, point, list, function
 --- input
 a = 'string'
 b = "string\n"
@@ -11,7 +11,7 @@ c = 42
 d = -3.14
 e = /foo\/.*/
 f = *foo
-# g = ['this', -42, /.*/, *foo, []]
+g = ['this', -42, /.*/, *foo, [], [1], [2, 3]]
 # h = (a, b)=>
 
 --- output
@@ -21,12 +21,19 @@ f = *foo
     ["=","b","string\n"],
     ["=","c",42],
     ["=","d",-3.14],
-    ["=",
-      "e",
+    ["=","e",
       ["/","foo\\/.*"]],
-    ["=",
-      "f",
-      ["*","foo"]]],
+    ["=","f",
+      ["*","foo"]],
+    ["=","g",
+      ["[]",
+        "this",
+        -42,
+        ["/",".*"],
+        ["*","foo"],
+        ["[]"],
+        ["[]",1,null],
+        ["[]",2,3]]]],
   "data": []}
 
 # vim: ft=:

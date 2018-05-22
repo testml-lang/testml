@@ -122,6 +122,16 @@ class TestMLCompiler.AST extends Pegex.Tree
   got_regex_object: (got)->
     ['/', got]
 
+  got_list_object: ([got])->
+    list = ['[]']
+    [first, rest] = got
+    rest = _.map rest, (x)-> x[0]
+    if first?
+      list.push first
+      for item in rest
+        list.push item
+    list
+
   got_call_object: (got)->
     [name, args] = got
     args ||= []
