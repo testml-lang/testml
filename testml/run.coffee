@@ -9,8 +9,10 @@ operator =
   '.'     : 'call'
   '=>'    : 'func'
   "$''"   : 'get-string'
+  '[]'    : 'list'
   '%()'   : 'pickloop'
   '*'     : 'point'
+  '/'     : 'regex'
   '='     : 'set-var'
 
 module.exports =
@@ -126,6 +128,9 @@ class TestML.Run
 
     return string
 
+  exec_list: (expr...)->
+    expr
+
   exec_pickloop: (list, expr)->
     for block in @data
       pick = true
@@ -145,6 +150,9 @@ class TestML.Run
 
   exec_point: (name)->
     return @block.point[name]
+
+  exec_regex: (regex)->
+    new RegExp regex
 
   exec_set_var: (name, expr)->
     @setv(name, @exec(expr)[0])
@@ -168,7 +176,7 @@ class TestML.Run
   get_label: (label_expr='')->
     label = @exec(label_expr)[0]
 
-    block_label = @block.label
+    block_label = if @block? then @block.label else ''
 
     if label
       label = label.replace /^\+/, block_label
