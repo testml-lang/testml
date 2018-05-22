@@ -201,7 +201,7 @@ class TestMLCompiler.AST extends Pegex.Tree
 
 #------------------------------------------------------------------------------
   make_point: (name, value, inherit, expr)->
-    return value if _.isNumber value
+    return value unless _.isString value
 
     if inherit
       value = @points[name] || ''
@@ -211,7 +211,7 @@ class TestMLCompiler.AST extends Pegex.Tree
       list = m[1].split ''
       for item in list
         throw "Unsupported point filter: '#{item}'" \
-          unless item.match /^[\<\+\-\#]$/
+          unless item.match /^[\<\+\-\#\@\/]$/
         filters[item] = true
 
     expr = expr.replace /^\((.*?)\)/, ''
@@ -223,16 +223,30 @@ class TestMLCompiler.AST extends Pegex.Tree
 
       value = value.replace /^\\/gm, ''
 
-      if not filters['+']
-        if value.match /\n/
-          value = value.replace /\n+$/, '\n'
-          value = '' if value == '\n'
+      if not filters['+'] and value.match /\n/
+        value = value.replace /\n+$/, '\n'
+        value = '' if value == '\n'
 
     if filters['<']
       value = value.replace /^    /gm, ''
 
-    if filters['-']
+    if filters['@']
+      if value.match /\n/
+        value = value.replace(/\n$/, '').split /\n/
+      else
+        value = value.split /\s+/
+
+    else if filters['-']
       value = value.replace /\n$/, ''
+
+    if filters['/']
+      if _.isArray value
+        value = _.map value, (regex)-> ['/', regex]
+      else
+        value = ['/', value]
+
+    if _.isArray value
+      value.unshift '[]'
 
     @points[name] = value
 

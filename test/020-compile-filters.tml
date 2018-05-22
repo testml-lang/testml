@@ -173,5 +173,28 @@ Diff = 1
       "point": {
         "foo": " # Not Comment\n# Not Comment\n"}}]}
 
+=== List points
+--- input
+    === Test 1
+    --- foo(@)
+    line 1
+    line 2
+    line 3
+    --- bar(@): one two three
+    --- baz(@/)
+    a b c.*$
+    this.*that
 
-# vim: ft=:
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": ["[]","line 1","line 2","line 3"],
+        "bar": ["[]","one","two","three"],
+        "baz": ["[]",
+          ["/","a b c.*$"],
+          ["/","this.*that"]]}}]}
+
+# vim: ft= sw=2:
