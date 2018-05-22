@@ -304,6 +304,10 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
             "+max": 1
           },
           {
+            ".ref": "suffix_label",
+            "+max": 1
+          },
+          {
             ".ref": "eol"
           }
         ]
@@ -387,6 +391,9 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
             ".ref": "code_expression"
           }
         ]
+      },
+      "suffix_label": {
+        ".rgx": "\\s*:\"((?:[^\\n\\\\\"]|\\\\[\\\\\"0nt])*?)\""
       },
       "data_section": {
         ".ref": "block_definition",

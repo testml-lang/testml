@@ -54,7 +54,11 @@ class TestMLCompiler.AST extends Pegex.Tree
     if _.isArray(got[0]) and got[0][0] == '()'
       pick = got.shift().pick
 
-    [left, right] = got
+    [left, right, suffix_label] = got
+
+    if not suffix_label and _.isPlainObject right
+      suffix_label = right
+      right = null
 
     if right?
       right[1] = left
@@ -63,8 +67,10 @@ class TestMLCompiler.AST extends Pegex.Tree
     else
       statement = left
 
-    if label
+    if label?
       statement.push label.label
+    else if suffix_label?
+      statement.push suffix_label.label
 
     pick = _.keys pick
     if pick.length > 0
@@ -73,6 +79,12 @@ class TestMLCompiler.AST extends Pegex.Tree
     statement
 
   got_expression_label: (got)->
+    if got.match /(?:\\\\|\\\{|.)*\{/
+      return label: ["$''", got]
+
+    return label: got
+
+  got_suffix_label: (got)->
     if got.match /(?:\\\\|\\\{|.)*\{/
       return label: ["$''", got]
 
@@ -243,3 +255,5 @@ class TestMLCompiler.AST extends Pegex.Tree
       blocks.push block
 
     return blocks
+
+# vim: ft=coffee sw=2:

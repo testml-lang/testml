@@ -8,12 +8,19 @@ Diff = 1
 "+ my label":
   *a == "foo"
 
+"+ my label": *b == "foo"
+
 --- output
 { "testml": "0.3.0",
   "code": [
     ["%()",["*a"],
       ["==",
         ["*","a"],
+        "foo",
+        "+ my label"]],
+    ["%()",["*b"],
+      ["==",
+        ["*","b"],
         "foo",
         "+ my label"]]],
   "data": []}
@@ -31,6 +38,29 @@ Diff = 1
         ["*","a"],
         "foo",
         ["$''","+ '{*a}' is 'foo'"]]]],
+  "data": []}
+
+=== Label on assertion
+--- ONLY
+--- input
+*a == "foo"
+  :"+ my label"
+
+*b == "foo" :"+ my label"
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["%()",["*a"],
+      ["==",
+        ["*","a"],
+        "foo",
+        "+ my label"]],
+    ["%()",["*b"],
+      ["==",
+        ["*","b"],
+        "foo",
+        "+ my label"]]],
   "data": []}
 
 # vim: ft=:

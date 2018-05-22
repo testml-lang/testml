@@ -44,10 +44,14 @@ expression-statement:
   pick-expression?
   code-expression
   assertion-expression?
+  suffix-label?
   eol
 
 expression-label:
   / double-string COLON WS* /
+
+suffix-label:
+  / WS* COLON double-string /
 
 pick-expression:
   LPAREN
