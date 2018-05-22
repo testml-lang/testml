@@ -1,4 +1,14 @@
 ---
+version: 0.0.18
+date:    Tue May 22 11:43:20 PDT 2018
+changes:
+- Add support for list object literals (arrays)
+- Add test for all code objects
+- Support regex objects
+- Add =~ and ~~ assertion operators
+- Add support for DIFF pseudo-point
+- Add test for removing data comments
+---
 version: 0.0.17
 date:    Thu May 17 11:11:53 PDT 2018
 changes:
