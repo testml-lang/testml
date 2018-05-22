@@ -1,4 +1,9 @@
 ---
+version: 0.0.10
+date:    Tue May 22 15:09:53 PDT 2018
+changes:
+- Type stdlib function, and per language tests
+---
 version: 0.0.9
 date:    Sun May 20 21:26:15 PDT 2018
 changes:
