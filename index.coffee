@@ -98,8 +98,11 @@ setTestMLTest = (name)->
   $('#ctest')[0].selectedIndex = 0
 
   test_bridge = ''
+  test_bridge_name = if name.match /^coffee-/ \
+    then './test/coffee-testml-bridge.coffee' \
+    else './test/testml-bridge.coffee'
   $.ajax
-    url: './test/testml-bridge.coffee'
+    url: test_bridge_name
     success: (text)->
       test_bridge = text
     async: false

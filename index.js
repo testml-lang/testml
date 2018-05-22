@@ -104,7 +104,7 @@
   };
 
   setTestMLTest = function(name) {
-    var test_bridge;
+    var test_bridge, test_bridge_name;
     if (!_.isString(name)) {
       name = this.value;
     }
@@ -117,8 +117,9 @@
     $('#yaml')[0].selectedIndex = 0;
     $('#ctest')[0].selectedIndex = 0;
     test_bridge = '';
+    test_bridge_name = name.match(/^coffee-/) ? './test/coffee-testml-bridge.coffee' : './test/testml-bridge.coffee';
     $.ajax({
-      url: './test/testml-bridge.coffee',
+      url: test_bridge_name,
       success: function(text) {
         return test_bridge = text;
       },

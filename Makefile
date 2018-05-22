@@ -28,7 +28,7 @@ yaml-test-suite:
 
 push:
 	git add -A .
-	git commit --amend --no-edit
+	git commit -m "$$(date)"
 	git push -f
 
 clean:
