@@ -1,7 +1,7 @@
 export TESTML_ROOT := $(PWD)
 export PATH := $(TESTML_ROOT)/bin:$(PATH)
 
-TAP_RUN := coffee node perl perl6 python
+TAP_RUN := coffee node perl perl6 python ruby
 TAP_TESTS := $(TAP_RUN:%=test-%-tap)
 
 COFFEE_FILES := $(shell find lib/coffee -type f) $(shell find test | grep -E '(\.coffee|/coffee/[0-9].*\.tml)')
@@ -21,7 +21,7 @@ test-all: test test-out
 # test-tap:
 # 	TESTML_RUN=$(@:test-%=%) prove -v $(test)
 
-test-perl-tap test-perl6-tap test-python-tap:
+test-perl-tap test-perl6-tap test-python-tap test-ruby-tap:
 	TESTML_RUN=$(@:test-%=%) prove -v $(test)
 
 test-coffee-tap: node_modules

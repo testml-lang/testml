@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# shellcheck disable=1090,2034
+
+set -e
+
+testml-run-file() {
+set -x
+    "$TESTML_LANG" \
+    -I"$TESTML_LIB" \
+    -I"$TESTML_INPUT_DIR" \
+    -e "require '$TESTML_MODULE'; TestMLTAP.run('$1')"
+}
+
+: "${TESTML_BIN:=testml-ruby-tap}"
+: "${TESTML_LANG:=ruby}"
+: "${TESTML_MODULE:=TestML/run/TAP}"
+: "${TESTML_LIB:=$TESTML_ROOT/lib/ruby}"
+: "${TESTML_BRIDGE:=testml-bridge}"
+export TESTML_{BIN,LANG,MODULE,LIB,BRIDGE}
+
+[[ -n $TESTML_SOURCED ]] ||
+  source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
+
+testml_runner_sourced=true
+
+[[ $0 != "${BASH_SOURCE[0]}" ]] || testml-run "$@"
