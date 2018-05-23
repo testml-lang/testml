@@ -211,7 +211,7 @@ class TestMLCompiler.AST extends Pegex.Tree
       list = m[1].split ''
       for item in list
         throw "Unsupported point filter: '#{item}'" \
-          unless item.match /^[\<\+\-\#\@\/]$/
+          unless item.match /^[\<\+\-\#\@\/\~]$/
         filters[item] = true
 
     expr = expr.replace /^\((.*?)\)/, ''
@@ -230,6 +230,9 @@ class TestMLCompiler.AST extends Pegex.Tree
     if filters['<']
       value = value.replace /^    /gm, ''
 
+    if filters['~']
+      value = value.replace /\n+/g, '\n'
+
     if filters['@']
       if value.match /\n/
         value = value.replace(/\n$/, '').split /\n/
@@ -243,7 +246,9 @@ class TestMLCompiler.AST extends Pegex.Tree
       if _.isArray value
         value = _.map value, (regex)-> ['/', regex]
       else
-        value = ['/', value]
+        flag = if value.match /\n/ then 'x' else ''
+        value = ['/', value.replace(/\n$/, '')]
+        value.push flag if flag
 
     if _.isArray value
       value.unshift '[]'
