@@ -51,7 +51,9 @@ class TestML.Run
   #----------------------------------------------------------------------------
   getp: (name)->
     return unless @block
-    return @block.point[name]
+    value = @block.point[name]
+    value = @exec(value)[0] if _.isArray value
+    value
 
   getv: (name)->
     return @vars[name]
@@ -149,7 +151,7 @@ class TestML.Run
     return
 
   exec_point: (name)->
-    return @block.point[name]
+    return @getp name
 
   exec_regex: (regex)->
     new RegExp regex
