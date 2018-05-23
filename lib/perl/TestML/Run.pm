@@ -201,7 +201,7 @@ sub exec_pickloop {
 sub exec_point {
   my ($self, $name) = @_;
 
-  return $self->block->point->{$name};
+  return $self->getp($name);
 }
 
 sub exec_set_var {

@@ -181,7 +181,7 @@ method exec-pickloop($list, $expr) {
 }
 
 method exec-point($name) {
-  return $.block.point{$name};
+  return self.getp($name);
 }
 
 method exec-set-var($name, $expr) {

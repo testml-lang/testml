@@ -148,7 +148,7 @@ class TestMLRun:
     self.block = None
 
   def exec_point(self, name):
-    return self.block.point[name]
+    return self.getp(name)
 
   def exec_set_var(self, name, expr):
     self.vars[name] = self.exec_(expr)[0]

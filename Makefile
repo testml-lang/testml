@@ -4,7 +4,7 @@ export PATH := $(TESTML_ROOT)/bin:$(PATH)
 TAP_RUN := coffee node perl perl6 python
 TAP_TESTS := $(TAP_RUN:%=test-%-tap)
 
-COFFEE_FILES := $(shell find lib/coffee -type f) $(shell find test | grep -E '(\.coffee|/coffee/[0-9].*\.tml)')
+COFFEE_FILES := $(shell find lib/coffee -type f | grep -v '\.swp$$') $(shell find test | grep -E '\.coffee$$' | grep -v '\.swp$$')
 JS_FILES := $(COFFEE_FILES:lib/coffee/%.coffee=lib/node/%.js)
 JS_FILES := $(JS_FILES:test/%.coffee=test/%.js)
 JS_FILES := $(subst coffee,node,$(JS_FILES))

@@ -1,10 +1,28 @@
 module.exports =
 class TestML.StdLib
-  true: ->
-    true
+  constructor: (@run)->
+
+  block: (selector)->
+    @run.blocks[selector]
+
+  count: (list)->
+    list.length
 
   false: ->
     false
+
+  lines: (text)->
+    text = text.replace /\n$/, ''
+    text.split /\n/
+
+  null: ->
+    null
+
+  text: (list)->
+    [list..., ''].join '\n'
+
+  true: ->
+    true
 
   type: (o)->
     switch
