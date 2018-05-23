@@ -134,9 +134,30 @@ Diff = 1
         "foo": "xxx\nyyy"}},
     { "label": "Test 2",
       "point": {
-        "foo": "xxx\nyyy"}}]}
+        "foo": "xxx\nyyy\n"}}]}
 
-=== Don't use auto filters on inherited point
+=== Point inheritance from different name
+--- input
+    === Test 1
+    --- foo(-)
+    xxx
+    yyy
+
+    === Test 2
+    --- ^bar^foo(+)
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx\nyyy"}},
+    { "label": "Test 2",
+      "point": {
+        "bar": "xxx\nyyy\n\n"}}]}
+
+=== Use auto filters on inherited point
 --- input
     === Test 1
     --- foo(+)
@@ -155,7 +176,7 @@ Diff = 1
         "foo": "xxx\nyyy\n\n"}},
     { "label": "Test 2",
       "point": {
-        "foo": "xxx\nyyy\n\n"}}]}
+        "foo": "xxx\nyyy\n"}}]}
 
 === Comments removed by default
 --- input
@@ -251,5 +272,30 @@ Diff = 1
         "foo": "line 1\nline 2\nline 3\n",
         "bar": "line 1\nline 2\nline 3",
         "baz": ["[]","line 1","line 2","line 3"]}}]}
+
+=== List points
+--- input
+    === Test 1
+    --- foo(@)
+    line 1
+    line 2
+    line 3
+    --- bar(@): one two three
+    --- baz(@/)
+    a b c.*$
+    this.*that
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": ["[]","line 1","line 2","line 3"],
+        "bar": ["[]","one","two","three"],
+        "baz": ["[]",
+          ["/","a b c.*$"],
+          ["/","this.*that"]]}}]}
+
 
 # vim: ft= sw=2:

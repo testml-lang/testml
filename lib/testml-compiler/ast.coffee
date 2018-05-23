@@ -206,6 +206,12 @@ class TestMLCompiler.AST extends Pegex.Tree
     if inherit
       value = @points[name] || ''
 
+    @points[name] = value
+
+    if m = expr.match /^\^([\-\w]*)/
+      expr = expr[(m[0].length)..]
+      value = @points[m[1]] || ''
+
     filters = {}
     if m = expr.match /^\((.*?)\)/
       list = m[1].split ''
@@ -217,15 +223,14 @@ class TestMLCompiler.AST extends Pegex.Tree
     expr = expr.replace /^\((.*?)\)/, ''
     throw "Unsupported point syntax: '#{expr}'" if expr
 
-    if not inherit
-      if not filters['#']
-        value = value.replace /^#.*\n/gm, ''
+    if not filters['#']
+      value = value.replace /^#.*\n/gm, ''
 
-      value = value.replace /^\\/gm, ''
+    value = value.replace /^\\/gm, ''
 
-      if not filters['+'] and value.match /\n/
-        value = value.replace /\n+$/, '\n'
-        value = '' if value == '\n'
+    if not filters['+'] and value.match /\n/
+      value = value.replace /\n+$/, '\n'
+      value = '' if value == '\n'
 
     if filters['<']
       value = value.replace /^    /gm, ''
@@ -252,8 +257,6 @@ class TestMLCompiler.AST extends Pegex.Tree
 
     if _.isArray value
       value.unshift '[]'
-
-    @points[name] = value
 
     value
 
