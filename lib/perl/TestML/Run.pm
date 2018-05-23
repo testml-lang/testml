@@ -245,6 +245,13 @@ sub get_label {
 
   my $label = $self->exec($label_expr)->[0];
 
+  if (not $label) {
+    $label = $self->getv('Label') || '';
+    if ($label =~ /\{\*?[\-\w]+\}/) {
+      $label = $self->exec(["\$''", $label])->[0];
+    }
+  }
+
   my $block_label = $self->block->label;
 
   if ($label) {

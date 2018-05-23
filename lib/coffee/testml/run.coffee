@@ -178,6 +178,11 @@ class TestML.Run
   get_label: (label_expr='')->
     label = @exec(label_expr)[0]
 
+    if not label
+      label = @getv('Label') || ''
+      if label.match /\{\*?[\-\w]+\}/
+        label = @exec(["$''", label])[0]
+
     block_label = if @block? then @block.label else ''
 
     if label

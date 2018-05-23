@@ -1,5 +1,7 @@
 #!/usr/bin/env testml-pl5
 
+Diff = True
+
 "prove -v {*testml}":
   prove(*testml) == *output
 
@@ -24,9 +26,17 @@ Result: PASS
 --- testml: test/030-assertion-label.tml
 --- output
 test/030-assertion-label.tml ..
-ok 1 - Test 1: 1 + 2 == 3
-ok 2 - Test 2: 4 + 5 == 9
-1..2
+ok 1 - Test 1 -- 1 + 2 == 3
+ok 2 - Test 2 -- 4 + 5 == 9
+ok 3 - Test 1 -- 1 + 2 == 3
+ok 4 - Test 2 -- 4 + 5 == 9
+ok 5 - Test 1 -- 1 + 2 == 3
+ok 6 - Test 2 -- 4 + 5 == 9
+ok 7 - Test 1 -- 1 + 2 == 3
+ok 8 - Test 2 -- 4 + 5 == 9
+ok 9 - Test 1 -- 1 + 2 == 3
+ok 10 - Test 2 -- 4 + 5 == 9
+1..10
 ok
 All tests successful.
 Result: PASS

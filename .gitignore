@@ -3,5 +3,5 @@
 /node/
 /node_modules/
 /package*
-/lib/perl6/.precomp/
+.precomp/
 .testml/

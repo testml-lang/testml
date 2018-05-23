@@ -11,31 +11,32 @@ JS_FILES := $(subst coffee,node,$(JS_FILES))
 
 WORKTREES := gh-pages node
 
-test := test/*.tml
-
 .PHONY: test
-test: $(TAP_TESTS)
+test: test-tap
+
+test-tap: $(TAP_TESTS)
 
 test-all: test test-out
 
-# test-tap:
-# 	TESTML_RUN=$(@:test-%=%) prove -v $(test)
-
 test-perl-tap test-perl6-tap test-python-tap:
+ifdef test
 	TESTML_RUN=$(@:test-%=%) prove -v $(test)
+else
+	TESTML_RUN=$(@:test-%=%) prove -v test/*.tml
+endif
 
 test-coffee-tap: node_modules
-ifndef tests
-	TESTML_RUN=$(@:test-%=%) prove -v $(test) $(wildcard test/coffee/*.tml)
+ifdef test
+	TESTML_RUN=$(@:test-%=%) prove -v $(test)
 else
-	TESTML_RUN=$(@:test-%=%) prove -v $(tests)
+	TESTML_RUN=$(@:test-%=%) prove -v test/*.tml test/coffee/*.tml
 endif
 
 test-node-tap: node_modules js-files
-ifndef tests
-	TESTML_RUN=$(@:test-%=%) prove -v $(test) $(wildcard test/node/*.tml)
+ifdef test
+	TESTML_RUN=$(@:test-%=%) prove -v $(test)
 else
-	TESTML_RUN=$(@:test-%=%) prove -v $(tests)
+	TESTML_RUN=$(@:test-%=%) prove -v test/*.tml test/node/*.tml
 endif
 
 test-out:
