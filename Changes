@@ -1,4 +1,9 @@
 ---
+version: 0.0.21
+date:    Wed May 23 10:36:21 PDT 2018
+changes:
+- Handle interpolation in double quoted strings
+---
 version: 0.0.20
 date:    Tue May 22 23:30:15 PDT 2018
 changes:
