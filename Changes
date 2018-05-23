@@ -1,4 +1,11 @@
 ---
+version: 0.0.19
+date:    Tue May 22 20:15:34 PDT 2018
+changes:
+- Support ~ strip-blank-lines filter
+- Add @ and / compile filters
+- Add suffix label syntax
+---
 version: 0.0.18
 date:    Tue May 22 11:43:20 PDT 2018
 changes:
