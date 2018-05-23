@@ -48,10 +48,10 @@ class TestMLRun:
   def getp(self, name):
     if not self.block:
       return
-    return self.block.point[name]
+    return self.block.point.get(name)
 
   def getv(self, name):
-    return self.vars[name]
+    return self.vars.get(name)
 
   def setv(self, name, value):
     self.vars[name] = value
@@ -172,6 +172,13 @@ class TestMLRun:
 
   def get_label(self, label_expr=''):
     label = self.exec_(label_expr)[0]
+
+    if not label:
+      label = self.getv('Label')
+      if not label:
+        label = ''
+      if re.search(r'\{\*?[\-\w]+\}', label):
+        label = self.exec_(["$''", label])[0]
 
     block_label = self.block.label
 
