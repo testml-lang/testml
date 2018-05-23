@@ -125,8 +125,12 @@ class TestMLCompiler.AST extends Pegex.Tree
     object
 
   got_double_string: (got)->
-    got.replace /\\n/g, '\n'
-       .replace /\\t/g, '\t'
+    value = got.replace /\\n/g, '\n'
+      .replace /\\t/g, '\t'
+
+    value = ["$''", value] if value.match /^(?:\\\\|[^\\])*?\{/
+
+    value
 
   got_number_object: (got)->
     Number got
@@ -137,7 +141,7 @@ class TestMLCompiler.AST extends Pegex.Tree
   got_list_object: ([got])->
     list = ['[]']
     [first, rest] = got
-    rest = _.map rest, (x)-> x[0]
+    rest = _.filter _.map rest, (x)-> x[0]
     if first?
       list.push first
       for item in rest
