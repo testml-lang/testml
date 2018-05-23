@@ -216,6 +216,13 @@ method initialize {
 method get-label($label-expr='') {
   my $label = self.exec($label-expr)[0];
 
+  if not $label {
+    $label = self.getv('Label') || '';
+    if $label ~~ /\{\*?<[\w\-]>\}/ {
+      $label = self.exec(["\$''", $label])[0];
+    }
+  }
+
   my $block-label = $.block.label;
 
   if $label {
