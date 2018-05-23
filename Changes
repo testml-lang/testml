@@ -1,4 +1,9 @@
 ---
+version: 0.0.20
+date:    Tue May 22 23:30:15 PDT 2018
+changes:
+- Support point inheritance from different point name
+---
 version: 0.0.19
 date:    Tue May 22 20:15:34 PDT 2018
 changes:
