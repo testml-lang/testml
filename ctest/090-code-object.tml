@@ -32,8 +32,25 @@ g = ['this', -42, /.*/, *foo, [], [1], [2, 3]]
         ["/",".*"],
         ["*","foo"],
         ["[]"],
-        ["[]",1,null],
+        ["[]",1],
         ["[]",2,3]]]],
+  "data": []}
+
+=== Double quoted strings
+--- input
+a = "one\ntwo\n"
+b = "three\n"
+c = "{a}{b}four\n"
+d = "this\tthat"
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","a","one\ntwo\n"],
+    ["=","b","three\n"],
+    ["=","c",
+      ["$''","{a}{b}four\n"]],
+    ["=","d","this\tthat"]],
   "data": []}
 
 # vim: ft=:
