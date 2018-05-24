@@ -28,7 +28,9 @@ class TestMLCompiler.Compiler
       say JSON.stringify grammar.tree, null, 2
       exit 0
 
-    @ast_to_lingy parse_testml testml_input, testml_file, @importer
+    testml_input.replace /\n?$/, '\n' if testml_input.length
+
+    @ast_to_json parse_testml testml_input, testml_file, @importer
 
   importer: (name, from)->
     if from == '-' or not from.match /\//
@@ -41,15 +43,17 @@ class TestMLCompiler.Compiler
 
     parse_testml testml_input, testml_file, @importer
 
-  ast_to_lingy: (ast)->
-    lingy = JSON.stringify ast, null, 2
-    lingy = lingy.replace /\[([^\{\[]+?)\]/g, (m, m1)->
+  ast_to_json: (ast)->
+    json = JSON.stringify ast, null, 2
+    json = json.replace /\[([^\{\[]+?)\]/g, (m, m1)->
       "[#{m1.replace /\n */g, ''}]"
-    lingy = lingy.replace /("=>",)\n *(\[[^\n]*\])/g, '$1$2'
-    lingy = lingy.replace /("\$''",)\n */g, '$1'
-    lingy = lingy.replace /\n *([\}\]])/g, '$1'
-    lingy = lingy.replace /\[\n +"/g, '["'
-    lingy = lingy.replace /^( *\["%\(\)",)\n *(\[.*\],)$/mg, '$1$2'
-    lingy = lingy.replace /(\{)\n +("(?:testml|label)":)/g, '$1 $2'
-    lingy = lingy.replace /("=",)\n\ */g, '$1'
-    lingy + "\n"
+    json = json.replace /("=>",)\n *(\[[^\n]*\])/g, '$1$2'
+    json = json.replace /("\$''",)\n */g, '$1'
+    json = json.replace /\n *([\}\]])/g, '$1'
+    json = json.replace /^( *\[)\n\ +("%\(\)",)\n *(\[.*\],)$/mg, '$1$2$3'
+    json = json.replace /\ \[\n +\[/g, ' [['
+    json = json.replace /^(\ +"code": \[)\[/m, '$1\n    ['
+    json = json.replace /\ \[\n +"/g, ' ["'
+    json = json.replace /(\{)\n +("(?:testml|label)":)/g, '$1 $2'
+    json = json.replace /("=",)\n\ */g, '$1'
+    json + "\n"

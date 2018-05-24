@@ -230,11 +230,11 @@ Diff = 1
   "data": [
     { "label": "Test 1",
       "point": {
-        "foo": ["[]","line 1","line 2","line 3"],
-        "bar": ["[]","one","two","three"],
-        "baz": ["[]",
-          ["/","a b c.*$"],
-          ["/","this.*that"]]}}]}
+        "foo": [["line 1","line 2","line 3"]],
+        "bar": [["one","two","three"]],
+        "baz": [[
+            ["/","a b c.*$"],
+            ["/","this.*that"]]]}}]}
 
 === Strip blank lines
 --- input
@@ -271,7 +271,7 @@ Diff = 1
       "point": {
         "foo": "line 1\nline 2\nline 3\n",
         "bar": "line 1\nline 2\nline 3",
-        "baz": ["[]","line 1","line 2","line 3"]}}]}
+        "baz": [["line 1","line 2","line 3"]]}}]}
 
 === List points
 --- input
@@ -291,11 +291,11 @@ Diff = 1
   "data": [
     { "label": "Test 1",
       "point": {
-        "foo": ["[]","line 1","line 2","line 3"],
-        "bar": ["[]","one","two","three"],
-        "baz": ["[]",
-          ["/","a b c.*$"],
-          ["/","this.*that"]]}}]}
+        "foo": [["line 1","line 2","line 3"]],
+        "bar": [["one","two","three"]],
+        "baz": [[
+            ["/","a b c.*$"],
+            ["/","this.*that"]]]}}]}
 
 === Filters and Inheritance
 --- input
@@ -324,12 +324,31 @@ Diff = 1
         "a": "line 1\nline 2\nline 3\n",
         "b": "line 1\nline 2\nline 3\n",
         "c": "line 1\n\nline 2\n\nline 3\n",
-        "d": ["[]","line 1","","line 2","","line 3"],
-        "e": ["[]",
-          ["/","line 1"],
-          ["/",""],
-          ["/","line 2"],
-          ["/",""],
-          ["/","line 3"]]}}]}
+        "d": [["line 1","","line 2","","line 3"]],
+        "e": [[
+            ["/","line 1"],
+            ["/",""],
+            ["/","line 2"],
+            ["/",""],
+            ["/","line 3"]]]}}]}
+
+=== Comments and Inheritance
+--- input
+    === Test 1
+    --- a
+    line 1
+    # Comment
+    line 2
+
+    --- ^b=a(#)
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "a": "line 1\nline 2\n",
+        "b": "line 1\n# Comment\nline 2\n"}}]}
 
 # vim: ft= sw=2:

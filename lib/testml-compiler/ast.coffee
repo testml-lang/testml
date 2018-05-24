@@ -140,14 +140,14 @@ class TestMLCompiler.AST extends Pegex.Tree
     ['/', got]
 
   got_list_object: ([got])->
-    list = ['[]']
+    list = []
     [first, rest] = got
     rest = _.filter _.map rest, (x)-> x[0]
     if first?
       list.push first
       for item in rest
         list.push item
-    list
+    [list]
 
   got_call_object: (got)->
     [name, args] = got
@@ -252,15 +252,15 @@ class TestMLCompiler.AST extends Pegex.Tree
           value = value.replace(/\n$/, '').split /\n/
         else
           value = value.split /\s+/
-        value.unshift '[]'
+        value = [value]
 
       else if filters['-']
         value = value.replace /\n$/, ''
 
     if filters['/']
       if _.isArray value
-        value = _.map value[1..], (regex)-> ['/', regex]
-        value.unshift '[]'
+        value = _.map value[0], (regex)-> ['/', regex]
+        value = [value]
       else
         flag = if value.match /\n/ then 'x' else ''
         value = ['/', value.replace(/\n$/, '')]
