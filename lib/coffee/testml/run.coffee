@@ -9,15 +9,9 @@ operator =
   '.'     : 'call'
   '=>'    : 'func'
   "$''"   : 'get-string'
-  '[]'    : 'list'
   '%()'   : 'pickloop'
   '*'     : 'point'
-  '/'     : 'regex'
   '='     : 'set-var'
-
-multi_method_lookup =
-  'eq+string+string': 'test_eq_str'
-  'eq+number+number': 'test_eq_num'
 
 module.exports =
 class TestML.Run
@@ -68,7 +62,10 @@ class TestML.Run
 
   #----------------------------------------------------------------------------
   exec: (expr, context=[])->
-    return [expr] unless _.isArray expr
+    return [expr] if \
+      not(_.isArray expr) or
+      _.isArray(expr[0]) or
+      _.isString(expr[0]) and expr[0].match /^[\/\?\!]$/
 
     args = _.clone expr
     name = call = args.shift()
@@ -158,9 +155,6 @@ class TestML.Run
 
   exec_point: (name)->
     return @getp name
-
-  exec_regex: (regex)->
-    new RegExp regex
 
   exec_set_var: (name, expr)->
     @setv(name, @exec(expr)[0])
