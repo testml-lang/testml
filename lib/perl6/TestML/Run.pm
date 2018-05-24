@@ -201,8 +201,7 @@ method initialize {
   ];
 
   if not $!bridge {
-    require ::(%*ENV<TESTML_BRIDGE>);
-    $!bridge = ::(%*ENV<TESTML_BRIDGE>).new;
+    $!bridge = (require ::(%*ENV<TESTML_BRIDGE>)).new;
   }
 
   if not $!stdlib {
