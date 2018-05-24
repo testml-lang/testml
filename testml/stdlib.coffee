@@ -11,7 +11,7 @@ class TestML.StdLib
     str.join ''
 
   count: (list)->
-    list.length
+    list[0].length
 
   false: -> false
 
@@ -25,7 +25,7 @@ class TestML.StdLib
 
   lines: (text)->
     text = text.replace /\n$/, ''
-    text.split /\n/
+    [text.split /\n/]
 
   null: -> null
 
@@ -42,7 +42,7 @@ class TestML.StdLib
     String any
 
   text: (list)->
-    [list..., ''].join '\n'
+    [list[0]..., ''].join '\n'
 
   true: -> true
 
@@ -51,10 +51,13 @@ class TestML.StdLib
       switch
         when _.isString o then 'string'
         when _.isNumber o then 'number'
-        when _.isArray o then 'list'
-        when _.isRegExp o then 'regex'
         when _.isBoolean o then 'bool'
-        when _.isNil o then 'null'
+        when _.isNull o then 'null'
+        when _.isArray o then switch
+          when _.isArray o[0] then 'list'
+          when o[0] == '/' then 'regex'
+          when o[0] == '!' then 'error'
+          when o[0] == '?' then 'any'
         else die "Can't determine type #{o}"
     ), '+'
 
