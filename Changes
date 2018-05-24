@@ -1,4 +1,9 @@
 ---
+version: 0.0.23
+date:    Thu May 24 10:13:40 PDT 2018
+changes:
+- Compile [1,2,3] to [[1,2,3]]
+---
 version: 0.0.22
 date:    Wed May 23 23:46:39 PDT 2018
 changes:
