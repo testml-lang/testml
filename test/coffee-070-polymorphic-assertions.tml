@@ -1,0 +1,15 @@
+#!/usr/bin/env testml
+
+Add(11, 31) == 42
+  :"number == number"
+
+Cat('foo', 'bar') == 'foobar'
+  :"string == string"
+
+True == True
+  :"boolean == boolean"
+
+# [1, 2, 3] == [1, 2, 3]
+#   :"list == list"
+
+# vim: ft= sw=2:
