@@ -162,17 +162,19 @@ point-single: /
   point-marker +
   ( CARET? )
   ( point-name )
-  ( NS* )
+  (: '=' ( point-name ) )?
+  (: ('(') ( ['#+-~/@']* ) ')' )?
   COLON + ( ANY*? -)
   EOL
-  ( point-lines )
+  point-lines
 /
 
 point-multi: /
   point-marker +
   ( CARET? )
   ( point-name )
-  ( NS* ) -
+  (: '=' ( point-name ) )?
+  (: ('(') ( ['<#+-~/@']* ) ')' )?
   EOL
   ( point-lines )
 /

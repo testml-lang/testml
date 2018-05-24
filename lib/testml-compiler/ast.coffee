@@ -5,7 +5,8 @@ class TestMLCompiler.AST extends Pegex.Tree
     super()
     @code = []
     @data = []
-    @points = {}
+    @point = {}
+    @filters = {}
     {@file, @importer} = args
 
   final: ->
@@ -175,11 +176,12 @@ class TestMLCompiler.AST extends Pegex.Tree
   got_block_definition: ([label, user, points])->
     point = {}
     for p in points
-      [inherit, name, expr, value, extra] = p
+      [inherit, name, from, has_filters, filters, value] = p
       if name.match /^(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF)$/
         point[name] = true
       else
-        point[name] = @make_point(name, value, inherit, expr)
+        point[name] =
+          @make_point(name, value, inherit, from, has_filters, filters)
 
     @data ||= []
 
@@ -188,7 +190,7 @@ class TestMLCompiler.AST extends Pegex.Tree
       point: point
 
   got_point_single: (got)->
-    value = got[3]
+    value = got[5]
     if value.match /^-?\d+(\.\d+)?$/
       value = Number value
     else if m = value.match /^'(.*)'\s*$/
@@ -196,7 +198,7 @@ class TestMLCompiler.AST extends Pegex.Tree
     else if m = value.match /^"(.*)"\s*$/
       value = m[1]
 
-    got[3] = value
+    got[5] = value
 
     got
 
@@ -204,63 +206,68 @@ class TestMLCompiler.AST extends Pegex.Tree
     return
 
 #------------------------------------------------------------------------------
-  make_point: (name, value, inherit, expr)->
+  make_point: (name, value, inherit, from, has_filters, filter_expr)->
     return value unless _.isString value
 
+#     www
+#       inherit: inherit
+#       name: name
+#       from: from
+#       has_filters: has_filters
+#       filter_expr: filter_expr
+
     if inherit
-      value = @points[name] || ''
+      from ||= name
+      value = @point[from] || ''
 
-    @points[name] = value
+      if not has_filters
+        filter_expr = @filters[from] || ''
 
-    if m = expr.match /^\^([\-\w]*)/
-      expr = expr[(m[0].length)..]
-      value = @points[m[1]] || ''
+    else
+      @point[name] = value
 
     filters = {}
-    if m = expr.match /^\((.*?)\)/
-      list = m[1].split ''
-      for item in list
-        throw "Unsupported point filter: '#{item}'" \
-          unless item.match /^[\<\+\-\#\@\/\~]$/
-        filters[item] = true
+    _.map _.split(filter_expr, ''), (f)-> filters[f] = true
 
-    expr = expr.replace /^\((.*?)\)/, ''
-    throw "Unsupported point syntax: '#{expr}'" if expr
+    @filters[name] = if inherit then '' else filter_expr
 
-    if not filters['#']
-      value = value.replace /^#.*\n/gm, ''
+    if _.isString value
+      if not filters['#']
+        value = value.replace /^#.*\n/gm, ''
 
-    value = value.replace /^\\/gm, ''
+      value = value.replace /^\\/gm, ''
 
-    if not filters['+'] and value.match /\n/
-      value = value.replace /\n+$/, '\n'
-      value = '' if value == '\n'
+      if not filters['+'] and value.match /\n/
+        value = value.replace /\n+$/, '\n'
+        value = '' if value == '\n'
 
-    if filters['<']
-      value = value.replace /^    /gm, ''
+      if filters['<']
+        value = value.replace /^    /gm, ''
 
-    if filters['~']
-      value = value.replace /\n+/g, '\n'
+      if filters['~']
+        value = value.replace /\n+/g, '\n'
 
-    if filters['@']
-      if value.match /\n/
-        value = value.replace(/\n$/, '').split /\n/
-      else
-        value = value.split /\s+/
+      if filters['@']
+        if value.match /\n/
+          value = value.replace(/\n$/, '').split /\n/
+        else
+          value = value.split /\s+/
+        value.unshift '[]'
 
-    else if filters['-']
-      value = value.replace /\n$/, ''
+      else if filters['-']
+        value = value.replace /\n$/, ''
 
     if filters['/']
       if _.isArray value
-        value = _.map value, (regex)-> ['/', regex]
+        value = _.map value[1..], (regex)-> ['/', regex]
+        value.unshift '[]'
       else
         flag = if value.match /\n/ then 'x' else ''
         value = ['/', value.replace(/\n$/, '')]
         value.push flag if flag
 
-    if _.isArray value
-      value.unshift '[]'
+    if inherit
+      @point[name] = value
 
     value
 

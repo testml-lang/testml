@@ -123,7 +123,7 @@ Diff = 1
     xxx
     yyy
     === Test 2
-    --- ^foo
+    --- ^foo()
 
 --- output
 { "testml": "0.3.0",
@@ -144,7 +144,7 @@ Diff = 1
     yyy
 
     === Test 2
-    --- ^bar^foo(+)
+    --- ^bar=foo(+)
 
 --- output
 { "testml": "0.3.0",
@@ -176,7 +176,7 @@ Diff = 1
         "foo": "xxx\nyyy\n\n"}},
     { "label": "Test 2",
       "point": {
-        "foo": "xxx\nyyy\n"}}]}
+        "foo": "xxx\nyyy\n\n"}}]}
 
 === Comments removed by default
 --- input
@@ -209,8 +209,8 @@ Diff = 1
   "data": [
     { "label": "Test 1",
       "point": {
-        "foo": ["[]","/","this\n  .*\nthat","x"],
-        "bar": ["[]","/","this.*that"]}}]}
+        "foo": ["/","this\n  .*\nthat","x"],
+        "bar": ["/","this.*that"]}}]}
 
 === List points
 --- input
@@ -297,5 +297,39 @@ Diff = 1
           ["/","a b c.*$"],
           ["/","this.*that"]]}}]}
 
+=== Filters and Inheritance
+--- input
+    === Test 1
+    --- a(~)
+    line 1
+
+    line 2
+
+    line 3
+
+    --- ^b=a
+
+    --- ^c=a()
+
+    --- ^d=a(@)
+
+    --- ^e=d(/)
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "a": "line 1\nline 2\nline 3\n",
+        "b": "line 1\nline 2\nline 3\n",
+        "c": "line 1\n\nline 2\n\nline 3\n",
+        "d": ["[]","line 1","","line 2","","line 3"],
+        "e": ["[]",
+          ["/","line 1"],
+          ["/",""],
+          ["/","line 2"],
+          ["/",""],
+          ["/","line 3"]]}}]}
 
 # vim: ft= sw=2:

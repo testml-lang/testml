@@ -430,9 +430,9 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         ]
       },
       "point_single": {
-        ".rgx": "\\-\\-\\-[\\ \\t]+(\\^?)((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF)))(\\S*):[\\ \\t]+(.*?[\\ \\t]*)\\r?\\n((?:.*\\r?\\n)*?(?=\\-\\-\\-|===|$))"
+        ".rgx": "\\-\\-\\-[\\ \\t]+(\\^?)((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF)))(?:=((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF))))?(?:(\\()([\\#\\+\\-\\~/\\@]*)\\))?:[\\ \\t]+(.*?[\\ \\t]*)\\r?\\n(?:.*\\r?\\n)*?(?=\\-\\-\\-|===|$)"
       },
       "point_multi": {
-        ".rgx": "\\-\\-\\-[\\ \\t]+(\\^?)((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF)))(\\S*)[\\ \\t]*\\r?\\n((?:.*\\r?\\n)*?(?=\\-\\-\\-|===|$))"
+        ".rgx": "\\-\\-\\-[\\ \\t]+(\\^?)((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF)))(?:=((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF))))?(?:(\\()([<\\#\\+\\-\\~/\\@]*)\\))?\\r?\\n((?:.*\\r?\\n)*?(?=\\-\\-\\-|===|$))"
       }
     }
