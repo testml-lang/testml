@@ -1,4 +1,9 @@
 ---
+version: 0.0.22
+date:    Wed May 23 23:46:39 PDT 2018
+changes:
+- Change semantics of filters+inheritance
+---
 version: 0.0.21
 date:    Wed May 23 10:36:21 PDT 2018
 changes:
