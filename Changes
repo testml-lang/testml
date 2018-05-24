@@ -1,4 +1,9 @@
 ---
+version: 0.0.13
+date:    Thu May 24 12:04:44 PDT 2018
+changes:
+- Adjust runtime for new list compilation
+---
 version: 0.0.12
 date:    Thu May 24 00:04:22 PDT 2018
 changes:
