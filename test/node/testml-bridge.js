@@ -6,4 +6,6 @@
 
   module.exports = TestMLBridge = class TestMLBridge extends TestML.Bridge {};
 
+  // vim: ft=coffee sw=2:
+
 }).call(this);
