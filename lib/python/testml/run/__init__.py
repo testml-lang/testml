@@ -2,17 +2,20 @@ import json, os, re, sys
 
 from testml.util import *
 
-operator = {
-  '=='    : 'eq',
-  '.'     : 'call',
-  '=>'    : 'func',
-  "$''"   : 'get-string',
-  '%()'   : 'pickloop',
-  '*'     : 'point',
-  '='     : 'set-var'
-}
-
 class TestMLRun:
+  vtable = {
+    '=='    : 'assert_eq',
+    '~~'    : 'assert_has',
+    '=~'    : 'assert_like',
+
+    '%()'   : 'pick_loop',
+    '.'     : 'exec_expr',
+
+    "$''"   : 'get_str',
+    '*'     : 'get_point',
+    '='     : 'set_var'
+  }
+
   def __init__(self, **params):
     testml = params.get('testml', {})
 
@@ -40,7 +43,7 @@ class TestMLRun:
 
     self.test_begin()
 
-    self.exec_(self.code)
+    self.exec_func([], self.code)
 
     self.test_end()
 
@@ -58,13 +61,15 @@ class TestMLRun:
 
   #----------------------------------------------------------------------------
   def exec_(self, expr, context=[]):
-    if not is_list(expr): return [expr]
+    if not is_list(expr) or \
+      is_list(expr[0]) or \
+      isinstance(expr[0], basestring) and \
+      re.match(r'^(?:=>|\/|\?|\!)$', expr[0]): return [expr]
 
     args = list(expr)
-    name = call = args.pop(0)
-    opname = operator.get(call)
-    if opname:
-      call = re.sub(r'-', '_', 'exec_' + opname)
+    opcode = name = args.pop(0)
+    call = self.vtable.get(opcode)
+    if call:
       return_ = getattr(self, call)(*args)
 
     else:
@@ -77,26 +82,30 @@ class TestMLRun:
       for item in context_:
         args.insert(0, item)
 
-      if re.search(r'^[a-z]', call):
-        call = re.sub(r'-', '_', call)
-        method = getattr(self.bridge, call)
-        if not method:
+      if re.search(r'^[a-z]', name):
+        call = getattr(self.bridge, name)
+        if not call:
           die("Can't find bridge function: '%s'" % name)
-        return_ = method(*args)
+        return_ = call(*args)
 
-      elif re.search(r'^[A-Z]', call):
-        call = call.lower()
-        method = getattr(self.stdlib, call)
-        if not method:
+      elif re.search(r'^[A-Z]', name):
+        call = getattr(self.stdlib, name.lower())
+        if not call:
           die("Can't find TestML Standard Library function: '%s'" % name)
-        return_ = method(*args)
+        return_ = call(*args)
 
       else:
         die("Can't resolve TestML function '%s'" % name)
 
     return [] if return_ is None else [return_]
 
-  def exec_call(self, *args):
+  def exec_func(self, context, function):
+    signature = function.pop(0)
+
+    for statement in function:
+      self.exec_(statement)
+
+  def exec_expr(self, *args):
     context = []
 
     for call in args:
@@ -104,35 +113,7 @@ class TestMLRun:
 
     if len(context): return context[0]
 
-  def exec_eq(self, left, right, label_expr=''):
-    got = self.exec_(left)[0]
-
-    want = self.exec_(right)[0]
-
-    label = self.get_label(label_expr)
-
-    self.test_eq(got, want, label)
-
-  def exec_func(self, signature, *statements):
-    for statement in statements:
-      self.exec_(statement)
-
-  def exec_get_string(self, string):
-    string = re.sub(
-      r'\{([\-\w+])\}',
-      lambda m: self.vars.get(m.group(1), '').__repr__(),
-      string,
-    )
-
-    string = re.sub(
-      r'\{\*([\-\w+])\}',
-      lambda m: self.block.point.get(m.group(1), '').__repr__(),
-      string
-    )
-
-    return string
-
-  def exec_pickloop(self, list_, expr):
+  def pick_loop(self, list_, expr):
     for block in self.data:
       pick = True
       for point in list_:
@@ -147,16 +128,39 @@ class TestMLRun:
 
     self.block = None
 
-  def exec_point(self, name):
+  def get_str(self, string):
+    string = re.sub(
+      r'\{([\-\w+])\}',
+      lambda m: self.vars.get(m.group(1), '').__repr__(),
+      string,
+    )
+
+    string = re.sub(
+      r'\{\*([\-\w+])\}',
+      lambda m: self.block.point.get(m.group(1), '').__repr__(),
+      string
+    )
+
+    return string
+
+  def get_point(self, name):
     return self.getp(name)
 
-  def exec_set_var(self, name, expr):
+  def set_var(self, name, expr):
     self.vars[name] = self.exec_(expr)[0]
+
+  def assert_eq(self, left, right, label_expr=''):
+    got = self.exec_(left)[0]
+
+    want = self.exec_(right)[0]
+
+    label = self.get_label(label_expr)
+
+    self.test_eq(got, want, label)
 
   #----------------------------------------------------------------------------
   def initialize(self):
     self.code.insert(0, [])
-    self.code.insert(0, '=>')
 
     self.data = list(map(
       (lambda x: TestMLBlock(x)),

@@ -4,22 +4,46 @@ require '../testml'
 
 lodash = require 'lodash'
 
-operator =
-  '=='    : 'eq'
-  '.'     : 'call'
-  '=>'    : 'func'
-  "$''"   : 'get-string'
-  '%()'   : 'pickloop'
-  '*'     : 'point'
-  '='     : 'set-var'
-
 module.exports =
 class TestML.Run
+  @vtable:
+    '=='    : 'assert_eq'
+    '~~'    : 'assert_has'
+    '=~'    : 'assert_like'
+
+    '%()'   : 'pick_loop'
+    '.'     : 'exec_expr'
+
+    "$''"   : 'get_str'
+    '*'     : 'get_point'
+    '='     : 'set_var'
+
+  block: undefined
+
+  file: undefined
+  version: undefined
+  code: undefined
+  data: undefined
+
+  bridge: undefined
+  stdlib: undefined
+
+  vars: {}
+
+  #----------------------------------------------------------------------------
   constructor: (params={})->
-    {@file, testml={}, @bridge, @stdlib} = params
-    {testml, @code, @data} = testml
+    { @file,
+      @bridge,
+      @stdlib,
+      testml={},
+    } = params
+
+    { testml,
+      @code,
+      @data
+    } = testml
+
     @version = testml
-    @vars = {}
 
     global._ = lodash if not TestML.browser
     return
@@ -40,7 +64,7 @@ class TestML.Run
 
     @test_begin()
 
-    @exec @code
+    @exec_func [], @code
 
     @test_end()
 
@@ -65,12 +89,11 @@ class TestML.Run
     return [expr] if \
       not(_.isArray expr) or
       _.isArray(expr[0]) or
-      _.isString(expr[0]) and expr[0].match /^[\/\?\!]$/
+      _.isString(expr[0]) and expr[0].match /^(?:=>|\/|\?|\!)$/
 
     args = _.clone expr
-    name = call = args.shift()
-    if opname = operator[call]
-      call = "exec_#{opname}".replace /-/g, '_'
+    opcode = name = args.shift()
+    if call = @constructor.vtable[opcode]
       return_ = @[call](args...)
 
     else
@@ -79,14 +102,14 @@ class TestML.Run
 
       args.unshift (_.reverse context)...
 
-      if call.match /^[a-z]/
-        call = call.replace /-/g, '_'
+      if name.match /^[a-z]/
+        call = name.replace /-/g, '_'
         throw "Can't find bridge function: '#{name}'" \
           unless @bridge?[call]
         return_ = @bridge[call](args...)
 
-      else if call.match /^[A-Z]/
-        call = _.lowerCase call
+      else if name.match /^[A-Z]/
+        call = _.lowerCase name
         throw "Unknown TestML Standard Library function: '#{name}'" \
           unless @stdlib[call]
         return_ = @stdlib[call](args...)
@@ -96,7 +119,13 @@ class TestML.Run
 
     return if return_ == undefined then [] else [return_]
 
-  exec_call: (args...)->
+  exec_func: (context, [signature, function_...])->
+    for statement in function_
+      @exec statement
+
+    return
+
+  exec_expr: (args...)->
     context = []
 
     for call in args
@@ -105,35 +134,7 @@ class TestML.Run
     return unless context.length
     return context[0]
 
-  exec_eq: (left, right, label_expr)->
-    got = @exec(left)[0]
-
-    want = @exec(right)[0]
-
-    label = @get_label(label_expr)
-
-    # method = assertion["eq+#{@stdlib.type(got,want)}"]
-
-    @test_eq got, want, label
-
-    return
-
-  exec_func: (signature, statements...)->
-    for statement in statements
-      @exec statement
-
-    return
-
-  exec_get_string: (string)->
-    string = string.replace /\{([\-\w+])\}/g, (m, name)=>
-      @vars[name] || ''
-
-    string = string.replace /\{\*([\-\w+])\}/g, (m, name)=>
-      @block.point[name] || ''
-
-    return string
-
-  exec_pickloop: (list, expr)->
+  pick_loop: (list, expr)->
     for block in @data
       pick = true
       for point in list
@@ -150,16 +151,38 @@ class TestML.Run
 
     return
 
-  exec_point: (name)->
+  get_str: (string)->
+    string = string.replace /\{([\-\w+])\}/g, (m, name)=>
+      @vars[name] || ''
+
+    string = string.replace /\{\*([\-\w+])\}/g, (m, name)=>
+      @block.point[name] || ''
+
+    return string
+
+  get_point: (name)->
     return @getp name
 
-  exec_set_var: (name, expr)->
+  set_var: (name, expr)->
     @setv(name, @exec(expr)[0])
+    return
+
+  assert_eq: (left, right, label_expr)->
+    got = @exec(left)[0]
+
+    want = @exec(right)[0]
+
+    label = @get_label(label_expr)
+
+    # method = assertion["eq+#{@stdlib.type(got,want)}"]
+
+    @test_eq got, want, label
+
     return
 
   #----------------------------------------------------------------------------
   initialize: ->
-    @code.unshift '=>', []
+    @code.unshift []
 
     @data = _.map @data, (block)=>
       new TestML.Block block

@@ -9,15 +9,20 @@ class TestML::Run {
 
 use JSON::Tiny;
 
-my $operator = {
-  '=='    => 'eq',
-  '.'     => 'call',
-  '=>'    => 'func',
-  "\$''"  => 'get-string',
-  '%()'   => 'pickloop',
-  '*'     => 'point',
+has $!vtable = {
+  '=='    => 'assert-eq',
+  '~~'    => 'assert-has',
+  '=~'    => 'assert-like',
+
+  '%()'   => 'pick-loop',
+  '.'     => 'exec-expr',
+
+  "\$''"  => 'get-str',
+  '*'     => 'get-point',
   '='     => 'set-var',
 };
+
+has TestML::Block $.block;
 
 has Str $!file;
 has Str $!version;
@@ -26,9 +31,8 @@ has Array $!data;
 
 has $!bridge;
 has $!stdlib;
-has $!vars;
 
-has TestML::Block $.block;
+has $!vars;
 
 method new(:$file='', :$testml={}, :$bridge, :$stdlib) {
   my $self = self.bless:
@@ -58,7 +62,7 @@ method test {
 
   self.test-begin;
 
-  self.exec: $!code;
+  self.exec-func([], $!code);
 
   self.test-end;
 
@@ -82,14 +86,16 @@ method setv($name, $value) {
 
 #------------------------------------------------------------------------------
 method exec($expr, $context=[]) {
-  return [$expr] unless $expr ~~ Array;
+  return [$expr] if
+    not $expr ~~ Array or
+    $expr[0] ~~ Array or
+    $expr[0] ~~ Str and $expr[0] ~~ /^[\=\>|\/|\?|\!]$/;
 
   my @args = @$expr.clone;
   my @return;
-  my $call = @args.shift;
-  my $name = $call;
-  if my $opname = $operator{$call} {
-    $call = "exec-$opname";
+  my $name = @args.shift;
+  my $opcode = $name;
+  if my $call = $!vtable{$opcode} {
     @return = self."$call"(|@args);
   }
   else {
@@ -99,13 +105,14 @@ method exec($expr, $context=[]) {
 
     @args.unshift($_) for $context.reverse;
 
-    if $call ~~ /^<[a..z]>/ {
+    if $name ~~ /^<[a..z]>/ {
+      my $call = $name;
       die "Can't find bridge function: '$name'"
         unless $!bridge.can($call);
       @return = $!bridge."$call"(|@args);
     }
-    elsif ($call ~~ /^<[A..Z]>/) {
-      $call = $call.lc;
+    elsif ($name ~~ /^<[A..Z]>/) {
+      $call = $name.lc;
       die "Unknown TestML Standard Library function: '$name'"
         unless $!stdlib.can($call);
       @return = $!stdlib."$call"(|@args);
@@ -118,7 +125,17 @@ method exec($expr, $context=[]) {
   return @return;
 }
 
-method exec-call(*@args) {
+method exec-func($context, @function) {
+  my $signature = @function.shift;
+
+  for @function -> $statement {
+    self.exec($statement);
+  }
+
+  return;
+}
+
+method exec-expr(*@args) {
   my $context = [];
 
   for |@args -> $call {
@@ -128,37 +145,7 @@ method exec-call(*@args) {
   return |$context;
 }
 
-method exec-eq($left, $right, $label-expr='') {
-  my $got = self.exec($left)[0];
-
-  my $want = self.exec($right)[0];
-
-  my $label = self.get-label($label-expr);
-
-  self.test-eq($got, $want, $label);
-
-  return;
-}
-
-method exec-func($signature, *@args) {
-  for @args -> $statement {
-    self.exec($statement);
-  }
-
-  return;
-}
-
-method exec-get-string($original) {
-  my $string = $original;
-
-  $string ~~ s/\{(<[\w\-]>+)\}/{$.vars{$0}}/;
-
-  $string ~~ s:g/\{\*(<[\w\-]>+)\}/{$.block.point{$0}}/;
-
-  return $string;
-}
-
-method exec-pickloop($list, $expr) {
+method pick-loop($list, $expr) {
   for |$!data -> $block {
     my $pick = True;
     for |$list -> $point {
@@ -180,19 +167,41 @@ method exec-pickloop($list, $expr) {
   return;
 }
 
-method exec-point($name) {
+method get-str($original) {
+  my $string = $original;
+
+  $string ~~ s/\{(<[\w\-]>+)\}/{$.vars{$0}}/;
+
+  $string ~~ s:g/\{\*(<[\w\-]>+)\}/{$.block.point{$0}}/;
+
+  return $string;
+}
+
+method get-point($name) {
   return self.getp($name);
 }
 
-method exec-set-var($name, $expr) {
+method set-var($name, $expr) {
   self.setv($name, self.exec($expr)[0]);
+
+  return;
+}
+
+method assert-eq($left, $right, $label-expr='') {
+  my $got = self.exec($left)[0];
+
+  my $want = self.exec($right)[0];
+
+  my $label = self.get-label($label-expr);
+
+  self.test-eq($got, $want, $label);
 
   return;
 }
 
 #------------------------------------------------------------------------------
 method initialize {
-  $!code.unshift('=>', []);
+  $!code.unshift([]);
 
   $!data = [
     $!data.map: {

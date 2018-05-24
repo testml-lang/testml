@@ -3,18 +3,22 @@ package TestML::Run;
 
 use JSON::PP 'decode_json';
 
-my $operator = {
-  '=='    => 'eq',
-  '.'     => 'call',
-  '=>'    => 'func',
-  "\$''"  => 'get-string',
-  '%()'   => 'pickloop',
-  '*'     => 'point',
-  '='     => 'set-var',
+our $vtable = {
+  '=='    => 'assert_eq',
+  '~~'    => 'assert_has',
+  '=~'    => 'assert_like',
+
+  '%()'   => 'pick_loop',
+  '.'     => 'exec_expr',
+
+  "\$''"  => 'get_str',
+  '*'     => 'get_point',
+  '='     => 'set_var',
 };
 
-sub block { return $_[0]->{block} }
+sub block { $_[0]->{block} }
 
+#------------------------------------------------------------------------------
 sub new {
   my ($class, %params) = @_;
 
@@ -55,7 +59,7 @@ sub test {
 
   $self->test_begin;
 
-  $self->exec($self->{code});
+  $self->exec_func([], $self->{code});
 
   $self->test_end;
 
@@ -86,15 +90,16 @@ sub exec {
 
   $context //= [];
 
-  return [$expr] unless ref $expr eq 'ARRAY';
+  return [$expr] if
+    ref $expr ne 'ARRAY' or
+    ref $expr->[0] eq 'ARRAY' or
+    not ref $expr->[0] and $expr->[0] =~ /^(?:=>|\/|\?|\!)$/;
 
   my @args = @$expr;
   my @return;
-  my $call = shift @args;
-  my $name = $call;
-  if (my $opname = $operator->{$call}) {
-    $call = "exec_$opname";
-    $call =~ s/-/_/g;
+  my $name = shift @args;
+  my $opcode = $name;
+  if (my $call = $vtable->{$opcode}) {
     @return = $self->$call(@args);
   }
   else {
@@ -104,14 +109,14 @@ sub exec {
 
     unshift @args, $_ for reverse @$context;
 
-    if ($call =~ /^[a-z]/) {
-      $call =~ s/-/_/g;
+    if ($name =~ /^[a-z]/) {
+      ($call = $name) =~ s/-/_/g;
       die "Can't find bridge function: '$name'"
         unless $self->{bridge}->can($call);
       @return = $self->{bridge}->$call(@args);
     }
-    elsif ($call =~ /^[A-Z]/) {
-      $call = lc $call;
+    elsif ($name =~ /^[A-Z]/) {
+      $call = lc $name;
       die "Unknown TestML Standard Library function: '$name'"
         unless $self->{stdlib}->can($call);
       @return = $self->{stdlib}->$call(@args);
@@ -124,7 +129,18 @@ sub exec {
   return [@return];
 }
 
-sub exec_call {
+sub exec_func {
+  my ($self, $context, $function) = @_;
+  my $signature = shift @$function;
+
+  for my $statement (@$function) {
+    $self->exec($statement);
+  }
+
+  return;
+}
+
+sub exec_expr {
   my ($self, @args) = @_;
 
   my $context = [];
@@ -136,45 +152,7 @@ sub exec_call {
   return @$context;
 }
 
-sub exec_eq {
-  my ($self, $left, $right, $label_expr) = @_;
-
-  my $got = $self->exec($left)->[0];
-
-  my $want = $self->exec($right)->[0];
-
-  my $label = $self->get_label($label_expr);
-
-  $self->test_eq($got, $want, $label);
-
-  return;
-}
-
-sub exec_func {
-  my ($self, $signature, @statements) = @_;
-
-  for my $statement (@statements) {
-    $self->exec($statement);
-  }
-
-  return;
-}
-
-sub exec_get_string {
-  my ($self, $string) = @_;
-
-  $string =~ s{\{([\-\w+])\}} {
-    $self->vars->{$1} || ''
-  }gex;
-
-  $string =~ s{\{\*([\-\w]+)\}} {
-    $self->block->point->{$1} || ''
-  }gex;
-
-  return $string;
-}
-
-sub exec_pickloop {
+sub pick_loop {
   my ($self, $list, $expr) = @_;
 
   for my $block (@{$self->{data}}) {
@@ -198,16 +176,44 @@ sub exec_pickloop {
   return;
 }
 
-sub exec_point {
+sub get_str {
+  my ($self, $string) = @_;
+
+  $string =~ s{\{([\-\w+])\}} {
+    $self->vars->{$1} || ''
+  }gex;
+
+  $string =~ s{\{\*([\-\w]+)\}} {
+    $self->block->point->{$1} || ''
+  }gex;
+
+  return $string;
+}
+
+sub get_point {
   my ($self, $name) = @_;
 
   return $self->getp($name);
 }
 
-sub exec_set_var {
+sub set_var {
   my ($self, $name, $expr) = @_;
 
   $self->setv($name, $self->exec($expr)->[0]);
+
+  return;
+}
+
+sub assert_eq {
+  my ($self, $left, $right, $label_expr) = @_;
+
+  my $got = $self->exec($left)->[0];
+
+  my $want = $self->exec($right)->[0];
+
+  my $label = $self->get_label($label_expr);
+
+  $self->test_eq($got, $want, $label);
 
   return;
 }
@@ -216,7 +222,7 @@ sub exec_set_var {
 sub initialize {
   my ($self) = @_;
 
-  unshift @{$self->{code}}, '=>', [];
+  unshift @{$self->{code}}, [];
 
   $self->{data} = [
     map {
@@ -275,8 +281,8 @@ sub new {
   return bless $data, $class;
 }
 
-sub label { return $_[0]->{label} }
-sub point { return $_[0]->{point} }
+sub label { $_[0]->{label} }
+sub point { $_[0]->{point} }
 
 1;
 
