@@ -1,4 +1,9 @@
 ---
+version: 0.0.12
+date:    Thu May 24 00:04:22 PDT 2018
+changes:
+- More stdlib
+---
 version: 0.0.11
 date:    Wed May 23 12:00:32 PDT 2018
 changes:
