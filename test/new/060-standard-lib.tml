@@ -20,7 +20,7 @@
 line 1
 line 2
 line 3
---- text^list
+--- ^text=list()
 --- count: 3
 
 === Test 2
