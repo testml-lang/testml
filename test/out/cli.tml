@@ -43,11 +43,11 @@ usage:   testml <options...> [<testml-file>...]
 
 ===
 --- command: testml -h
---- ^output
+--- ^output(+)
 
 ===
 --- command: testml --help
---- ^output
+--- ^output(+)
 
 ===
 --- command: testml --version

@@ -67,10 +67,11 @@ test/node/%.js: test/coffee/%.coffee
 	coffee -cp $< > $@
 
 clean:
-	rm -fr test/.testml/ test/out/.testml/
 	rm -fr lib/perl6/.precomp/
 	rm -fr $(WORKTREES)
 	rm -fr node_modules/
 	rm -f package*
+	find . -d | grep '\.testml$$' | xargs rm -fr
+	find . -d | grep '\.precomp$$' | xargs rm -fr
 	find . -name '*.pyc' | xargs rm
 	git worktree prune

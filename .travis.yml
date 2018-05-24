@@ -1,0 +1,25 @@
+language: node_js
+
+node_js: [node]
+
+branches: {only: [master, travis]}
+
+env:
+  global:
+  - export PATH="/opt/rakudo-pkg/bin:/opt/rakudo-pkg/share/perl6/site/bin:$PATH"
+addons:
+  apt:
+    sources:
+    - sourceline: 'deb https://dl.bintray.com/nxadm/rakudo-pkg-debs $(lsb_release -cs) main'
+      key_url: 'http://keyserver.ubuntu.com/pks/lookup?search=0x379CE192D401AB61&op=get'
+    packages:
+    - cpanminus
+    - rakudo-pkg
+
+install:
+- npm install -g coffeescript testml-compiler
+- sudo cpanm -n boolean Capture::Tiny Text::Diff
+- zef install JSON::Tiny Test::Builder
+
+script:
+- make test-all

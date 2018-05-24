@@ -226,7 +226,7 @@ sub initialize {
 
   if (not $self->{bridge}) {
     my $bridge_module = $ENV{TESTML_BRIDGE};
-    eval "require $bridge_module";
+    eval "require $bridge_module; 1" or die "$@";
     $self->{bridge} = $bridge_module->new;
   }
 

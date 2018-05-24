@@ -3,6 +3,8 @@ TestML
 
 An Acmeist Data-Driven Software Testing Language
 
+[![Build Status](https://travis-ci.org/testml-lang/testml.svg?branch=master)](https://travis-ci.org/testml-lang/testml)
+
 # Synopsis
 
 Try [Interactive TestML](https://testml-lang.github.io/testml/)
