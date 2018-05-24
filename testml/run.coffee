@@ -15,6 +15,10 @@ operator =
   '/'     : 'regex'
   '='     : 'set-var'
 
+multi_method_lookup =
+  'eq+string+string': 'test_eq_str'
+  'eq+number+number': 'test_eq_num'
+
 module.exports =
 class TestML.Run
   constructor: (params={})->
@@ -110,6 +114,8 @@ class TestML.Run
     want = @exec(right)[0]
 
     label = @get_label(label_expr)
+
+    # method = assertion["eq+#{@stdlib.type(got,want)}"]
 
     @test_eq got, want, label
 
