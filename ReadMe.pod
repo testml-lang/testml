@@ -10,6 +10,9 @@ See http://github.com/ingydotnet/swim-pm#readme
 
 testml-compiler - The TestML Compiler
 
+=for html
+<a href="https://travis-ci.org/testml-lang/testml-compiler"><img src="https://travis-ci.org/testml-lang/testml-compiler.png" alt="testml-compiler"></a>
+
 =head1 Synopsis
 
 C<>C<< testml-compiler foo.tml > foo.tml.json >>C<>

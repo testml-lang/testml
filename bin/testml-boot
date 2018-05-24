@@ -25,7 +25,6 @@ $testml = "%TestML 0.1.0\n\n$testml";
   use File::Temp qw/tempdir/;
   use Capture::Tiny 'capture';
   use Test::More;
-  use XXX;
 
   sub undent {
     my ($self, $text) = @_;

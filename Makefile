@@ -1,4 +1,6 @@
 INGY_NPM := ../ingy-npm
+export TESTML_COMPILER_ROOT := $(PWD)
+export PATH := $(TESTML_COMPILER_ROOT)/bin:$(PATH)
 
 ifneq ($(wildcard $(INGY_NPM)),)
     include $(INGY_NPM)/share/ingy-npm.mk
@@ -14,12 +16,11 @@ test = test/[0-9]*.tml
 debug =
 
 test: node_modules
-	(source .rc; NODE_PATH=lib TESTML_COMPILER_DEBUG=$(debug) \
-          prove -v $(test))
+	NODE_PATH=lib TESTML_COMPILER_DEBUG=$(debug) prove -v $(test)
 
 test-pegex: node_modules ../pegex-js/npm
 	rm -fr node_modules/pegex
-	(source .rc; NODE_PATH=lib:../pegex-js/npm/lib prove -lv test/)
+	NODE_PATH=lib:../pegex-js/npm/lib prove -lv test/
 
 html: gh-pages
 
