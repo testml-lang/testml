@@ -133,9 +133,6 @@ class TestML.Run
 
     return string
 
-  exec_list: (expr...)->
-    expr
-
   exec_pickloop: (list, expr)->
     for block in @data
       pick = true
