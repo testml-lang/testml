@@ -351,4 +351,32 @@ Diff = 1
         "a": "line 1\nline 2\n",
         "b": "line 1\n# Comment\nline 2\n"}}]}
 
+=== Don't inherit previous filters unless using ^x=y form
+--- input
+    === Test 1
+    --- regex(/): I like pie
+
+    === Test 2
+    --- ^regex(@/)
+
+    === Test 3
+    --- ^regex(/)
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "regex": ["/","I like pie"]}},
+    { "label": "Test 2",
+      "point": {
+        "regex": [[
+            ["/","I"],
+            ["/","like"],
+            ["/","pie"]]]}},
+    { "label": "Test 3",
+      "point": {
+        "regex": ["/","I like pie"]}}]}
+
 # vim: ft= sw=2:
