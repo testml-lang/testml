@@ -209,19 +209,12 @@ class TestMLCompiler.AST extends Pegex.Tree
   make_point: (name, value, inherit, from, has_filters, filter_expr)->
     return value unless _.isString value
 
-#     www
-#       inherit: inherit
-#       name: name
-#       from: from
-#       has_filters: has_filters
-#       filter_expr: filter_expr
-
     if inherit
-      from ||= name
-      value = @point[from] || ''
+      key = from || name
+      value = @point[key] || ''
 
       if not has_filters
-        filter_expr = @filters[from] || ''
+        filter_expr = @filters[key] || ''
 
     else
       @point[name] = value
@@ -266,7 +259,7 @@ class TestMLCompiler.AST extends Pegex.Tree
         value = ['/', value.replace(/\n$/, '')]
         value.push flag if flag
 
-    if inherit
+    if inherit and from
       @point[name] = value
 
     value
