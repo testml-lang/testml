@@ -1,4 +1,9 @@
 ---
+version: 0.0.14
+date:    Fri May 25 13:42:03 PDT 2018
+changes:
+- Added polymorphic == and =~ assertions
+---
 version: 0.0.13
 date:    Thu May 24 12:04:44 PDT 2018
 changes:
