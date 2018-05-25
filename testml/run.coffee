@@ -8,8 +8,19 @@ module.exports =
 class TestML.Run
   @vtable:
     '=='    : 'assert_eq'
+    assert_eq:
+      'str,str': 'assert_str_eq_str'
+      'num,num': 'assert_num_eq_num'
+      'bool,bool': 'assert_bool_eq_bool'
     '~~'    : 'assert_has'
+    assert_has:
+      'str,str': 'assert_str_has_str'
     '=~'    : 'assert_like'
+    assert_like:
+      'str,regex': 'assert_str_like_regex'
+      'str,list': 'assert_str_like_list'
+      'list,regex': 'assert_list_like_regex'
+      'list,list': 'assert_list_like_list'
 
     '%()'   : 'pick_loop'
     '.'     : 'exec_expr'
@@ -62,11 +73,11 @@ class TestML.Run
   test: ->
     @initialize()
 
-    @test_begin()
+    @testml_begin()
 
     @exec_func [], @code
 
-    @test_end()
+    @testml_end()
 
     return
 
@@ -152,13 +163,7 @@ class TestML.Run
     return
 
   get_str: (string)->
-    string = string.replace /\{([\-\w+])\}/g, (m, name)=>
-      @vars[name] || ''
-
-    string = string.replace /\{\*([\-\w+])\}/g, (m, name)=>
-      @block.point[name] || ''
-
-    return string
+    return @interpolate string
 
   get_point: (name)->
     return @getp name
@@ -167,18 +172,59 @@ class TestML.Run
     @setv(name, @exec(expr)[0])
     return
 
-  assert_eq: (left, right, label_expr)->
-    got = @exec(left)[0]
 
-    want = @exec(right)[0]
-
-    label = @get_label(label_expr)
-
-    # method = assertion["eq+#{@stdlib.type(got,want)}"]
-
-    @test_eq got, want, label
-
+  assert_eq: (left, right, label)->
+    @vars.Got = got = @exec(left)[0]
+    @vars.Want = want = @exec(right)[0]
+    method = @get_method('assert_eq', got, want)
+    @[method] got, want, label
     return
+
+  assert_str_eq_str: (got, want, label)->
+    @testml_eq(got, want, @get_label label)
+
+  assert_num_eq_num: (got, want, label)->
+    @testml_eq(got, want, @get_label label)
+
+  assert_bool_eq_bool: (got, want, label)->
+    @testml_eq(got, want, @get_label label)
+
+
+  assert_has: (left, right, label)->
+    @vars.Got = got = @exec(left)[0]
+    @vars.Want = want = @exec(right)[0]
+    method = @get_method('assert_has', got, want)
+    @[method] got, want, label
+    return
+
+  assert_str_has_str: (got, want, label)->
+    @testml_eq(got, want, @get_label label)
+
+
+  assert_like: (left, right, label)->
+    got = @exec(left)[0]
+    want = @exec(right)[0]
+    method = @get_method('assert_like', got, want)
+    @[method] got, want, label
+    return
+
+  assert_str_like_regex: (got, want, label)->
+    @vars.Got = got
+    @vars.Want = "/#{want[1]}/"
+    @testml_like(got, want, @get_label label)
+
+  assert_str_like_list: (got, want, label)->
+    for regex in want[0]
+      @assert_str_like_regex got, regex, label
+
+  assert_list_like_regex: (got, want, label)->
+    for str in got[0]
+      @assert_str_like_regex str, want, label
+
+  assert_list_like_list: (got, want, label)->
+    for str in got[0]
+      for regex in want[0]
+        @assert_str_like_regex str, regex, label
 
   #----------------------------------------------------------------------------
   initialize: ->
@@ -191,18 +237,43 @@ class TestML.Run
       @bridge = new(require process.env.TESTML_BRIDGE)
 
     if not @stdlib
-      @stdlib = new(require '../testml/stdlib')
+      @stdlib = new(require '../testml/stdlib') @
 
     return
+
+  get_method: (key, args...)->
+    sig = []
+    for arg in args
+      sig.push @get_type arg
+    sig = sig.join ','
+
+    method = @constructor.vtable[key][sig] or
+      throw "Can't resolve #{key}(#{sig})"
+
+    throw "Method '#{method}' does not exist" unless @[method]
+
+    return method
+
+  get_type: (object)->
+    type = switch
+      when object == null then 'null'
+      when typeof object == 'string' then 'str'
+      when typeof object == 'number' then 'num'
+      when typeof object == 'boolean' then 'bool'
+      when object instanceof Array then switch
+        when object[0] instanceof Array then 'list'
+        when object[0] == '/' then 'regex'
+        else null
+      else null
+
+    throw "Can't get type of #{require('util').inspect object}" unless type
+
+    type
 
   get_label: (label_expr='')->
     label = @exec(label_expr)[0]
 
-    if not label
-      label = @getv('Label') || ''
-      if label.match /\{\*?[\-\w]+\}/
-        label = @exec(["$''", label])[0]
-
+    label ||= @getv('Label') || ''
     block_label = if @block? then @block.label else ''
 
     if label
@@ -212,9 +283,24 @@ class TestML.Run
     else
       label = block_label
 
-    return label
+    return @interpolate label, true
 
+  interpolate: (string, short=false)->
+    string = string.replace /\{([\-\w]+)\}/g, (m, name)=>
+      if short
+        (String @vars[name] || '').replace /\n[^]*/, '\\n...'
+      else
+        String @vars[name] || ''
+
+    string = string.replace /\{\*([\-\w]+)\}/g, (m, name)=>
+      if short
+        (String @block.point[name] || '').replace /\n[^]*/, '\\n...'
+      else
+        String @block.point[name] || ''
+
+    return string
 #------------------------------------------------------------------------------
+
 TestML.Block = class
   constructor: ({@label, @point})->
 

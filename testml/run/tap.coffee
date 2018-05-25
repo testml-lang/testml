@@ -15,9 +15,9 @@ module.exports = class TestML.Run.TAP extends TestML.Run
 
     return
 
-  test_begin: ->
+  testml_begin: ->
 
-  test_end: ->
+  testml_end: ->
     @tap.done_testing()
 
     if TestML.browser and @output
@@ -25,7 +25,7 @@ module.exports = class TestML.Run.TAP extends TestML.Run
 
     return
 
-  test_eq: (got, want, label)->
+  testml_eq: (got, want, label)->
     if _.isString(want) and
       got != want and
       want.match(/\n/) and (
@@ -47,5 +47,8 @@ module.exports = class TestML.Run.TAP extends TestML.Run
       @tap.is_eq got, want, label
 
     return
+
+  testml_like: (got, want, label)->
+    @tap.like got, want, label
 
 # vim: ft=coffee sw=2:
