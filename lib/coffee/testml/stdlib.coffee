@@ -7,6 +7,9 @@ class TestML.StdLib
   block: (selector)->
     @run.blocks[selector]
 
+  bool: (any)->
+    Boolean any
+
   cat: (str...)->
     str.join ''
 
@@ -29,7 +32,7 @@ class TestML.StdLib
 
   null: -> null
 
-  number: (any)->
+  num: (any)->
     Number any
 
   pairs: (list)->
@@ -38,7 +41,7 @@ class TestML.StdLib
   split: (string, delim=/\s+/, limit=0)->
     _.split(string, delim, limit)
 
-  string: (any)->
+  str: (any)->
     String any
 
   text: (list)->
@@ -46,19 +49,7 @@ class TestML.StdLib
 
   true: -> true
 
-  type: (args...)->
-    _.join _.map(args, (o)->
-      switch
-        when _.isString o then 'string'
-        when _.isNumber o then 'number'
-        when _.isBoolean o then 'bool'
-        when _.isNull o then 'null'
-        when _.isArray o then switch
-          when _.isArray o[0] then 'list'
-          when o[0] == '/' then 'regex'
-          when o[0] == '!' then 'error'
-          when o[0] == '?' then 'any'
-        else die "Can't determine type #{o}"
-    ), '+'
+  type: (object)->
+    @run.get_type object
 
 # vim: ft=coffee sw=2:

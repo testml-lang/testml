@@ -55,6 +55,12 @@ class TestML.TAP
         want = "'#{want}'"
       @err "#     expected: #{want}"
 
+  like: (got, want, label)->
+    if got.match new RegExp want[1]
+      @pass label
+    else
+      @fail label
+
   diag: (msg)->
     @err msg.replace /^/mg, '# '
 
