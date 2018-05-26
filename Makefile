@@ -9,7 +9,7 @@ JS_FILES := $(COFFEE_FILES:lib/coffee/%.coffee=lib/node/%.js)
 JS_FILES := $(JS_FILES:test/%.coffee=test/%.js)
 JS_FILES := $(subst coffee,node,$(JS_FILES))
 
-WORKTREES := gh-pages node
+WORKTREES := node site playground
 
 .PHONY: test
 test: test-tap
@@ -49,7 +49,7 @@ node_modules:
 $(WORKTREES):
 	git worktree add -f $@ $@
 
-gh-pages-test: gh-pages
+playground-test: playground
 	make -C $< test
 
 npm: node js-files
