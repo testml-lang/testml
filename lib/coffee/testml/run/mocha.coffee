@@ -16,7 +16,7 @@ module.exports = class TestML.Run.Mocha extends TestML.Run
 
     return
 
-  test_begin: ->
+  testml_begin: ->
     if @browser
       $('#mocha').html('')
 
@@ -26,7 +26,7 @@ module.exports = class TestML.Run.Mocha extends TestML.Run
       mocha.suite.ctx = new window.Mocha.Context()
       mocha.ui "bdd"
 
-  test_end: ->
+  testml_end: ->
     if @browser
       run = ({got, want, label})->
         it label, ->
@@ -37,7 +37,7 @@ module.exports = class TestML.Run.Mocha extends TestML.Run
 
       mocha.run()
 
-  test_eq: (got, want, label)->
+  testml_eq: (got, want, label)->
     if @browser
       @tests.push {got, want, label}
 
