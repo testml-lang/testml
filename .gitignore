@@ -1,8 +1,11 @@
 *.pyc
+/compiler/
+/compiler-site/
 /gh-pages/
 /node/
 /node_modules/
 /playground/
+/site/
 /package*
 .precomp/
 .testml/

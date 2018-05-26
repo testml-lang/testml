@@ -9,7 +9,27 @@ JS_FILES := $(COFFEE_FILES:lib/coffee/%.coffee=lib/node/%.js)
 JS_FILES := $(JS_FILES:test/%.coffee=test/%.js)
 JS_FILES := $(subst coffee,node,$(JS_FILES))
 
-WORKTREES := node playground site
+WORKTREES := \
+    compiler \
+    compiler-site \
+    gh-pages \
+    node \
+    playground \
+    site \
+
+status:
+	@for d in $(WORKTREES); do \
+	    [[ -d $$d ]] || continue; \
+	    ( \
+		echo $$d; \
+		cd $$d; \
+		git status -s; \
+		git log --graph --decorate --pretty=oneline --abbrev-commit -10 | grep wip; \
+		echo '----'; \
+	    ); \
+	done
+	@echo master
+	@git status -s
 
 .PHONY: test
 test: test-tap
@@ -42,9 +62,15 @@ endif
 test-out:
 	prove -v test/out/*.tml
 
-node_modules:
+node_modules: ../testml-node-modules
+	ln -s $< $@
+
+../testml-node-modules:
 	npm install --save-dev lodash diff
 	rm -f package*
+	mv node_modules $@
+
+work: $(WORKTREES)
 
 $(WORKTREES):
 	git worktree add -f $@ $@
