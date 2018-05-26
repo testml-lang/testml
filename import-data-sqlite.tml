@@ -1,0 +1,6 @@
+#!/usr/bin/env testml
+
+ImportDataSQLite('math.db', 'math')
+
+"+ - {*a} + {*b} == {*c}":
+  *a.add(*b) == *c

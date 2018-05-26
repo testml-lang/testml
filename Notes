@@ -1,0 +1,13 @@
+- Update testml.org front page a bit
+- Release new a TestML.pm with a note up front not to use from CPAN.
+  - Release a new TestML1 with same
+- Find existing TestML and Test::Base CPAN modules
+  - Show the test suites in talk
+  - ingy miyagawa agentzh socialtext
+  - Kwiki Swim Pegex
+- Sell TestML as evolving language from 2005
+- Fix `Method 'assert_num_eq_str' does not exist`
+- Debug Perl6 slowness
+
+== Test::Base Modules
+- Test::Base
