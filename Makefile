@@ -9,7 +9,7 @@ JS_FILES := $(COFFEE_FILES:lib/coffee/%.coffee=lib/node/%.js)
 JS_FILES := $(JS_FILES:test/%.coffee=test/%.js)
 JS_FILES := $(subst coffee,node,$(JS_FILES))
 
-WORKTREES := node site playground
+WORKTREES := node playground site
 
 .PHONY: test
 test: test-tap
