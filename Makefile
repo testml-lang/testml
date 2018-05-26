@@ -26,7 +26,7 @@ update: yaml-test-suite
 yaml-test-suite:
 	git clone -b fix-json --depth=1 git@github.com:yaml/$@
 
-push:
+publish:
 	git add -A .
 	git commit -m "$$(date)"
 	git push -f
