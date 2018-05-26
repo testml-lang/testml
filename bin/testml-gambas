@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# shellcheck disable=1090,2034
+
+set -e
+
+testml-run-file() {
+  # Make this function run your Gambas; compiling if needed....
+  GAMBAS_LIB_PATH="$TESTML_ROOT_LIB,$TESTML_LIB${GAMBAS_LIB_PATH:+,$GAMBAS_LIB_PATH}" \
+    "$TESTML_LANG" -e "use $TESTML_MODULE; $TESTML_MODULE.run('$1')"
+}
+
+: "${TESTML_BIN:=testml-gambas-tap}"
+: "${TESTML_LANG:=gambas}"
+: "${TESTML_MODULE:=TestML::Run::TAP}"
+: "${TESTML_BRIDGE:=TestMLBridge}"
+export TESTML_{BIN,LANG,MODULE,BRIDGE}
+
+[[ -n $TESTML_SOURCED ]] ||
+  source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
+
+testml_runner_sourced=true
+
+[[ $0 != "${BASH_SOURCE[0]}" ]] || testml-run "$@"
