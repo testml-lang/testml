@@ -1,0 +1,160 @@
+== Post YAPC
+- Post to git-subrepo
+- TestML compiler in Perl5
+- Redo yaml test suite layout
+  - devel subrepo branch
+- Test2 in TestML
+- TestML CPAN releases
+- Rosetta update
+- TestML config support
+- Restructure and renumber tests for developemnt
+
+== NEXT!!!
+- Add $TESTML_DIR/.testml.rc config file
+  - Also look in $TESTML_UPDIR/.testml.rc
+- Fix https://gist.github.com/perlpunk/d5b4eea65f61446875dcc8b174e7f8b6
+- Remove leading \ escape from language
+- Refactor $'' opcode to ''
+- Refactor types => type-table
+- Move TestML/testml-node-modules and TestML/testml-site-node-modules into a testml/node_modules worktree branch
+
+- Use <sha1>.tml.json cache name for stdin
+- Write own TAP logic for perl5 insstead of Test::Builder
+- Finish tests for all stdlib methods
+- Add ONLY warning to all langs
+- Sync all TAP classes
+- Turn on IRC notifications
+
+== Project
+- <If ...> ... <Else> ...
+  <*AAAA, !*BBBB> == <If *AAAA, !*BBBB>
+  <Else ...> is like <ElseIf ...>
+- ImportData, ImportDataPush stdlib
+- Use testml in yaml-test-suite for make test
+  - Rearrange
+- Test output of all tap tests in all langs in a testml test
+- Support "{File}"
+- Support TAP SubTests
+- Foo = ... assignment for TestML vars can
+  - Only support TestML approved vars
+  - Type check them
+- Prompt an offer to download and cache testml-compiler if not in PATH
+  - Need to build tesml-compiler into a standalone
+
+== Repo Refactor
+- run/node/   (run-node)
+  - pkg/      (pkg-node)
+  - exe/      (exe-node)
+    - #!/usr/bin/env testml-exe-node tap
+      - written in nodejs
+
+- Rename all node-0.x.x tags to pkg-node-0.x.x
+- Add branch node_modules from ~/src/TestML/testml-node-modules
+
+== Releases
+- CPAN Release
+- Perl6 Release
+- PyPI placeholder release
+- Work on testml.org website
+- Release RotN.pm
+
+== Error Messages (make these more user friendly:)
+- Method 'assert_num_eq_str' does not exist at...
+
+== Language (compiler and runtime)
+
+== Compiler
+- Support source mapping
+  - Use in labels
+- Support === with no (empty) label
+- %ImportData compiler feature
+- %Import  (...compiler fix...)
+  - With or without .tml suffix
+  - Multinode name should be 'foo/bar'
+    - Look under $TESTML_PATH and then $TESTML_DIR
+- Fix foo.bar:baz precedence bug
+- Honor and enforce %TestML statement
+- Nested functions
+  - Make work with subtests
+
+== Runtime
+- Support FailMsg variable
+- Check for TestML version number before run
+- All runners should handle stdin ('-') for testml
+- Shuffle blocks with:  Shuffle = True
+
+== Perl5
+- Make TestML cpan release
+- Wide chars in Test::Builder (ask exodist)
+- Add TestML::Base for perl5; new & has
+
+== NodeJS
+- move lodash from testml/run to testml
+- Add tests to dist
+- Add travis support
+
+== Standard Library
+
+== CLI
+- Support and test all env-vars / options
+- Add TESTML_DIFF
+- Support .testml/config .testml.rc testml.rc
+== Playground
+- Move playground to testml.org Try
+- Add codemirror support
+  - Line numbers
+
+== Web
+- testml.org
+  - Smooth TestML book
+  - Home page
+  - TestML Interactive Runner
+- Run TestML JS testing in codepen
+  - https://codepen.io/DriftwoodJP/pen/LRQjpw
+  - https://codepen.io/ingydotnet/pen/gzvBON
+
+== Desired Runtimes
+- Haskell
+- Go
+- C++
+- Java
+
+== Not Doing
+- Named compile-time filters
+
+== Config and Env Vars
+
+                TESTML_ROOT
+                TESTML_INPUT
+                TESTML_INPUT_DIR
+                TESTML_INPUT_FILE
+                TESTML_INPUT_PATH
+                TESTML_EXEC_PATH
+
+   --diff       TESTML_DIFF
+
+   --cache      TESTML_CACHE
+-l --lang       TESTML_LANG
+-b --bin        TESTML_BIN
+-f --config     TESTML_CONFIG
+-I --lib        TESTML_LIB
+-R --run        TESTML_RUN
+-P --path       TESTML_PATH
+-B --bridge     TESTML_BRIDGE
+
+-c --compile
+-e --eval
+-s --status
+   --info
+-h --help
+   --version
+   --clean
+
+-p --print
+-o --output
+-D --diff       TESTML_DIFF
+-O --only
+-x --debug      TESTML
+-L --log
+-v --verbose    TESTML_VERBOSITY -1 0 1 2  -q -v -vv
+-q --quiet
