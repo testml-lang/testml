@@ -1,0 +1,47 @@
+#!/usr/bin/env testml-boot
+
+Diff = 1
+*input.compile == *output
+
+=== Assertion operators ==, =~ and ~~
+--- input
+*a.b == *c
+*a.b =~ *c
+*a.b ~~ *c
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["%()",["*a","*c"],
+      ["==",
+        [".",
+          ["*","a"],
+          ["b"]],
+        ["*","c"]]],
+    ["%()",["*a","*c"],
+      ["=~",
+        [".",
+          ["*","a"],
+          ["b"]],
+        ["*","c"]]],
+    ["%()",["*a","*c"],
+      ["~~",
+        [".",
+          ["*","a"],
+          ["b"]],
+        ["*","c"]]]],
+  "data": []}
+
+=== Assignment operators =, ||=
+--- input
+foo = 123
+bar ||= 'abc'
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","foo",123],
+    ["||=","bar","abc"]],
+  "data": []}
+
+# vim: ft=:
