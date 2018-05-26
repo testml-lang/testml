@@ -1,4 +1,9 @@
 ---
+version: 0.0.15
+date:    Sat May 26 15:31:48 PDT 2018
+changes:
+- Fix regression with Mocha
+---
 version: 0.0.14
 date:    Fri May 25 13:42:03 PDT 2018
 changes:

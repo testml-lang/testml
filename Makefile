@@ -1,4 +1,7 @@
 INGY_NPM := ../../ingy-npm
+export TESTML_ROOT := $(PWD)/..
+export PATH := $(TESTML_COMPILER_ROOT)/bin:$(PATH)
+export TAG_PREFIX := node
 
 ifneq ($(wildcard $(INGY_NPM)),)
     include $(INGY_NPM)/share/ingy-npm.mk
@@ -11,7 +14,7 @@ endif
 test = test/*.tml
 
 test: node_modules
-	(source .rc; NODE_PATH=lib prove -v $(test))
+	NODE_PATH=lib prove -v $(test)
 
 clean: ingy-npm-clean
 	rm -fr node_modules
