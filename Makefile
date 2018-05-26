@@ -21,7 +21,7 @@ test-pegex: node_modules ../pegex-js/npm
 	rm -fr node_modules/pegex
 	NODE_PATH=lib:../pegex-js/npm/lib prove -lv test/
 
-update-grammar: node_modules
+update-grammar: node_modules ../pegex
 	( \
 	set -o pipefail; \
 	grep -B99 make_tree lib/testml-compiler/grammar.coffee; \
@@ -30,6 +30,9 @@ update-grammar: node_modules
             | sed 's/^/    /' \
 	) > tmp-grammar
 	mv tmp-grammar lib/testml-compiler/grammar.coffee
+
+../pegex:
+	(cd ..; make pegex)
 
 clean: ingy-npm-clean
 	rm -fr node_modules
