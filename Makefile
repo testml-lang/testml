@@ -1,6 +1,7 @@
-INGY_NPM := ../ingy-npm
+INGY_NPM := ../../ingy-npm
 export TESTML_COMPILER_ROOT := $(PWD)
 export PATH := $(TESTML_COMPILER_ROOT)/bin:$(PATH)
+export TAG_PREFIX := compiler
 
 ifneq ($(wildcard $(INGY_NPM)),)
     include $(INGY_NPM)/share/ingy-npm.mk
@@ -9,8 +10,6 @@ else
     $(warning Try: git clone git@github.com:ingydotnet/ingy-npm $(INGY_NPM))
     $(error Fix your errors)
 endif
-
-WORKTREES := gh-pages
 
 test = test/[0-9]*.tml
 debug =
@@ -21,11 +20,6 @@ test: node_modules
 test-pegex: node_modules ../pegex-js/npm
 	rm -fr node_modules/pegex
 	NODE_PATH=lib:../pegex-js/npm/lib prove -lv test/
-
-html: gh-pages
-
-$(WORKTREES):
-	git worktree add -f $@ $@
 
 update-grammar: node_modules
 	( \
@@ -40,5 +34,3 @@ update-grammar: node_modules
 clean: ingy-npm-clean
 	rm -fr node_modules
 	rm -f tmp-grammar
-	rm -fr $(WORKTREES)
-	git worktree prune
