@@ -1,0 +1,1 @@
+../../../coffeescript/docs/v2/browser-compiler/coffeescript.js

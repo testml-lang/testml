@@ -1,0 +1,66 @@
+<%= include('navbar.html') %>
+
+<%= include('try.html') %>
+
+<div class="container-fluid" id="top">
+  <div class="row flex-nowrap main-row">
+    <nav class="sidebar bg-ribbed-light">
+      <%= include('sidebar.html') %>
+    </nav>
+    <main class="main">
+      <header class="d-none d-lg-block">
+        <p class="title-logo">
+          <%= include('logo.svg') %>
+        </p>
+      </header>
+      <section id="introduction">
+        <%= htmlFor('introduction') %>
+      </section>
+      <section id="overview">
+        <%= htmlFor('overview') %>
+      </section>
+      <section id="installation">
+        <%= htmlFor('installation') %>
+      </section>
+      <section id="usage">
+        <%= htmlFor('usage') %>
+        <section id="cli">
+          <%= htmlFor('command_line_interface') %>
+        </section>
+      </section>
+      <section id="language">
+        <%= htmlFor('language') %>
+        <section id="functions">
+          <%= htmlFor('functions') %>
+        </section>
+      </section>
+      <section id="resources">
+        <%= htmlFor('resources') %>
+        <section id="books">
+          <%= htmlFor('books') %>
+        </section>
+        <section id="screencasts">
+          <%= htmlFor('screencasts') %>
+        </section>
+        <section id="examples">
+          <%= htmlFor('examples') %>
+        </section>
+        <section id="chat">
+          <%= htmlFor('chat') %>
+        </section>
+        <section id="contributing">
+          <%= htmlFor('contributing') %>
+        </section>
+      </section>
+      <section id="changelog">
+        <%= htmlFor('changelog') %>
+        <section id="0.1.1">
+          <%= htmlFor('changelog/0.1.1') %>
+        </section>
+        <section id="0.1.0">
+          <%= htmlFor('changelog/0.1.0') %>
+        </section>
+      </section>
+    </main>
+  </div>
+</div>

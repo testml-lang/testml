@@ -1,0 +1,1 @@
+../../coffeescript/documentation/examples/functions.coffee
