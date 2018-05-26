@@ -14,6 +14,7 @@ WORKTREES := \
     compiler-site \
     gh-pages \
     node \
+    pegex \
     playground \
     site \
 
