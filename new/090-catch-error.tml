@@ -1,0 +1,4 @@
+#!/usr/bin/env testml
+
+Throw('an error').foo.bar.Catch.Error == 'an error'
+  :"Throw an Error and Catch it"

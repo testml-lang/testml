@@ -1,0 +1,7 @@
+#!/usr/bin/env testml
+
+1 == 1 :"XXX Write this test!!!"
+
+# ['food', 'fool', 'foot'] % (word)=>
+#   word =~ /foo/
+#     :"'{Got}' matches /foo/"
