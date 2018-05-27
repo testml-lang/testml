@@ -1,6 +1,7 @@
 INGY_NPM := ../../ingy-npm
 export TESTML_COMPILER_ROOT := $(PWD)
-export PATH := $(TESTML_COMPILER_ROOT)/bin:$(PATH)
+export TESTML_ROOT := $(shell cd $(PWD)/.. && pwd)
+export PATH := "$(TESTML_ROOT)/bin:$(TESTML_COMPILER_ROOT)/bin:$(PATH)"
 export TAG_PREFIX := compiler
 
 ifneq ($(wildcard $(INGY_NPM)),)
@@ -13,9 +14,10 @@ endif
 
 test = test/[0-9]*.tml
 debug =
+boot =
 
 test: node_modules
-	NODE_PATH=lib TESTML_COMPILER_DEBUG=$(debug) prove -v $(test)
+	NODE_PATH=lib TESTML_COMPILER_BOOTSTRAP=$(boot) TESTML_COMPILER_DEBUG=$(debug) prove -v $(test)
 
 test-pegex: node_modules ../pegex-js/npm
 	rm -fr node_modules/pegex
@@ -37,3 +39,4 @@ update-grammar: node_modules ../pegex
 clean: ingy-npm-clean
 	rm -fr node_modules
 	rm -f tmp-grammar
+	rm -fr test/.testml

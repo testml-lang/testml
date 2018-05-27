@@ -4,3 +4,4 @@
 /pegex-js/
 /testml-compiler-*.tgz
 /testml-compiler-*/
+.testml/

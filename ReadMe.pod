@@ -10,8 +10,7 @@ See http://github.com/ingydotnet/swim-pm#readme
 
 testml-compiler - The TestML Compiler
 
-=for html
-<a href="https://travis-ci.org/testml-lang/testml-compiler"><img src="https://travis-ci.org/testml-lang/testml-compiler.png" alt="testml-compiler"></a>
+=for comment <badge travis testml-lang/testml-compiler>
 
 =head1 Synopsis
 

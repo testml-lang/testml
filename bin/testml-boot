@@ -5,6 +5,10 @@ use warnings;
 
 use TestML;
 
+if (not $ENV{TESTML_COMPILER_BOOTSTRAP}) {
+  exec("$ENV{TESTML_ROOT}/bin/testml-perl-tap", @ARGV) or die;
+}
+
 my $testml_path = $ARGV[0];
 
 open TESTML, $testml_path or
@@ -82,3 +86,5 @@ TestML->new(
   testml => $testml,
   bridge => 'Bridge',
 )->run;
+
+# vim: sw=2:
