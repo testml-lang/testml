@@ -9,6 +9,8 @@ JS_FILES := $(COFFEE_FILES:lib/coffee/%.coffee=lib/node/%.js)
 JS_FILES := $(JS_FILES:test/%.coffee=test/%.js)
 JS_FILES := $(subst coffee,node,$(JS_FILES))
 
+s = -s
+
 WORKTREES := \
     compiler \
     compiler-site \
@@ -24,13 +26,13 @@ status:
 	    ( \
 		echo $$d; \
 		cd $$d; \
-		git status -s; \
+		git status $(s); \
 		git log --graph --decorate --pretty=oneline --abbrev-commit -10 | grep wip; \
 		echo '----'; \
 	    ); \
 	done
 	@echo master
-	@git status -s
+	@git status $(s)
 
 .PHONY: test
 test: test-tap
