@@ -379,4 +379,24 @@ Diff = 1
       "point": {
         "regex": ["/","I like pie"]}}]}
 
+=== Strip comments before trailing blank lines
+--- input
+    === Test1
+    --- foo
+    line 1
+
+
+    # Comment about Test 2
+    === Test 2
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test1",
+      "point": {
+        "foo": "line 1\n"}},
+    { "label": "Test 2",
+      "point": {}}]}
+
+
 # vim: ft= sw=2:
