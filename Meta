@@ -26,6 +26,7 @@ devel:
   bin:
     testml-compiler: ./bin/testml-compiler
   dependencies:
+    ingy-prelude: '>=0.0.1'
     lodash: '>=2.2.2'
     pegex: '>=0.1.5'
   scripts:

@@ -1,5 +1,4 @@
 require '../testml-compiler'
-require '../testml-compiler/prelude'
 require '../testml-compiler/grammar'
 require '../testml-compiler/ast'
 
@@ -39,7 +38,7 @@ class TestMLCompiler.Compiler
       root = from.replace /^(.*)\/.*/, '$1'
 
     testml_file = "#{root}/#{name}.tml"
-    testml_input = read_file testml_file
+    testml_input = file_read testml_file
 
     parse_testml testml_input, testml_file, @importer
 

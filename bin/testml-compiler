@@ -2,7 +2,7 @@
 
 module.paths.unshift "#{require('path').dirname(__dirname)}/lib"
 
-require 'testml-compiler/prelude'
+require 'ingy-prelude'
 require 'testml-compiler/compiler'
 
 argv = process.argv[2..]
@@ -23,7 +23,7 @@ throw "usage: testml-compiler <input-file>" \
 throw "Input file does not exist: '#{input_file}'" \
   unless input_file == '-' or file_exists input_file
 
-input_text = read_file input_file
+input_text = file_read input_file
 
 compiler = new TestMLCompiler.Compiler
 
