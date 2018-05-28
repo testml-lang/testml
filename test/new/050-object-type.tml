@@ -6,7 +6,19 @@
 "Type is bool":   True.Type     == 'bool'
 "Type is null":   Null.Type     == 'null'
 "Type is list":   [1,2,3].Type  == 'list'
+"Type is list":   *list.Type    == 'list'
+"Type is hash":   *hash.Type    == 'hash'
+
 # "Type is error":  Q.Catch.Type  == 'error'
 
 # f = =>
 # "Type is fun":   f.Type         == 'func'
+
+
+=== Test 1
+--- list(%)
+[ 'foo', 123 ]
+
+--- hash(%)
+foo: 'bar'
+bar: 123
