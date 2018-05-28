@@ -253,7 +253,10 @@ class TestMLCompiler.AST extends Pegex.Tree
         else
           CoffeeScript = require('coffeescript')
 
-        value = ['%', eval CoffeeScript.compile(value, bare: true)]
+        value = eval CoffeeScript.compile(value, bare: true)
+
+        if _.isPlainObject(value) or _.isArray value
+          value = [value]
 
       else if filters['-']
         value = value.replace /\n$/, ''

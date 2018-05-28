@@ -1,0 +1,86 @@
+#!/usr/bin/env testml-boot
+
+Diff = 1
+*input.undent.compile == *output
+
+=== Numeric points
+--- input
+    === Test 1
+    --- a: 12345
+    --- b: 3.14
+    --- c: -12345
+    --- d: -3.14
+    --- e: '12345'
+    --- f: "12345"
+    --- g
+    12345
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "a": 12345,
+        "b": 3.14,
+        "c": -12345,
+        "d": -3.14,
+        "e": "12345",
+        "f": "12345",
+        "g": "12345\n"}}]}
+
+=== Empty point
+--- input
+    === Test 1
+    --- foo
+
+    --- bar: 123
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "",
+        "bar": 123}}]}
+
+=== Point inheritance
+--- input
+    === Test 1
+    --- foo: xxx
+
+    === Test 2
+    --- ^foo
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx"}},
+    { "label": "Test 2",
+      "point": {
+        "foo": "xxx"}}]}
+
+=== Point inheritance from different name
+--- input
+    === Test 1
+    --- foo: xxx
+
+    === Test 2
+    --- ^bar=foo
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx"}},
+    { "label": "Test 2",
+      "point": {
+        "bar": "xxx"}}]}
+
+# vim: ft= sw=2:
