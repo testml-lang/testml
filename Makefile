@@ -10,7 +10,7 @@ test: build
 
 site: $(SITE) build
 	cp -r docs/* $<
-	rm -f $</v2/index.html
+	rm -f $</v2/*.html
 
 coffeescript:
 	git clone --depth=1 http://github.com/jashkenas/$@
