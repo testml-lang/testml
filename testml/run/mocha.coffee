@@ -28,9 +28,9 @@ module.exports = class TestML.Run.Mocha extends TestML.Run
 
   testml_end: ->
     if @browser
-      run = ({got, want, label})->
+      run = ({got, want, label, assertion})->
         it label, ->
-          chai.assert.equal got, want, label
+          chai.assert[assertion] got, want, label
 
       describe '', =>
         run test for test in @tests
@@ -39,6 +39,19 @@ module.exports = class TestML.Run.Mocha extends TestML.Run
 
   testml_eq: (got, want, label)->
     if @browser
-      @tests.push {got, want, label}
+      @tests.push {got, want, label, assertion: 'equal'}
+
+  testml_like: (got, want, label)->
+    if @browser
+      want = new RegExp want
+      @tests.push {got, want, label, assertion: 'match'}
+
+  testml_str_has: (got, want, label)->
+    if @browser
+      @tests.push {got, want, label, assertion: 'include'}
+
+  testml_list_has: (got, want, label)->
+    if @browser
+      @tests.push {got, want, label, assertion: 'include'}
 
 # vim: ft=coffee sw=2:

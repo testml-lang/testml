@@ -1,33 +1,42 @@
-# require '../../../../testml-compiler/lib/testml-compiler/prelude'
-
 require '../testml'
-
+require 'ingy-prelude' if TestML.env['TESTML_DEVEL']
 lodash = require 'lodash'
 
 module.exports =
 class TestML.Run
   @vtable:
-    '=='    : 'assert_eq'
-    assert_eq:
-      'str,str': 'assert_str_eq_str'
-      'num,num': 'assert_num_eq_num'
-      'bool,bool': 'assert_bool_eq_bool'
-    '~~'    : 'assert_has'
-    assert_has:
-      'str,str': 'assert_str_has_str'
-    '=~'    : 'assert_like'
-    assert_like:
-      'str,regex': 'assert_str_like_regex'
-      'str,list': 'assert_str_like_list'
-      'list,regex': 'assert_list_like_regex'
-      'list,list': 'assert_list_like_list'
+    '==': [
+      'assert_eq',
+      'assert_%1_eq_%2',
+        'str,str': ''
+        'num,num': ''
+        'bool,bool': ''
+    ]
 
-    '%()'   : 'pick_loop'
-    '.'     : 'exec_expr'
+    '~~': [
+      'assert_has',
+      'assert_%1_has_%2',
+        'str,str': ''
+        'str,list': ''
+        'list,str': ''
+        'list,list': ''
+    ]
 
-    "$''"   : 'get_str'
-    '*'     : 'get_point'
-    '='     : 'set_var'
+    '=~': [
+      'assert_like',
+      'assert_%1_like_%2',
+        'str,regex': ''
+        'str,list': ''
+        'list,regex': ''
+        'list,list': ''
+    ]
+
+    '%()': 'pick_loop'
+    '.'  : 'exec_expr'
+
+    "$''": 'get_str'
+    '*'  : 'get_point'
+    '='  : 'set_var'
 
   block: undefined
 
@@ -105,6 +114,7 @@ class TestML.Run
     args = _.clone expr
     opcode = name = args.shift()
     if call = @constructor.vtable[opcode]
+      call = call[0] if _.isArray call
       return_ = @[call](args...)
 
     else
@@ -176,7 +186,7 @@ class TestML.Run
   assert_eq: (left, right, label)->
     @vars.Got = got = @exec(left)[0]
     @vars.Want = want = @exec(right)[0]
-    method = @get_method('assert_eq', got, want)
+    method = @get_method('==', got, want)
     @[method] got, want, label
     return
 
@@ -191,27 +201,42 @@ class TestML.Run
 
 
   assert_has: (left, right, label)->
-    @vars.Got = got = @exec(left)[0]
-    @vars.Want = want = @exec(right)[0]
-    method = @get_method('assert_has', got, want)
+    got = @exec(left)[0]
+    want = @exec(right)[0]
+    method = @get_method('~~', got, want)
     @[method] got, want, label
     return
 
   assert_str_has_str: (got, want, label)->
-    @testml_eq(got, want, @get_label label)
+    @vars.Got = got
+    @vars.Want = want
+    @testml_str_has(got, want, @get_label label)
+
+  assert_str_has_list: (got, want, label)->
+    for str in want[0]
+      @assert_str_has_str(got, str, label)
+
+  assert_list_has_str: (got, want, label)->
+    @vars.Got = got
+    @vars.Want = want
+    @testml_list_has(got[0], want, @get_label label)
+
+  assert_list_has_list: (got, want, label)->
+    for str in want[0]
+      @assert_list_has_str(got, str, label)
 
 
   assert_like: (left, right, label)->
     got = @exec(left)[0]
     want = @exec(right)[0]
-    method = @get_method('assert_like', got, want)
+    method = @get_method('=~', got, want)
     @[method] got, want, label
     return
 
   assert_str_like_regex: (got, want, label)->
     @vars.Got = got
     @vars.Want = "/#{want[1]}/"
-    @testml_like(got, want, @get_label label)
+    @testml_like(got, want[1], @get_label label)
 
   assert_str_like_list: (got, want, label)->
     for regex in want[0]
@@ -245,10 +270,13 @@ class TestML.Run
     sig = []
     for arg in args
       sig.push @get_type arg
-    sig = sig.join ','
+    sig_str = sig.join ','
 
-    method = @constructor.vtable[key][sig] or
-      throw "Can't resolve #{key}(#{sig})"
+    entry = @constructor.vtable[key]
+    [name, pattern, vtable] = entry
+    method = vtable[sig_str] || pattern.replace /%(\d+)/g, (m, num)->
+      sig[num - 1]
+    throw "Can't resolve #{name}(#{sig_str})" unless method
 
     throw "Method '#{method}' does not exist" unless @[method]
 
@@ -285,18 +313,24 @@ class TestML.Run
 
     return @interpolate label, true
 
-  interpolate: (string, short=false)->
-    string = string.replace /\{([\-\w]+)\}/g, (m, name)=>
-      if short
-        (String @vars[name] || '').replace /\n[^]*/, '\\n...'
+  interpolate: (string, label=false)->
+    transform = (m, name)=>
+      if label
+        return '' unless v = @vars[name]
+        switch
+          when @get_type(v) == 'list' then \
+            JSON.stringify(v[0]).replace /"/g, ''
+          else String(v).replace /\n/g, '␤'
       else
-        String @vars[name] || ''
+        return '' unless v = @block.point[name]
+        switch
+          when @get_type(v) == 'list' then \
+            JSON.stringify(v[0]).replace /"/g, ''
+          else String(v)
 
-    string = string.replace /\{\*([\-\w]+)\}/g, (m, name)=>
-      if short
-        (String @block.point[name] || '').replace /\n[^]*/, '\\n...'
-      else
-        String @block.point[name] || ''
+    string = string.replace /\{([\-\w]+)\}/g, transform
+
+    string = string.replace /\{\*([\-\w]+)\}/g, transform
 
     return string
 #------------------------------------------------------------------------------
