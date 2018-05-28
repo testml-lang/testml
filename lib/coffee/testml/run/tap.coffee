@@ -51,4 +51,16 @@ module.exports = class TestML.Run.TAP extends TestML.Run
   testml_like: (got, want, label)->
     @tap.like got, want, label
 
+  testml_str_has: (got, want, label)->
+    if got.indexOf(want) != -1
+      @tap.pass label
+    else
+      @tap.fail label
+
+  testml_list_has: (got, want, label)->
+    if (_.findIndex got, (str)-> str == want) != -1
+      @tap.pass label
+    else
+      @tap.fail label
+
 # vim: ft=coffee sw=2:

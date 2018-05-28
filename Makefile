@@ -18,6 +18,8 @@ WORKTREES := \
     playground \
     site \
 
+export TESTML_DEVEL := $(devel)
+
 status:
 	@for d in $(WORKTREES); do \
 	    [ -d $$d ] || continue; \
@@ -64,10 +66,10 @@ test-out:
 	prove -v test/out/*.tml
 
 node_modules: ../testml-node-modules
-	ln -s $< $@
+	cp -r $< $@
 
 ../testml-node-modules:
-	npm install --save-dev lodash diff
+	npm install --save-dev diff ingy-prelude lodash
 	rm -f package*
 	mv node_modules $@
 
@@ -95,10 +97,12 @@ test/node/%.js: test/coffee/%.coffee
 
 clean:
 	rm -fr lib/perl6/.precomp/
-	rm -fr $(WORKTREES)
 	rm -fr node_modules/
 	rm -f package*
 	find . -d | grep '\.testml$$' | xargs rm -fr
 	find . -d | grep '\.precomp$$' | xargs rm -fr
 	find . -name '*.pyc' | xargs rm
 	git worktree prune
+
+realclean: clean
+	rm -fr $(WORKTREES)
