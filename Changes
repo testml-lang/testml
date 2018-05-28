@@ -1,4 +1,9 @@
 ---
+version: 0.0.26
+date:    Sun May 27 23:05:29 PDT 2018
+changes:
+- Support % data compile filter for coffee data syntax
+---
 version: 0.0.25
 date:    Sun May 27 08:26:23 PDT 2018
 changes:
