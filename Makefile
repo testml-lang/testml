@@ -9,8 +9,6 @@ JS_FILES := $(COFFEE_FILES:lib/coffee/%.coffee=lib/node/%.js)
 JS_FILES := $(JS_FILES:test/%.coffee=test/%.js)
 JS_FILES := $(subst coffee,node,$(JS_FILES))
 
-s = -s
-
 WORKTREES := \
     compiler \
     compiler-site \
@@ -22,17 +20,17 @@ WORKTREES := \
 
 status:
 	@for d in $(WORKTREES); do \
-	    [[ -d $$d ]] || continue; \
+	    [ -d $$d ] || continue; \
 	    ( \
-		echo $$d; \
+		echo "=== $$d"; \
 		cd $$d; \
-		git status $(s); \
+		git status | grep -Ev '(^On branch|up-to-date|nothing to commit)'; \
 		git log --graph --decorate --pretty=oneline --abbrev-commit -10 | grep wip; \
-		echo '----'; \
+		echo; \
 	    ); \
 	done
-	@echo master
-	@git status $(s)
+	@echo "=== master"
+	@git status | grep -Ev '(^On branch|up-to-date|nothing to commit)'
 
 .PHONY: test
 test: test-tap
