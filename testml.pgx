@@ -163,7 +163,7 @@ point-single: /
   ( CARET? )
   ( point-name )
   (: '=' ( point-name ) )?
-  (: ('(') ( ['#+-~/@']* ) ')' )?
+  (: ('(') ( ['#+-~/@%']* ) ')' )?
   COLON + ( ANY*? -)
   EOL
   point-lines
@@ -174,7 +174,7 @@ point-multi: /
   ( CARET? )
   ( point-name )
   (: '=' ( point-name ) )?
-  (: ('(') ( ['<#+-~/@']* ) ')' )?
+  (: ('(') ( ['<#+-~/@%']* ) ')' )?
   EOL
   ( point-lines )
 /
