@@ -16,6 +16,13 @@ class TestML.StdLib
   count: (list)->
     list[0].length
 
+  error: (error='')->
+    type = @run.get_type(error)
+    switch
+      when type == 'str' then ['!', error]
+      when type == 'error' then error[1]
+      else throw "Bad argument passed to Error: '#{error}'"
+
   false: -> false
 
   flat: (list, depth=9999999999)->
@@ -46,6 +53,9 @@ class TestML.StdLib
 
   text: (list)->
     [list[0]..., ''].join '\n'
+
+  throw: (error='')->
+    throw error
 
   true: -> true
 

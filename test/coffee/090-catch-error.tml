@@ -1,0 +1,5 @@
+#!/usr/bin/env testml
+
+Throw('an error').foo.bar.Catch.Error == 'an error'
+
+# vim: ft= sw=2:
