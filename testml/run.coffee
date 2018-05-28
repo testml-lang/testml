@@ -109,6 +109,7 @@ class TestML.Run
     return [expr] if \
       not(_.isArray expr) or
       _.isArray(expr[0]) or
+      _.isPlainObject(expr[0]) or
       _.isString(expr[0]) and expr[0].match /^(?:=>|\/|\?|\!)$/
 
     args = _.clone expr
@@ -290,6 +291,7 @@ class TestML.Run
       when typeof object == 'boolean' then 'bool'
       when object instanceof Array then switch
         when object[0] instanceof Array then 'list'
+        when _.isPlainObject object[0] then 'hash'
         when object[0] == '/' then 'regex'
         else null
       else null
