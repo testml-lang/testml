@@ -21,6 +21,8 @@ window.exports = {}
 # include npm/lib/testml-compiler/compiler.js
 ```
 
+TestMLCompiler.browser = true
+
 window.global = _global
 window.require = _require
 window.exports = _exports

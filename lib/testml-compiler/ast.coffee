@@ -248,17 +248,18 @@ class TestMLCompiler.AST extends Pegex.Tree
         value = [value]
 
       else if filters['%']
-        value = [
-          '%',
-          eval require('coffeescript').compile(value, bare: true)
-        ]
+        if TestMLCompiler.browser
+          CoffeeScript = window.CoffeeScript
+        else
+          CoffeeScript = require('coffeescript')
 
+        value = ['%', eval CoffeeScript.compile(value, bare: true)]
 
       else if filters['-']
         value = value.replace /\n$/, ''
 
     if filters['/']
-      if _.isArray value
+      if _.isArray(value) and _.isArray value[0]
         value = _.map value[0], (regex)-> ['/', regex]
         value = [value]
       else
