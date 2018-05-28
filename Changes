@@ -1,4 +1,9 @@
 ---
+version: 0.0.18
+date:    Mon May 28 10:20:04 PDT 2018
+changes:
+- Better test failure output
+---
 version: 0.0.17
 date:    Mon May 28 00:12:23 PDT 2018
 changes:
