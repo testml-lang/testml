@@ -4,7 +4,12 @@
 
   require('testml/bridge');
 
-  module.exports = TestMLBridge = class TestMLBridge extends TestML.Bridge {};
+  module.exports = TestMLBridge = class TestMLBridge extends TestML.Bridge {
+    hash_lookup(hash, key) {
+      return hash[key];
+    }
+
+  };
 
   // vim: ft=coffee sw=2:
 

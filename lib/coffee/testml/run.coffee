@@ -35,6 +35,7 @@ class TestML.Run
     '.'  : 'exec_expr'
 
     "$''": 'get_str'
+    "${}": 'get_hash'
     '*'  : 'get_point'
     '='  : 'set_var'
 
@@ -113,33 +114,51 @@ class TestML.Run
       _.isString(expr[0]) and expr[0].match /^(?:=>|\/|\?|\!)$/
 
     args = _.clone expr
+
     opcode = name = args.shift()
     if call = @constructor.vtable[opcode]
       call = call[0] if _.isArray call
       return_ = @[call](args...)
 
     else
-      args = _.map args, (x)=>
-        if _.isArray x then @exec(x)[0] else x
-
       args.unshift (_.reverse context)...
 
       if name.match /^[a-z]/
-        call = name.replace /-/g, '_'
-        throw "Can't find bridge function: '#{name}'" \
-          unless @bridge?[call]
-        return_ = @bridge[call](args...)
+        return_ = @exec_bridge_function name, args
 
       else if name.match /^[A-Z]/
-        call = _.lowerCase name
-        throw "Unknown TestML Standard Library function: '#{name}'" \
-          unless @stdlib[call]
-        return_ = @stdlib[call](args...)
+        return_ = @exec_stdlib_function name, args
 
       else
         throw "Can't resolve TestML function '#{name}'"
 
     return if return_ == undefined then [] else [return_]
+
+  exec_bridge_function: (name, args)->
+    call = name.replace /-/g, '_'
+    throw "Can't find bridge function: '#{name}'" \
+      unless @bridge?[call]
+
+    args = _.map args, (x)=>
+      v = @exec(x)[0]
+      if _.isArray v then v[0] else v
+
+    return_ = @bridge[call](args...)
+
+    if return_ and @get_type(return_).match /^(list|hash)$/
+      return_ = [return_]
+
+    return_
+
+  exec_stdlib_function: (name, args)->
+    call = _.lowerCase name
+    throw "Unknown TestML Standard Library function: '#{name}'" \
+      unless @stdlib[call]
+
+    args = _.map args, (x)=>
+      @exec(x)[0]
+
+    @stdlib[call](args...)
 
   exec_func: (context, [signature, function_...])->
     for statement in function_
@@ -179,6 +198,10 @@ class TestML.Run
 
   get_str: (string)->
     return @interpolate string
+
+  get_hash: (hash, key)->
+    hash = @exec(hash)[0]
+    return hash[0][key]
 
   get_point: (name)->
     return @getp name

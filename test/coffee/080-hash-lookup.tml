@@ -1,0 +1,15 @@
+#!/usr/bin/env testml
+
+
+*hash:bar == 'world'
+  :"+ Hash lookup with static key"
+
+hash-lookup(*hash, 'foo') == 'hello'
+  :"Use hash in bridge function"
+
+=== Test 1
+--- hash(%)
+foo: 'hello'
+bar: 'world'
+
+# vim: ft= sw=2:
