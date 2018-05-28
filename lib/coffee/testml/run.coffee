@@ -211,7 +211,7 @@ class TestML.Run
   assert_str_has_str: (got, want, label)->
     @vars.Got = got
     @vars.Want = want
-    @testml_str_has(got, want, @get_label label)
+    @testml_has(got, want, @get_label label)
 
   assert_str_has_list: (got, want, label)->
     for str in want[0]

@@ -26,41 +26,23 @@ module.exports = class TestML.Run.TAP extends TestML.Run
     return
 
   testml_eq: (got, want, label)->
-    if _.isString(want) and
-      got != want and
+    diff = (
+      _.isString(want) and
       want.match(/\n/) and (
         @getv('Diff') or
         @getp('DIFF')
       )
-      global.JsDiff = require 'diff' unless TestML.browser
+    )
 
-      @tap.fail label
-
-      @tap.diag JsDiff.createTwoFilesPatch(
-        'want', 'got',
-        want, got,
-        '', '',
-        context: 3
-      )
-
-    else
-      @tap.is_eq got, want, label
-
-    return
+    @tap.is_eq got, want, label, diff
 
   testml_like: (got, want, label)->
     @tap.like got, want, label
 
-  testml_str_has: (got, want, label)->
-    if got.indexOf(want) != -1
-      @tap.pass label
-    else
-      @tap.fail label
+  testml_has: (got, want, label)->
+    @tap.has got, want, label
 
   testml_list_has: (got, want, label)->
-    if (_.findIndex got, (str)-> str == want) != -1
-      @tap.pass label
-    else
-      @tap.fail label
+    @tap.list_has got, want, label
 
 # vim: ft=coffee sw=2:
