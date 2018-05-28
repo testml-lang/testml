@@ -29,7 +29,7 @@ index.js: index.coffee
 	(cd $< && make npm)
 
 ../node ../compiler:
-	(cd .. && make $(@:../%=%))
+	(cd .. && make js-files $(@:../%=%))
 
 update: yaml-test-suite ../compiler
 	bin/make-yaml
