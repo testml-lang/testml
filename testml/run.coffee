@@ -158,6 +158,10 @@ class TestML.Run
 
   pick_loop: (list, expr)->
     for block in @data
+      if block.point.ONLY and ! @warned_only
+        @warn "Warning: TestML 'ONLY' in use."
+        @warned_only = true
+
       pick = true
       for point in list
         if (point.match(/^\*/) and ! block.point[point[1..]]?) or

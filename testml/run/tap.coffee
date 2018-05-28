@@ -45,4 +45,7 @@ module.exports = class TestML.Run.TAP extends TestML.Run
   testml_list_has: (got, want, label)->
     @tap.list_has got, want, label
 
+  warn: (msg)->
+    @tap.diag(msg)
+
 # vim: ft=coffee sw=2:
