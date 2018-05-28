@@ -1,4 +1,9 @@
 ---
+version: 0.0.28
+date:    Sun May 27 23:57:10 PDT 2018
+changes:
+- Hash types serialize as [{}]
+---
 version: 0.0.27
 date:    Sun May 27 23:57:10 PDT 2018
 changes:
