@@ -32,7 +32,7 @@ module.exports = class TestML.Run.Mocha extends TestML.Run
         it label, ->
           chai.assert.equal got, want, label
 
-      describe 'Mocha Tests', =>
+      describe '', =>
         run test for test in @tests
 
       mocha.run()
