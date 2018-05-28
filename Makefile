@@ -32,7 +32,7 @@ status:
 	    ); \
 	done
 	@echo "=== master"
-	@git status | grep -Ev '(^On branch|up-to-date|nothing to commit)'
+	@git status | grep -Ev '(^On branch|up-to-date|nothing to commit)' || true
 
 .PHONY: test
 test: test-tap
