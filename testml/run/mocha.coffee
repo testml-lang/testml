@@ -46,7 +46,7 @@ module.exports = class TestML.Run.Mocha extends TestML.Run
       want = new RegExp want
       @tests.push {got, want, label, assertion: 'match'}
 
-  testml_str_has: (got, want, label)->
+  testml_has: (got, want, label)->
     if @browser
       @tests.push {got, want, label, assertion: 'include'}
 
