@@ -18,7 +18,13 @@ True == True
 # Tests for =~ (regex match) variations
 *text =~ *regex
 
-=== Test 1: {Got} =~ {Want}
+# Tests for ~~ (has/contains str or substr) variations
+
+# Like (=~) regex test blocks:
+*text ~~ *substr
+
+
+=== Test 1: '{Got}' =~ '{Want}' -- string matches regex
 --- text
 I see pie
 I see me
@@ -26,16 +32,42 @@ I see you
 
 --- regex(/): I see
 
-=== Test 2: {Got} =~ {Want}
+=== Test 2: '{Got}' =~ '{Want}'
 --- ^text
 --- ^regex(@/)
 
-=== Test 3: {Got} =~ {Want}
+=== Test 3: '{Got}' =~ '{Want}'
 --- ^text(@)
 --- ^regex(/)
 
-=== Test 4: {Got} =~ {Want}
+=== Test 4: '{Got}' =~ '{Want}'
 --- ^text(@)
 --- ^regex(@/)
+
+
+# Has (~~) test blocks:
+=== Test 5: '{Got}' ~~ '{Want}' -- string has substring
+--- text
+I see pie
+I see me
+I see you
+
+--- substr(-)
+pie
+I see
+
+=== Test 6: '{Got}' ~~ '{Want}'
+--- ^text
+--- substr(@): pie you
+
+=== Test 6: '{Got}' ~~ '{Want}' -- list has string in it
+--- ^text(@)
+--- substr: I see me
+
+=== Test 6: '{Got}' ~~ '{Want}'
+--- ^text(@)
+--- substr(@)
+I see me
+I see pie
 
 # vim: ft= sw=2:

@@ -37,7 +37,7 @@ update: yaml-test-suite ../compiler
 	bin/make-ctest
 
 yaml-test-suite:
-	git clone -b fix-json --depth=1 git@github.com:yaml/$@
+	git clone -b master --depth=1 git@github.com:yaml/$@
 
 clean:
 	rm -fr yaml-test-suite

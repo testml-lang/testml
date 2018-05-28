@@ -32,4 +32,16 @@ Diff = 1
         ["*","c"]]]],
   "data": []}
 
+=== Assignment operators =, ||=
+--- input
+foo = 123
+bar ||= 'abc'
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","foo",123],
+    ["||=","bar","abc"]],
+  "data": []}
+
 # vim: ft=:
