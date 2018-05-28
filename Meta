@@ -1,7 +1,7 @@
 =meta: 0.0.2
 
 name: testml-compiler
-version: 0.0.25
+version: 0.0.26
 abstract: TestML Compiler CLI
 homepage: http://testml.org
 tag: [testml, compiler, testing, language, acmeism]
@@ -26,6 +26,7 @@ devel:
   bin:
     testml-compiler: ./bin/testml-compiler
   dependencies:
+    coffeescript: '>=2.3.1'
     ingy-prelude: '>=0.0.1'
     lodash: '>=2.2.2'
     pegex: '>=0.1.5'

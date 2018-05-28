@@ -247,6 +247,13 @@ class TestMLCompiler.AST extends Pegex.Tree
           value = value.split /\s+/
         value = [value]
 
+      else if filters['%']
+        value = [
+          '%',
+          eval require('coffeescript').compile(value, bare: true)
+        ]
+
+
       else if filters['-']
         value = value.replace /\n$/, ''
 

@@ -398,5 +398,36 @@ Diff = 1
     { "label": "Test 2",
       "point": {}}]}
 
+=== CoffeeScript object syntax
+--- input
+    === Test1
+    --- foo(%): {foo: 'bar', bar: 42}
+    --- bar(%)
+    foo:
+      bar: 1234
+    --- baz(%)
+    {
+      "foo": [
+         22
+      ]
+    }
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test1",
+      "point": {
+        "foo": ["%",
+          {
+            "foo": "bar",
+            "bar": 42}],
+        "bar": ["%",
+          {
+            "foo": {
+              "bar": 1234}}],
+        "baz": ["%",
+          {
+            "foo": [22]}]}}]}
 
 # vim: ft= sw=2:
