@@ -167,7 +167,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         ]
       },
       "point_object": {
-        ".rgx": "\\*([a-z][\\-\\_a-z0-9]*)"
+        ".rgx": "\\*([a-z][\\-\\_a-z0-9]*)(?::([a-zA-Z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*))?"
       },
       "string_object": {
         ".any": [
@@ -228,6 +228,10 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
           {
             ".ref": "call_arguments",
             "+max": 1
+          },
+          {
+            ".ref": "index_lookup",
+            "+max": 1
           }
         ]
       },
@@ -268,6 +272,9 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
       },
       "RPAREN": {
         ".rgx": "\\)"
+      },
+      "index_lookup": {
+        ".rgx": ":([a-zA-Z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*)"
       },
       "function_call": {
         ".all": [

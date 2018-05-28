@@ -121,8 +121,11 @@ class TestMLCompiler.AST extends Pegex.Tree
     expr
 
   got_point_object: (got)->
-    object = ['*', got]
-    object.pick = "*#{got}": true
+    [name, lookup] = got
+    object = ['*', name]
+    if lookup
+      object = ['${}', object, lookup]
+    object.pick = "*#{name}": true
     object
 
   got_double_string: (got)->
@@ -150,15 +153,26 @@ class TestMLCompiler.AST extends Pegex.Tree
     [list]
 
   got_call_object: (got)->
-    [name, args] = got
+    [name, args, lookup] = got
+    if _.isPlainObject args
+      lookup = args
+      args = null
+
     args ||= []
+    lookup = lookup.lookup if lookup
     object = [name, args...]
 
     object.pick = {}
     for a in args
       _.merge object.pick, a.pick || {}
 
+    if lookup?
+      object = ['${}', object, lookup]
+
     object
+
+  got_index_lookup: (got)->
+    lookup: got
 
   got_call_arguments: (got)->
     got = got[0]
