@@ -51,6 +51,9 @@ class TestML.Run
 
   vars: {}
 
+  warned_only: false
+  error: null
+
   #----------------------------------------------------------------------------
   constructor: (params={})->
     { @file,
@@ -166,11 +169,21 @@ class TestML.Run
 
     return
 
-  exec_expr: (args...)->
+  exec_expr: (calls...)->
     context = []
 
-    for call in args
-      context = @exec call, context
+    @error = null
+    for call in calls
+      if ! @error
+        try
+          context = @exec call, context
+        catch e
+          @error = ['!', e]
+      else if call[0] == 'Catch'
+        context = [@error]
+        @error = null
+
+    throw @error[1] if @error
 
     return unless context.length
     return context[0]
@@ -320,6 +333,7 @@ class TestML.Run
         when object[0] instanceof Array then 'list'
         when _.isPlainObject object[0] then 'hash'
         when object[0] == '/' then 'regex'
+        when object[0] == '!' then 'error'
         else null
       else null
 
