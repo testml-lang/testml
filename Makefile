@@ -10,7 +10,7 @@ test: build
 
 site: $(SITE) build
 	cp -r docs/* $<
-	rm -f $</v2/*.html
+	rm -f $</v2/index.html
 
 coffeescript:
 	git clone --depth=1 http://github.com/jashkenas/$@
@@ -30,4 +30,4 @@ clean:
 	rm -fr coffeescript
 	rm -fr node_modules
 	rm -f package-lock.json
-	rm -f docs/v2/*.html
+	rm -f docs/v2/index.html
