@@ -1,5 +1,6 @@
 010-basic-syntax
-020-compile-filters
+020-data-point
+025-point-transforms
 030-filter-args
 040-pick-clause
 050-pseudo-points

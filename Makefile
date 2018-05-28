@@ -7,6 +7,8 @@ test: build testml compiler
 	(sleep 0.5; open http://localhost:1234/) &
 	static -p 1234
 
+test-clean: clean-test test
+
 site: $(SITE)
 	cp -r index* yaml test ctest $(SITE)/playground/
 
@@ -42,3 +44,7 @@ yaml-test-suite:
 clean:
 	rm -fr yaml-test-suite
 	rm -f testml compiler
+
+clean-test:
+	rm -fr ../node/npm
+	rm -fr ../compiler/npm
