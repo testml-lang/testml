@@ -51,15 +51,15 @@
         runner = new TestML.Run.TAP({
           testml: testml,
           bridge: bridge,
-          stdlib: new TestML.StdLib,
           output: output[0]
         });
+        runner.stdlib = new TestML.StdLib(runner);
       } else {
         runner = new TestML.Run.Mocha({
           testml: testml,
-          bridge: bridge,
-          stdlib: new TestML.StdLib
+          bridge: bridge
         });
+        runner.stdlib = new TestML.StdLib(runner);
       }
       return runner.test();
     } catch (error1) {
