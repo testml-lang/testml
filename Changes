@@ -1,4 +1,9 @@
 ---
+version: 0.0.17
+date:    Mon May 28 00:12:23 PDT 2018
+changes:
+- Fix bad 0.0.16 release
+---
 version: 0.0.16
 date:    Mon May 28 00:05:55 PDT 2018
 changes:
