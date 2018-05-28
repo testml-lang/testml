@@ -48,18 +48,11 @@ else
 	TESTML_RUN=$(@:test-%=%) prove -v test/*.tml
 endif
 
-test-coffee-tap: node_modules
+test-coffee-tap test-node-tap: node_modules js-files
 ifdef test
 	TESTML_RUN=$(@:test-%=%) prove -v $(test)
 else
-	TESTML_RUN=$(@:test-%=%) prove -v test/*.tml test/coffee/*.tml
-endif
-
-test-node-tap: node_modules js-files
-ifdef test
-	TESTML_RUN=$(@:test-%=%) prove -v $(test)
-else
-	TESTML_RUN=$(@:test-%=%) prove -v test/*.tml test/node/*.tml
+	TESTML_RUN=$(@:test-%=%) prove -v test/*.tml test/$(subst -tap,,$(subst test-,,$@))/*.tml
 endif
 
 test-out:
