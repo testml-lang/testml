@@ -25,13 +25,14 @@ index.js: index.coffee
 	coffee -cp $< > $@
 
 ../node/npm: ../node
+	(cd .. && make js-files)
 	(cd $< && make npm)
 
 ../compiler/npm: ../compiler
 	(cd $< && make npm)
 
 ../node ../compiler:
-	(cd .. && make js-files $(@:../%=%))
+	(cd .. && make $(@:../%=%))
 
 update: yaml-test-suite ../compiler
 	bin/make-yaml
