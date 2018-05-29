@@ -31,8 +31,10 @@ class TestML.Run
         'list,list': ''
     ]
 
-    '%()': 'pick_loop'
     '.'  : 'exec_expr'
+    '%()': 'pick_loop'
+    '()' : 'pick_exec'
+    '=>' : 'exec_func'
 
     "$''": 'get_str'
     "${}": 'get_hash'
@@ -88,7 +90,8 @@ class TestML.Run
 
     @testml_begin()
 
-    @exec_func [], @code
+    for statement in @code
+      @exec statement
 
     @testml_end()
 
@@ -114,13 +117,14 @@ class TestML.Run
       not(_.isArray expr) or
       _.isArray(expr[0]) or
       _.isPlainObject(expr[0]) or
-      _.isString(expr[0]) and expr[0].match /^(?:=>|\/|\?|\!)$/
+      _.isString(expr[0]) and expr[0].match /^(?:\/|\?|\!)$/
 
     args = _.clone expr
 
     opcode = name = args.shift()
     if call = @constructor.vtable[opcode]
       call = call[0] if _.isArray call
+      # Might need to pass context to => calls here.
       return_ = @[call](args...)
 
     else
@@ -166,12 +170,6 @@ class TestML.Run
 
     @stdlib[call](args...)
 
-  exec_func: (context, [signature, function_...])->
-    for statement in function_
-      @exec statement
-
-    return
-
   exec_expr: (calls...)->
     context = []
 
@@ -193,24 +191,32 @@ class TestML.Run
 
   pick_loop: (list, expr)->
     for block in @data
+      @block = block
+
       if block.point.ONLY and ! @warned_only
         @warn "Warning: TestML 'ONLY' in use."
         @warned_only = true
 
-      pick = true
-      for point in list
-        if (point.match(/^\*/) and ! block.point[point[1..]]?) or
-           (point.match(/^\!\*/) and block.point[point[2..]]?)
-          pick = false
-          break
-
-      if pick
-        @block = block
-        @exec expr
+      @exec ['()', list, expr]
 
     @block = undefined
 
     return
+
+  pick_exec: (list, expr)->
+    pick = true
+    for point in list
+      if (point.match(/^\*/) and ! @block.point[point[1..]]?) or
+          (point.match(/^\!\*/) and @block.point[point[2..]]?)
+        pick = false
+        break
+
+    if pick
+      @exec expr
+
+  exec_func: (signature, statements)->
+    for statement in statements
+      @exec statement
 
   get_str: (string)->
     return @interpolate string
@@ -297,8 +303,6 @@ class TestML.Run
 
   #----------------------------------------------------------------------------
   initialize: ->
-    @code.unshift []
-
     @data = _.map @data, (block)=>
       new TestML.Block block
 
