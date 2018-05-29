@@ -23,8 +23,12 @@ class TestMLCompiler.AST extends Pegex.Tree
       else
         if statement[0] == '()'
           statement[0] = '%()'
-        else if not statement[0].match /^(=|\|\|=|==|=~|~~)$/
-          statement = ['%()', [], statement]
+        else if statement[0] == '=>'
+          for s in statement[2]
+            if s[0] == '()'
+              statement = ['%()', [], statement]
+              break
+
         got.code.push statement
 
     got.data.push (@make_data @data)...
@@ -49,13 +53,17 @@ class TestMLCompiler.AST extends Pegex.Tree
     [[variable, operator], expression] = got
     [operator, variable, expression]
 
+  got_loop_statement: (got)->
+    ['%()', [], got[0]]
+
+  got_pick_statement: ([pick, statement])->
+    ['()', pick, statement]
+
   got_expression_statement: (got)->
     if _.isPlainObject got[0]
       label = got.shift()
 
     pick = {}
-    if _.isArray(got[0]) and got[0][0] == '()'
-      pick = got.shift().pick
 
     [left, right, suffix_label] = got
 
@@ -100,9 +108,7 @@ class TestMLCompiler.AST extends Pegex.Tree
     for item in more
       continue unless item.length
       pick[item[0]] = true
-    expr = ['()']
-    expr.pick = pick
-    expr
+    _.keys pick
 
   got_code_expression: (got)->
     [object, calls] = got

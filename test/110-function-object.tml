@@ -5,10 +5,15 @@ Diff = 1
 
 === Function loop
 --- input
+    # Loop over all blocks
     =>
       *foo.t1 == *bar
 
       *foo.t2 == *baz
+
+    # Don't loop
+    =>
+      123 == 123
 
     === Test 1
 
@@ -30,7 +35,9 @@ Diff = 1
               [".",
                 ["*","foo"],
                 ["t2"]],
-              ["*","baz"]]]]]]],
+              ["*","baz"]]]]]],
+    ["=>",[],
+      [["==",123,123]]]],
   "data": [
     { "label": "Test 1",
       "point": {}}]}
@@ -40,7 +47,7 @@ Diff = 1
     f1 = =>
       *foo.t1 == *bar
 
-    f1()
+    % f1()
 
     === Test 1
 
@@ -82,8 +89,7 @@ Diff = 1
               ["a"],
               ["b"]],
             ["c"]]]]],
-    ["%()",[],
-      ["f1",2,3,5]]],
+    ["f1",2,3,5]],
   "data": [
     { "label": "Test 1",
       "point": {}}]}

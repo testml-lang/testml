@@ -107,6 +107,15 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
             ".ref": "assignment_statement"
           },
           {
+            ".ref": "loop_statement"
+          },
+          {
+            ".ref": "pick_statement"
+          },
+          {
+            ".ref": "function_statement"
+          },
+          {
             ".ref": "expression_statement"
           }
         ]
@@ -411,14 +420,90 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
           }
         ]
       },
+      "loop_statement": {
+        ".all": [
+          {
+            ".rgx": "%[\\ \\t]+"
+          },
+          {
+            ".any": [
+              {
+                ".ref": "pick_statement"
+              },
+              {
+                ".ref": "function_statement"
+              },
+              {
+                ".ref": "expression_statement"
+              }
+            ]
+          }
+        ]
+      },
+      "pick_statement": {
+        ".all": [
+          {
+            ".ref": "pick_expression"
+          },
+          {
+            ".any": [
+              {
+                ".ref": "function_statement"
+              },
+              {
+                ".ref": "expression_statement"
+              }
+            ]
+          }
+        ]
+      },
+      "pick_expression": {
+        ".all": [
+          {
+            ".ref": "LANGLE"
+          },
+          {
+            ".all": [
+              {
+                ".ref": "pick_argument"
+              },
+              {
+                ".all": [
+                  {
+                    ".rgx": ",[\\ \\t]*"
+                  },
+                  {
+                    ".ref": "pick_argument"
+                  }
+                ],
+                "+min": 0
+              }
+            ]
+          },
+          {
+            ".ref": "RANGLE"
+          },
+          {
+            ".ref": "__"
+          }
+        ]
+      },
+      "LANGLE": {
+        ".rgx": "<"
+      },
+      "pick_argument": {
+        ".rgx": "(!?\\*[a-z][\\-\\_a-z0-9]*)"
+      },
+      "RANGLE": {
+        ".rgx": ">"
+      },
+      "function_statement": {
+        ".ref": "function_object"
+      },
       "expression_statement": {
         ".all": [
           {
             ".ref": "expression_label",
-            "+max": 1
-          },
-          {
-            ".ref": "pick_expression",
             "+max": 1
           },
           {
@@ -440,40 +525,6 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
       },
       "expression_label": {
         ".rgx": "\"((?:[^\\n\\\\\"]|\\\\[\\\\\"0nt])*?)\":\\s*"
-      },
-      "pick_expression": {
-        ".all": [
-          {
-            ".ref": "LPAREN"
-          },
-          {
-            ".all": [
-              {
-                ".ref": "pick_argument"
-              },
-              {
-                ".all": [
-                  {
-                    ".rgx": ",[\\ \\t]*"
-                  },
-                  {
-                    ".ref": "pick_argument"
-                  }
-                ],
-                "+min": 0
-              }
-            ]
-          },
-          {
-            ".ref": "RPAREN"
-          },
-          {
-            ".ref": "__"
-          }
-        ]
-      },
-      "pick_argument": {
-        ".rgx": "(!?\\*[a-z][\\-\\_a-z0-9]*)"
       },
       "assertion_expression": {
         ".any": [
