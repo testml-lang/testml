@@ -300,7 +300,8 @@ class TestML.Run
       new TestML.Block block
 
     if not @bridge
-      @bridge = new(require process.env.TESTML_BRIDGE)
+      try
+        @bridge = new(require process.env.TESTML_BRIDGE)
 
     if not @stdlib
       @stdlib = new(require '../testml/stdlib') @
