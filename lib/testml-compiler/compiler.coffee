@@ -46,13 +46,13 @@ class TestMLCompiler.Compiler
     json = JSON.stringify ast, null, 2
     json = json.replace /\[([^\{\[]+?)\]/g, (m, m1)->
       "[#{m1.replace /\n */g, ''}]"
+    json = json.replace /\ \[\n +"/g, ' ["'
     json = json.replace /("=>",)\n *(\[[^\n]*\])/g, '$1$2'
     json = json.replace /("\$''",)\n */g, '$1'
     json = json.replace /\n *([\}\]])/g, '$1'
-    json = json.replace /^( *\[)\n\ +("%\(\)",)\n *(\[.*\],)$/mg, '$1$2$3'
+    json = json.replace /^(\ +\["%\(\)",)\n\ +/mg, '$1'
     json = json.replace /\ \[\n +\[/g, ' [['
     json = json.replace /^(\ +"code": \[)\[/m, '$1\n    ['
-    json = json.replace /\ \[\n +"/g, ' ["'
     json = json.replace /(\{)\n +("(?:testml|label)":)/g, '$1 $2'
     json = json.replace /^(\ +\{)\n\ +\"/mg, '$1 "'
     json = json.replace /("=",)\n\ */g, '$1'

@@ -1,0 +1,38 @@
+#!/usr/bin/env testml-boot
+
+# Diff = 1
+*input.undent.compile == *output
+
+=== Function Loop
+--- input
+    =>
+      *foo.t1 == *bar
+
+      *foo.t2 == *baz
+
+    === Test 1
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["%()",[],
+      ["=>",[],
+        [["()",
+            ["*foo","*bar"],
+            ["==",
+              [".",
+                ["*","foo"],
+                ["t1"]],
+              ["*","bar"]]],
+          ["()",
+            ["*foo","*baz"],
+            ["==",
+              [".",
+                ["*","foo"],
+                ["t2"]],
+              ["*","baz"]]]]]]],
+  "data": [
+    { "label": "Test 1",
+      "point": {}}]}
+
+# vim: ft=:

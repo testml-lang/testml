@@ -23,6 +23,8 @@ class TestMLCompiler.AST extends Pegex.Tree
       else
         if statement[0] == '()'
           statement[0] = '%()'
+        else if statement[0] == '=>'
+          statement = ['%()', [], statement]
         got.code.push statement
 
     got.data.push (@make_data @data)...
@@ -151,6 +153,10 @@ class TestMLCompiler.AST extends Pegex.Tree
       for item in rest
         list.push item
     [list]
+
+  got_function_object: (got)->
+    got.unshift '=>', []
+    got
 
   got_call_object: (got)->
     [name, args, lookup] = got

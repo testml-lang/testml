@@ -6,6 +6,37 @@ class TestMLCompiler.DevGrammar extends Pegex.Grammar
     @file = '../pegex/testml.pgx'
 
 class TestMLCompiler.Grammar extends Pegex.Grammar
+  constructor: ->
+    super()
+    @indents = ['']
+
+  rule_indent: (parser, input, offset)->
+    [..., indent] = @indents
+    regex = "(?=(#{indent}\\ +)\\S)"
+    return unless m = parser.match_rgx regex
+    @indents.push m[0]
+    return []
+
+  rule_ondent: (parser, input, offset)->
+    parser.match_ref 'comment_lines'
+
+    [..., indent] = @indents
+    regex = "#{indent}(?=\\S)"
+    parser.match_rgx regex
+
+  rule_undent: (parser, input, offset)->
+    parser.match_ref 'comment_lines'
+
+    return [] if input[offset..] == ''
+
+    for i in [(@indents.length - 1)...-1]
+      regex = "(?=#{@indents[i]}\\S)"
+      if parser.match_rgx regex
+        @indents.pop()
+        return []
+
+    return
+
   make_tree: ->
     {
       "+toprule": "testml_document",
@@ -141,6 +172,10 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
           {
             ".ref": "function_call",
             "+min": 0
+          },
+          {
+            ".ref": "each_call",
+            "+max": 1
           }
         ]
       },
@@ -160,6 +195,9 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
           },
           {
             ".ref": "list_object"
+          },
+          {
+            ".ref": "function_object"
           },
           {
             ".ref": "call_object"
@@ -219,6 +257,75 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
             ".rgx": "\\]"
           }
         ]
+      },
+      "function_object": {
+        ".all": [
+          {
+            ".ref": "function_signature",
+            "+max": 1
+          },
+          {
+            ".rgx": "[\\ \\t]*=\\>\\r?\\n"
+          },
+          {
+            ".ref": "indent",
+            "-skip": 1
+          },
+          {
+            ".all": [
+              {
+                ".ref": "ondent",
+                "-skip": 1
+              },
+              {
+                ".ref": "code_statement"
+              }
+            ],
+            "+min": 1
+          },
+          {
+            ".ref": "undent",
+            "-skip": 1
+          },
+          {
+            ".rgx": "(?=[\\s\\S]|$)"
+          }
+        ]
+      },
+      "function_signature": {
+        ".all": [
+          {
+            ".rgx": "\\([\\ \\t]*"
+          },
+          {
+            ".ref": "function_variables"
+          },
+          {
+            ".rgx": "[\\ \\t]*\\)"
+          }
+        ]
+      },
+      "function_variables": {
+        ".all": [
+          {
+            ".ref": "function_variable"
+          },
+          {
+            ".all": [
+              {
+                ".rgx": ",[\\ \\t]*"
+              },
+              {
+                ".ref": "function_variable"
+              }
+            ],
+            "+min": 0
+          }
+        ],
+        "+max": 1
+      },
+      "function_variable": {
+        ".rgx": "([a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*)"
       },
       "call_object": {
         ".all": [
@@ -293,6 +400,16 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
       "DOT": {
         ".rgx": "\\."
       },
+      "each_call": {
+        ".all": [
+          {
+            ".rgx": "[\\ \\t]+%[\\ \\t]+"
+          },
+          {
+            ".ref": "code_expression"
+          }
+        ]
+      },
       "expression_statement": {
         ".all": [
           {
@@ -315,7 +432,8 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
             "+max": 1
           },
           {
-            ".ref": "eol"
+            ".ref": "eol",
+            "+max": 1
           }
         ]
       },

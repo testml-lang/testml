@@ -29,6 +29,6 @@ devel:
     coffeescript: '>=2.3.1'
     ingy-prelude: '>=0.0.1'
     lodash: '>=2.2.2'
-    pegex: '>=0.1.5'
+    pegex: '>=0.1.7'
   scripts:
     test: (source .rc; prove -v test)
