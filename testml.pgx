@@ -37,7 +37,7 @@ assignment-statement:
   / ( variable-name ) +
     ( assignment-operator ) +/
   code-expression
-  eol
+  eol?
 
 expression-statement:
   expression-label?
@@ -45,7 +45,7 @@ expression-statement:
   code-expression
   assertion-expression?
   suffix-label?
-  eol
+  eol?
 
 expression-label:
   / double-string COLON WS* /
@@ -66,6 +66,7 @@ pick-argument:
 code-expression:
   code-object
   function-call*
+  each-call?
 
 code-object:
   | point-object
@@ -73,10 +74,11 @@ code-object:
   | number-object
   | regex-object
   | list-object
+  | function-object
   | call-object
 
 point-object:
-  / STAR ( LOWER [\-\_a-z0-9]* ) /
+  / STAR ( LOWER [\-\_a-z0-9]* ) (: COLON ( identifier-name ))? /
 
 string-object:
   | double-string
@@ -102,9 +104,26 @@ regex-object:
 list-object:
   '[' ( code-object ( /- ',' -/ code-object )* )? ']'
 
+function-object:
+  function-signature?
+  /- '=>' EOL/
+  .indent
+  (.ondent code-statement)+
+  .undent
+  /(?= ALL | EOS)/
+
+function-signature:
+  / LPAREN -/
+  function-variables
+  /-  RPAREN/
+
+function-variables:
+  (function-variable ( / COMMA -/ function-variable )* )?
+
 call-object:
   call-name
   call-arguments?
+  index-lookup?
 
 call-name: /( identifier-name )/
 
@@ -115,9 +134,15 @@ call-arguments:
   )?
   RPAREN
 
+index-lookup: / COLON ( identifier-name )/
+
 function-call:
   .call-operator
   call-object
+
+each-call:
+  /+ '%' +/
+  code-expression
 
 assertion-expression:
   | assertion-eq
@@ -206,19 +231,22 @@ eol: / EOL /
 
 eos: EOS
 
+function-variable:
+  /( identifier-user )/
+
 identifier-name:
   / ALPHA ALNUM* (: DASH ALNUM+)* /
 
 identifier-user:
   / LOWER ALNUM* (: DASH ALNUM+)* /
 
-pseudo-point-name:
-  /(:HEAD|LAST|ONLY|SKIP|TODO|DIFF)/
-
 module-name: /( NS+ )/
 
 point-name:
   /(: identifier-user | pseudo-point-name)/
+
+pseudo-point-name:
+  /(:HEAD|LAST|ONLY|SKIP|TODO|DIFF)/
 
 variable-name: identifier-name
 
