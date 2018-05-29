@@ -9,4 +9,10 @@ class TestMLBridge extends TestML.Bridge
   get_env: (name)->
     process.env[name]
 
+  add: (x, y)->
+    x + y
+
+  sub: (x, y)->
+    x - y
+
 # vim: ft=coffee sw=2:

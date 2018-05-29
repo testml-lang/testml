@@ -13,6 +13,14 @@
       return process.env[name];
     }
 
+    add(x, y) {
+      return x + y;
+    }
+
+    sub(x, y) {
+      return x - y;
+    }
+
   };
 
   // vim: ft=coffee sw=2:
