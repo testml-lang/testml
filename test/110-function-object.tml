@@ -63,4 +63,29 @@ Diff = 1
     { "label": "Test 1",
       "point": {}}]}
 
+=== Function with arguments
+--- input
+    f1 = (a, b, c)=>
+      add(a, b) == c
+
+    f1(2, 3, 5)
+
+    === Test 1
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","f1",
+      ["=>",["a","b","c"],
+        [["==",
+            ["add",
+              ["a"],
+              ["b"]],
+            ["c"]]]]],
+    ["%()",[],
+      ["f1",2,3,5]]],
+  "data": [
+    { "label": "Test 1",
+      "point": {}}]}
+
 # vim: ft=:

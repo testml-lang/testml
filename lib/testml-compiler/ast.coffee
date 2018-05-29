@@ -155,8 +155,20 @@ class TestMLCompiler.AST extends Pegex.Tree
     [list]
 
   got_function_object: (got)->
-    got.unshift '=>', []
+    signature = if got.length == 2 \
+      then got.shift()[0] \
+      else []
+    got.unshift '=>', signature
     got
+
+  got_function_variables: (got)->
+    vars = [got.shift()]
+    return [] unless got.length
+    more = got[0]
+    for item in more
+      continue unless item.length
+      vars.push item[0]
+    vars
 
   got_call_object: (got)->
     [name, args, lookup] = got
