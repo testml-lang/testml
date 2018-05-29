@@ -246,5 +246,3 @@ method get-label($label-expr='') {
 }
 
 } # class TestML::Run
-
-# vim: set ft=perl6 sw=2:
