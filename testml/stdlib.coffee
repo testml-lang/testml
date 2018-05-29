@@ -23,6 +23,8 @@ class TestML.StdLib
       when type == 'error' then error[1]
       else throw "Bad argument passed to Error: '#{error}'"
 
+  env: -> [process.env]
+
   false: -> false
 
   flat: (list, depth=9999999999)->
@@ -31,7 +33,7 @@ class TestML.StdLib
   head: (list)->
 
   join: (list, separator=' ')->
-    _.join list, separator
+    _.join list[0], separator
 
   lines: (text)->
     text = text.replace /\n$/, ''
@@ -45,8 +47,8 @@ class TestML.StdLib
   pairs: (list)->
     _.chunk(list, 2)
 
-  split: (string, delim=/\s+/, limit=0)->
-    _.split(string, delim, limit)
+  split: (string, delim=/\s+/, limit=9999999999)->
+    [_.split(string, delim, limit)]
 
   str: (any)->
     String any
