@@ -23,7 +23,7 @@ class TestMLCompiler.AST extends Pegex.Tree
       else
         if statement[0] == '()'
           statement[0] = '%()'
-        else if statement[0] == '=>'
+        else if not statement[0].match /^(=|\|\|=|==|=~|~~)$/
           statement = ['%()', [], statement]
         got.code.push statement
 

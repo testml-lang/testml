@@ -160,7 +160,8 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
             ".ref": "code_expression"
           },
           {
-            ".ref": "eol"
+            ".ref": "eol",
+            "+max": 1
           }
         ]
       },

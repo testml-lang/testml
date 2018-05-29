@@ -1,9 +1,9 @@
 #!/usr/bin/env testml-boot
 
-# Diff = 1
+Diff = 1
 *input.undent.compile == *output
 
-=== Function Loop
+=== Function loop
 --- input
     =>
       *foo.t1 == *bar
@@ -31,6 +31,33 @@
                 ["*","foo"],
                 ["t2"]],
               ["*","baz"]]]]]]],
+  "data": [
+    { "label": "Test 1",
+      "point": {}}]}
+
+=== Assign function to variable
+--- input
+    f1 = =>
+      *foo.t1 == *bar
+
+    f1
+
+    === Test 1
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","f1",
+      ["=>",[],
+        [["()",
+            ["*foo","*bar"],
+            ["==",
+              [".",
+                ["*","foo"],
+                ["t1"]],
+              ["*","bar"]]]]]],
+    ["%()",[],
+      ["f1"]]],
   "data": [
     { "label": "Test 1",
       "point": {}}]}

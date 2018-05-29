@@ -13,11 +13,11 @@ else
 endif
 
 test = test/[0-9]*.tml
-debug =
-boot =
+export TESTML_COMPILER_BOOTSTRAP := $(boot)
+export TESTML_COMPILER_DEBUG := $(debug)
 
 test: node_modules
-	NODE_PATH=lib TESTML_COMPILER_BOOTSTRAP=$(boot) TESTML_COMPILER_DEBUG=$(debug) prove -v $(test)
+	NODE_PATH=lib prove -v $(test)
 
 test-pegex: node_modules ../pegex-js/npm
 	rm -fr node_modules/pegex
