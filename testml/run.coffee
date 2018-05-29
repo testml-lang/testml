@@ -176,6 +176,8 @@ class TestML.Run
     @error = null
     for call in calls
       if ! @error
+        if @get_type(call) == 'expr' and @vars[call[0]]?
+          call = @vars[call[0]]
         try
           context = @exec call, context
         catch e
@@ -229,7 +231,10 @@ class TestML.Run
     return @getp name
 
   set_var: (name, expr)->
-    @setv(name, @exec(expr)[0])
+    if @get_type expr == 'func'
+      @setv name, expr
+    else
+      @setv(name, @exec(expr)[0])
     return
 
 
@@ -342,7 +347,7 @@ class TestML.Run
         when _.isPlainObject object[0] then 'hash'
         when object[0] == '/' then 'regex'
         when object[0] == '!' then 'error'
-        else null
+        else 'expr'
       else null
 
     throw "Can't get type of #{require('util').inspect object}" unless type
