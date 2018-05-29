@@ -394,5 +394,3 @@ class TestML.Run
 
 TestML.Block = class
   constructor: ({@label, @point})->
-
-# vim: set ft=coffee sw=2:

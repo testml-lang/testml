@@ -53,5 +53,3 @@ module.exports = class TestML.Run.Mocha extends TestML.Run
   testml_list_has: (got, want, label)->
     if @browser
       @tests.push {got, want, label, assertion: 'include'}
-
-# vim: ft=coffee sw=2:
