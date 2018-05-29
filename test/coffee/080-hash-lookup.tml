@@ -7,6 +7,9 @@
 hash-lookup(*hash, 'foo') == 'hello'
   :"Use hash in bridge function"
 
+Env:PATH == get-env('PATH')
+  :"Env var hash lookup"
+
 === Test 1
 --- hash(%)
 foo: 'hello'

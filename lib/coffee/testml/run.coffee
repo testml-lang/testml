@@ -126,7 +126,10 @@ class TestML.Run
     else
       args.unshift (_.reverse context)...
 
-      if name.match /^[a-z]/
+      if args.length == 0 and @vars[name]?
+        return_ = @vars[name]
+
+      else if name.match /^[a-z]/
         return_ = @exec_bridge_function name, args
 
       else if name.match /^[A-Z]/
@@ -358,23 +361,29 @@ class TestML.Run
     return @interpolate label, true
 
   interpolate: (string, label=false)->
-    transform = (m, name)=>
+    transform = (value)=>
       if label
-        return '' unless v = @vars[name]
         switch
-          when @get_type(v) == 'list' then \
-            JSON.stringify(v[0]).replace /"/g, ''
-          else String(v).replace /\n/g, '␤'
+          when @get_type(value).match /^(?:list|hash)$/ then \
+            JSON.stringify(value[0]).replace /"/g, ''
+          else String(value).replace /\n/g, '␤'
       else
-        return '' unless v = @block.point[name]
         switch
-          when @get_type(v) == 'list' then \
-            JSON.stringify(v[0]).replace /"/g, ''
-          else String(v)
+          when @get_type(value).match /^(?:list|hash)$/ then \
+            JSON.stringify(value[0]).replace /"/g, ''
+          else String(value)
 
-    string = string.replace /\{([\-\w]+)\}/g, transform
+    transform1 = (m, name)=>
+      return '' unless (value = @vars[name])?
+      transform value
 
-    string = string.replace /\{\*([\-\w]+)\}/g, transform
+    transform2 = (m, name)=>
+      return '' unless (value = @block?.point[name])?
+      transform value
+
+    string = string.replace /\{([\-\w]+)\}/g, transform1
+
+    string = string.replace /\{\*([\-\w]+)\}/g, transform2
 
     return string
 #------------------------------------------------------------------------------

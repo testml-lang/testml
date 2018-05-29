@@ -9,6 +9,10 @@
       return hash[key];
     }
 
+    get_env(name) {
+      return process.env[name];
+    }
+
   };
 
   // vim: ft=coffee sw=2:
