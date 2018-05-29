@@ -201,4 +201,4 @@ class TestMLBlock:
     self.label = obj['label']
     self.point = obj['point']
 
-# vim: ft=python sw=2:
+# vim: sw=2:

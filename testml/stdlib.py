@@ -5,4 +5,4 @@ class StdLib():
   def false(self):
     return False
 
-# vim: ft=python sw=2:
+# vim: sw=2:

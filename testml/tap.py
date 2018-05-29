@@ -52,4 +52,4 @@ class TAP:
   def done_testing(self):
     print "1..%s" % self.count
 
-# vim: ft=python sw=2:
+# vim: sw=2:
