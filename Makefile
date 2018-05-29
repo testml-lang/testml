@@ -19,6 +19,7 @@ WORKTREES := \
     site \
 
 export TESTML_DEVEL := $(devel)
+export TESTML_COMPILER_DEBUG := $(debug)
 
 status:
 	@for d in $(WORKTREES); do \
@@ -68,7 +69,7 @@ node_modules: ../testml-node-modules
 
 work: $(WORKTREES)
 
-$(WORKTREES):
+$(WORKTREES) orphan-template:
 	git worktree add -f $@ $@
 
 playground-test: playground
@@ -95,7 +96,7 @@ clean:
 	find . -d | grep '\.testml$$' | xargs rm -fr
 	find . -d | grep '\.precomp$$' | xargs rm -fr
 	find . -name '*.pyc' | xargs rm
-	git worktree prune
 
 realclean: clean
-	rm -fr $(WORKTREES)
+	rm -fr $(WORKTREES) orphan-template
+	git worktree prune
