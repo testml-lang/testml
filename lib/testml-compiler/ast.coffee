@@ -112,7 +112,7 @@ class TestMLCompiler.AST extends Pegex.Tree
     for e in expr
       _.merge pick, e.pick || {}
 
-    if expr.length == 1
+    if expr.length == 1 and not object.callable
       expr = expr[0]
     else
       expr = ['.', expr...]
@@ -164,6 +164,7 @@ class TestMLCompiler.AST extends Pegex.Tree
       lookup = args
       args = null
 
+    callable = args? and args.length == 0
     args ||= []
     lookup = lookup.lookup if lookup
     object = [name, args...]
@@ -175,6 +176,8 @@ class TestMLCompiler.AST extends Pegex.Tree
     if lookup?
       object = ['${}', object, lookup]
 
+    object.callable = callable
+
     object
 
   got_index_lookup: (got)->
@@ -183,6 +186,7 @@ class TestMLCompiler.AST extends Pegex.Tree
   got_call_arguments: (got)->
     got = got[0]
     args = [got.shift()]
+    return [] unless got.length
     more = got[0]
     for item in more
       continue unless item.length
