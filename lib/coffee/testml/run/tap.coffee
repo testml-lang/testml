@@ -47,5 +47,3 @@ module.exports = class TestML.Run.TAP extends TestML.Run
 
   warn: (msg)->
     @tap.diag(msg)
-
-# vim: ft=coffee sw=2:

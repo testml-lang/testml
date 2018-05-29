@@ -37,5 +37,3 @@ method test-eq($got, $want, $label) {
 
   return;
 }
-
-# vim: ft=perl6 sw=2:

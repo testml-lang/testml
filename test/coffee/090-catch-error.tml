@@ -2,5 +2,3 @@
 
 Throw('an error').foo.bar.Catch.Error == 'an error'
   :"Throw an Error and Catch it"
-
-# vim: ft= sw=2:

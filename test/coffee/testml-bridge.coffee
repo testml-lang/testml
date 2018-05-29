@@ -14,5 +14,3 @@ class TestMLBridge extends TestML.Bridge
 
   sub: (x, y)->
     x - y
-
-# vim: ft=coffee sw=2:

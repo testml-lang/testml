@@ -14,5 +14,3 @@ Env:PATH == get-env('PATH')
 --- hash(%)
 foo: 'hello'
 bar: 'world'
-
-# vim: ft= sw=2:

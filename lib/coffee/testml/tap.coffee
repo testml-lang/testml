@@ -90,5 +90,3 @@ class TestML.TAP
     if _.isString want
       want = "'#{want}'"
     @diag "#{want_prefix} #{want}"
-
-# vim: ft=coffee sw=2:

@@ -23,6 +23,4 @@
 
   };
 
-  // vim: ft=coffee sw=2:
-
 }).call(this);

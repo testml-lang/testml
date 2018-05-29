@@ -41,4 +41,4 @@ class TestMLRunTAP(TestMLRun):
     else:
       self.tap.is_eq(got, want, label)
 
-# vim: ft=python sw=2:
+# vim: sw=2:

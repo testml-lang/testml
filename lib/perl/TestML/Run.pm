@@ -285,5 +285,3 @@ sub label { $_[0]->{label} }
 sub point { $_[0]->{point} }
 
 1;
-
-# vim: set ft=perl sw=2:

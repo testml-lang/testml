@@ -63,5 +63,3 @@ class TestML.StdLib
 
   type: (object)->
     @run.get_type object
-
-# vim: ft=coffee sw=2:

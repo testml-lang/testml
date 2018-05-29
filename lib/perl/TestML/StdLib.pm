@@ -16,5 +16,3 @@ sub false {
 }
 
 1;
-
-# vim: ft=perl sw=2:

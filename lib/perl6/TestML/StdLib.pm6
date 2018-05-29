@@ -7,5 +7,3 @@ method true {
 method False {
   False;
 }
-
-# vim: ft=perl6 sw=2:
