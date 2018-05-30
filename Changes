@@ -1,4 +1,16 @@
 ---
+version: 0.0.21
+date:    Wed May 30 11:51:29 PDT 2018
+changes:
+- Get all tests working with new pick compilation
+- Call a user defined function
+- Support top level function looping
+- More stdlib stuff and fix label interpolation bugs
+- Don't error if no bridge class exists
+- Support Error, Throw, Catch
+- Support hash lookups and hashes in bridge calls
+- Warn when using ONLY
+---
 version: 0.0.20
 date:    Mon May 28 12:15:58 PDT 2018
 changes:

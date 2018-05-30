@@ -1,1 +1,1 @@
-branches: {only: [master, travis]}
+branches: {only: [master]}
