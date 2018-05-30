@@ -1,8 +1,0 @@
-#!/usr/bin/env testml
-
-"XXX Write this test!!!": 1 == 1
-
-# f1 = (a, b, c)=>
-#   a.add(b) == c
-#
-# f1(2, 3, 5)

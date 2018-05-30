@@ -5,17 +5,15 @@
 set -e
 
 testml-run-file() {
-  NODE_PATH="$TESTML_LIB:$TESTML_INPUT_DIR${NODE_PATH:+:$NODE_PATH}" \
-    "$TESTML_LANG" \
-      -e "require('$TESTML_MODULE').run('$1')"
+  NODE_PATH="$TESTML_ROOT_LIB:$TESTML_LIB${NODE_PATH:+:$NODE_PATH}" \
+    "$TESTML_LANG" -e "require('$TESTML_MODULE').run('$1')"
 }
 
 : "${TESTML_BIN:=testml-node-mocha}"
 : "${TESTML_LANG:=node}"
 : "${TESTML_MODULE:=testml/run/mocha}"
-: "${TESTML_LIB:=$TESTML_ROOT/lib/node}"
 : "${TESTML_BRIDGE:=testml-bridge}"
-export TESTML_{BIN,LANG,MODULE,LIB,BRIDGE}
+export TESTML_{BIN,LANG,MODULE,BRIDGE}
 
 [[ -n $TESTML_SOURCED ]] ||
   source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"

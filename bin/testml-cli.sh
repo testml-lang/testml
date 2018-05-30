@@ -53,7 +53,7 @@ cmd-run() {
 
     set-testml-bin
 
-    set-input-vars
+    set-testml-vars
 
     compile-testml
 
@@ -61,7 +61,9 @@ cmd-run() {
       source "$TESTML_BIN"
     fi
 
-    testml-run-file "$TESTML_EXEC_PATH" || true
+    set-more-testml-vars
+
+    testml-run-file "$TESTML_EXEC" || true
   done
 }
 
@@ -69,18 +71,17 @@ cmd-compile() {
   for file; do
     check-input-file "$file"
 
-    set-input-vars
-
+    set-testml-vars
 
     if $option_print; then
-      testml-compiler "$TESTML_INPUT_PATH"
+      testml-compiler "$TESTML_PATH"
 
     else
       mkdir -p "$TESTML_CACHE"
 
-      testml-compiler "$TESTML_INPUT_PATH" > "$TESTML_EXEC_PATH" || {
+      testml-compiler "$TESTML_PATH" > "$TESTML_EXEC" || {
         rc=$?
-        rm -f "$TESTML_EXEC_PATH"
+        rm -f "$TESTML_EXEC"
         exit $rc
       }
     fi
@@ -114,7 +115,7 @@ Aliases:
 cmd-env() {
   if [[ -n $1 ]]; then
     export TESTML_INPUT=$1
-    set-input-vars
+    set-testml-vars
   fi
 
   env | grep '^TESTML_'

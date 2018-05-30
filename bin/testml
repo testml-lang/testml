@@ -27,11 +27,13 @@ testml-run() {
     run-cli "$@"
 
   else
-    set-input-vars
+    set-testml-vars
 
     compile-testml
 
-    testml-run-file "$TESTML_EXEC_PATH"
+    set-more-testml-vars
+
+    testml-run-file "$TESTML_EXEC"
   fi
 }
 
@@ -76,27 +78,41 @@ See 'testml --list' for a list of runners.
 "
 }
 
-set-input-vars() {
-  TESTML_INPUT_DIR=$(cd "$(dirname "$TESTML_INPUT")" && pwd)
-  export TESTML_INPUT_DIR
-  TESTML_INPUT_FILE=$(basename "$TESTML_INPUT")
-  export TESTML_INPUT_FILE
-  export TESTML_INPUT_PATH="$TESTML_INPUT_DIR/$TESTML_INPUT_FILE"
-  export TESTML_CACHE="$TESTML_INPUT_DIR/.testml"
-  export TESTML_EXEC_PATH="$TESTML_CACHE/$TESTML_INPUT_FILE.json"
+set-testml-vars() {
+  TESTML_DIR=$(cd "$(dirname "$TESTML_INPUT")" && pwd)
+  export TESTML_DIR
+  TESTML_FILE=$(basename "$TESTML_INPUT")
+  export TESTML_FILE
+  export TESTML_PATH="$TESTML_DIR/$TESTML_FILE"
+  export TESTML_CACHE="$TESTML_DIR/.testml"
+  export TESTML_EXEC="$TESTML_CACHE/$TESTML_FILE.json"
+}
+
+set-more-testml-vars() {
+  local dir=
+  if [[ $TESTML_PATH =~ (^.*)/testml/ ]]; then
+    dir=":${BASH_REMATCH[1]}"
+  fi
+  TESTML_LIB="$TESTML_DIR$dir"
+  if [[ $TESTML_LANG == 'perl6' ]]; then
+    TESTML_LIB=${TESTML_LIB//:/,}
+  fi
+  export TESTML_LIB
+
+  export TESTML_ROOT_LIB="$TESTML_ROOT/lib/$TESTML_LANG"
 }
 
 compile-testml() {
-  [[ -e $TESTML_EXEC_PATH && ! -s $TESTML_EXEC_PATH ]] &&
-    rm -f "$TESTML_EXEC_PATH"
-  [[ $TESTML_EXEC_PATH -nt $TESTML_INPUT_PATH ]] &&
+  [[ -e $TESTML_EXEC && ! -s $TESTML_EXEC ]] &&
+    rm -f "$TESTML_EXEC"
+  [[ $TESTML_EXEC -nt $TESTML_PATH ]] &&
     return 0
 
   mkdir -p "$TESTML_CACHE"
 
-  testml-compiler "$TESTML_INPUT_PATH" > "$TESTML_EXEC_PATH" || {
+  testml-compiler "$TESTML_PATH" > "$TESTML_EXEC" || {
     local rc=$?
-    rm -f "$TESTML_EXEC_PATH"
+    rm -f "$TESTML_EXEC"
     return "$rc"
   }
 }

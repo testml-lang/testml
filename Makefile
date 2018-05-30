@@ -44,22 +44,22 @@ test-tap: $(TAP_TESTS)
 
 test-all: test test-out
 
-test-perl-tap test-perl6-tap test-python-tap:
+test-coffee-tap test-node-tap: testml-tml node_modules js-files
 ifdef test
 	TESTML_RUN=$(@:test-%=%) prove -v $(test)
 else
-	TESTML_RUN=$(@:test-%=%) prove -v test/*.tml
+	TESTML_RUN=$(@:test-%=%) prove -v test/testml/*.tml test/$(subst -tap,,$(subst test-,,$@))/testml/*.tml
 endif
 
-test-coffee-tap test-node-tap: node_modules js-files
+test-perl-tap test-perl6-tap test-python-tap: testml-tml
 ifdef test
 	TESTML_RUN=$(@:test-%=%) prove -v $(test)
 else
-	TESTML_RUN=$(@:test-%=%) prove -v test/*.tml test/$(subst -tap,,$(subst test-,,$@))/*.tml
+	TESTML_RUN=$(@:test-%=%) prove -v test/testml/*.tml
 endif
 
 test-out:
-	prove -v test/out/*.tml
+	prove -v test/out/testml/*.tml
 
 node_modules: ../testml-node-modules
 	cp -r $< $@
