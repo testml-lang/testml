@@ -5,3 +5,11 @@
 coffee-050-object-type
 coffee-060-standard-lib
 coffee-070-polymorphic-assertions
+coffee-080-hash-lookup
+coffee-090-catch-error
+coffee-100-each
+coffee-110-stdlib-import
+coffee-120-function-loop
+coffee-130-function-assignment
+coffee-140-pick-func-call
+coffee-150-call-func-with-args
