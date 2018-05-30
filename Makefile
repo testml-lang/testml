@@ -31,10 +31,10 @@ index.js: index.coffee
 ../compiler/npm: ../compiler
 	(cd $< && make npm)
 
-../node ../compiler:
+../node ../compiler ../compiler-tml ../testml-tml:
 	(cd .. && make $(@:../%=%))
 
-update: yaml-test-suite ../compiler
+update: yaml-test-suite ../compiler-tml ../testml-tml
 	bin/make-yaml
 	bin/make-test
 	bin/make-ctest

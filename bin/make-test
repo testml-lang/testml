@@ -4,13 +4,13 @@ set -e
 
 rm -f test/*.tml
 
-cp ../test/*.tml ../test/testml-bridge.coffee test/
+cp ../testml-tml/*.tml ../test/testml-bridge.coffee test/
 
-if [[ -d ../test/coffee ]]; then
+if [[ -d ../testml-tml/coffee ]]; then
   cp ../test/coffee/testml-bridge.coffee test/coffee-testml-bridge.coffee
 
-  for test in ../test/coffee/*.tml; do
-    cp "$test" "test/coffee-${test#../test/coffee/}"
+  for test in ../testml-tml/coffee/*.tml; do
+    cp "$test" "test/coffee-${test#../testml-tml/coffee/}"
   done
 fi
 
