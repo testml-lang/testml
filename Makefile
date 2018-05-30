@@ -95,9 +95,9 @@ clean:
 	rm -fr lib/perl6/.precomp/
 	rm -fr node_modules/
 	rm -f package*
-	find . -d | grep '\.testml$$' | xargs rm -fr
-	find . -d | grep '\.precomp$$' | xargs rm -fr
-	find . -name '*.pyc' | xargs rm
+	find . -type d | grep '\.testml$$' | xargs rm -fr
+	find . -type d | grep '\.precomp$$' | xargs rm -fr
+	find . -name '*.pyc' | xargs rm -f
 
 realclean: clean
 	rm -fr $(WORKTREES) orphan-template
