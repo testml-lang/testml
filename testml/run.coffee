@@ -36,6 +36,7 @@ class TestML.Run
     '()' : 'pick_exec'
     '=>' : 'exec_func'
 
+    '&'  : 'call_func'
     "$''": 'get_str'
     "${}": 'get_hash'
     '*'  : 'get_point'
@@ -130,8 +131,11 @@ class TestML.Run
     else
       args.unshift (_.reverse context)...
 
-      if args.length == 0 and @vars[name]?
-        return_ = @vars[name]
+      if (value = @vars[name])?
+        if args.length
+          return_ = @exec value, args...
+        else
+          return_ = value
 
       else if name.match /^[a-z]/
         return_ = @exec_bridge_function name, args
@@ -176,8 +180,6 @@ class TestML.Run
     @error = null
     for call in calls
       if ! @error
-        if @get_type(call) == 'expr' and @vars[call[0]]?
-          call = @vars[call[0]]
         try
           context = @exec call, context
         catch e
@@ -219,6 +221,12 @@ class TestML.Run
   exec_func: (signature, statements)->
     for statement in statements
       @exec statement
+
+  call_func: (name)->
+    func = @vars[name]
+    throw "Tried to call '#{name}' but is not a function" \
+      unless func? and @get_type(func) == 'func'
+    @exec func
 
   get_str: (string)->
     return @interpolate string
@@ -345,6 +353,7 @@ class TestML.Run
       when object instanceof Array then switch
         when object[0] instanceof Array then 'list'
         when _.isPlainObject object[0] then 'hash'
+        when object[0] == '=>' then 'func'
         when object[0] == '/' then 'regex'
         when object[0] == '!' then 'error'
         else 'expr'
