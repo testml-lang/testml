@@ -1,12 +1,17 @@
 *.pyc
 /compiler/
 /compiler-site/
+/compiler-tml/
 /gh-pages/
 /node/
 /node_modules/
 /pegex/
+/orphan-template/
 /playground/
 /site/
+/testml-tml/
 /package*
 .precomp/
 .testml/
+
+/test/fail/

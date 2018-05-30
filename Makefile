@@ -12,10 +12,12 @@ JS_FILES := $(subst coffee,node,$(JS_FILES))
 WORKTREES := \
     compiler \
     compiler-site \
+    compiler-tml \
     gh-pages \
     node \
     pegex \
     playground \
+    testml-tml \
     site \
 
 export TESTML_DEVEL := $(devel)
