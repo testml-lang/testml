@@ -12,12 +12,12 @@ else
     $(error Fix your errors)
 endif
 
-test = test/[0-9]*.tml
+test = test/testml/[0-9]*.tml
 export TESTML_COMPILER_BOOTSTRAP := $(boot)
 export TESTML_COMPILER_DEBUG := $(debug)
 
-test: node_modules
-	NODE_PATH=lib prove -v $(test)
+test: node_modules ../compiler-tml
+	NODE_PATH=lib PERL5LIB=test prove -v $(test)
 
 test-pegex: node_modules ../pegex-js/npm
 	rm -fr node_modules/pegex
@@ -33,10 +33,10 @@ update-grammar: node_modules ../pegex
 	) > tmp-grammar
 	mv tmp-grammar lib/testml-compiler/grammar.coffee
 
-../pegex:
-	(cd ..; make pegex)
+../pegex ../compiler-tml:
+	(cd ..; make $(@:../%=%))
 
 clean: ingy-npm-clean
 	rm -fr node_modules
 	rm -f tmp-grammar
-	rm -fr test/.testml
+	rm -fr test/testml/.testml
