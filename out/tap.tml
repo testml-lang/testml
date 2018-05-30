@@ -1,6 +1,6 @@
 #!/usr/bin/env testml-pl5
 
-Diff = True
+# Diff = True
 
 "prove -v {*testml}":
   prove(*testml) == *output
@@ -23,6 +23,16 @@ All tests successful.
 Result: PASS
 
 ===
+--- testml: test/testml/020-pick-exclude.tml
+--- output
+test/testml/020-pick-exclude.tml ..
+ok 1 - Test 2
+1..1
+ok
+All tests successful.
+Result: PASS
+
+===
 --- testml: test/testml/030-assertion-label.tml
 --- output
 test/testml/030-assertion-label.tml ..
@@ -37,6 +47,16 @@ ok 8 - Test 2 -- 4 + 5 == 9
 ok 9 - Test 1 -- 1 + 2 == 3
 ok 10 - Test 2 -- 4 + 5 == 9
 1..10
+ok
+All tests successful.
+Result: PASS
+
+===
+--- testml: test/testml/040-multiline-point.tml
+--- output
+test/testml/040-multiline-point.tml ..
+ok 1 - Test 1
+1..1
 ok
 All tests successful.
 Result: PASS
