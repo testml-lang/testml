@@ -8,8 +8,9 @@ class TestMLRun:
     '~~'    : 'assert_has',
     '=~'    : 'assert_like',
 
-    '%()'   : 'pick_loop',
     '.'     : 'exec_expr',
+    '%()'   : 'pick_loop',
+    '()'    : 'pick_exec',
 
     "$''"   : 'get_str',
     '*'     : 'get_point',
@@ -115,18 +116,24 @@ class TestMLRun:
 
   def pick_loop(self, list_, expr):
     for block in self.data:
-      pick = True
-      for point in list_:
-        if (re.match(r'\*', point) and not block.point.get(point[1:])) or \
-           (re.match(r'\!\*', point) and block.point.get(point[2:])):
-          pick = False
-          break
+      self.block = block
 
-      if pick:
-        self.block = block
-        self.exec_(expr)
+      self.exec_(['()', list_, expr])
 
     self.block = None
+
+  def pick_exec(self, list_, expr):
+    pick = True
+    for point in list_:
+      if (re.match(r'\*', point) and
+          not self.block.point.get(point[1:])) or \
+         (re.match(r'\!\*', point) and
+          self.block.point.get(point[2:])):
+        pick = False
+        break
+
+    if pick:
+      self.exec_(expr)
 
   def get_str(self, string):
     string = re.sub(

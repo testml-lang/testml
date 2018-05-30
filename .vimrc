@@ -5,10 +5,10 @@ augroup END
 
 augroup code_ft
   autocmd!
-  autocmd BufNewFile,BufRead *.coffee,*.pm,*.pm6,*.py  set sw=2
+  autocmd BufNewFile,BufRead *.coffee,*.pm,*.py  set sw=2
 augroup END
 
 augroup pm6_ft
   autocmd!
-  autocmd BufNewFile,BufRead *.pm6  set lisp
+  autocmd BufNewFile,BufRead *.pm6  set sw=2
 augroup END

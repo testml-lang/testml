@@ -8,8 +8,9 @@ our $vtable = {
   '~~'    => 'assert_has',
   '=~'    => 'assert_like',
 
-  '%()'   => 'pick_loop',
   '.'     => 'exec_expr',
+  '%()'   => 'pick_loop',
+  '()'    => 'pick_exec',
 
   "\$''"  => 'get_str',
   '*'     => 'get_point',
@@ -156,24 +157,35 @@ sub pick_loop {
   my ($self, $list, $expr) = @_;
 
   for my $block (@{$self->{data}}) {
-    my $pick = 1;
-    for my $point (@$list) {
-      if (($point =~ /^\*/ and not exists $block->{point}{substr($point, 1)}) or
-          ($point =~ /^!*/) and exists $block->{point}{substr($point, 2)}) {
-        $pick = 0;
-        last;
-      }
-    }
+    $self->{block} = $block;
 
-    if ($pick) {
-      $self->{block} = $block;
-      $self->exec($expr);
-    }
+    $self->exec(['()', $list, $expr]);
   }
 
   delete $self->{block};
 
   return;
+}
+
+sub pick_exec {
+  my ($self, $list, $expr) = @_;
+
+  my $pick = 1;
+  for my $point (@$list) {
+    if (
+      ($point =~ /^\*/ and
+        not exists $self->block->point->{substr($point, 1)}) or
+      ($point =~ /^!*/) and
+        exists $self->block->point->{substr($point, 2)}
+    ) {
+      $pick = 0;
+      last;
+    }
+  }
+
+  if ($pick) {
+    $self->exec($expr);
+  }
 }
 
 sub get_str {

@@ -14,8 +14,9 @@ has $!vtable = {
   '~~'    => 'assert-has',
   '=~'    => 'assert-like',
 
-  '%()'   => 'pick-loop',
   '.'     => 'exec-expr',
+  '%()'   => 'pick-loop',
+  '()'    => 'pick-exec',
 
   "\$''"  => 'get-str',
   '*'     => 'get-point',
@@ -147,24 +148,32 @@ method exec-expr(*@args) {
 
 method pick-loop($list, $expr) {
   for |$!data -> $block {
-    my $pick = True;
-    for |$list -> $point {
-      if ($point ~~ /^\*/ and not $block.point{substr($point, 1)}:exists) or
-         ($point ~~ /^\!\*/ and $block.point{substr($point, 2)}:exists) {
-        $pick = False;
-        last;
-      }
-    }
+    $!block = $block;
 
-    if $pick {
-      $!block = $block;
-      self.exec($expr);
-    }
+    self.exec(['()', $list, $expr]);
   }
 
   $!block = Nil;
 
   return;
+}
+
+method pick-exec($list, $expr) {
+  my $pick = True;
+  for |$list -> $point {
+    if ($point ~~ /^\*/ and
+        not $.block.point{substr($point, 1)}:exists) or
+       ($point ~~ /^\!\*/ and
+        $.block.point{substr($point, 2)}:exists
+    ) {
+      $pick = False;
+      last;
+    }
+  }
+
+  if $pick {
+    self.exec($expr);
+  }
 }
 
 method get-str($original) {
