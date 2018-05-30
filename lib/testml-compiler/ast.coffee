@@ -118,8 +118,10 @@ class TestMLCompiler.AST extends Pegex.Tree
     for e in expr
       _.merge pick, e.pick || {}
 
-    if expr.length == 1 and not object.callable
+    if expr.length == 1
       expr = expr[0]
+      if object.callable
+        expr = ['&', expr]
     else
       expr = ['.', expr...]
 
