@@ -1,6 +1,6 @@
 #!/usr/bin/env testml
 
-(!*x) *a.add(*b) == *c
+<!*x> *a.add(*b) == *c
 
 === Test 1
 --- a: 1

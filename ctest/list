@@ -8,3 +8,5 @@
 070-expression-labels
 080-testml-operators
 090-code-object
+100-hash-lookup
+110-function-object

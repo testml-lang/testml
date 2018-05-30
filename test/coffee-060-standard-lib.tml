@@ -15,6 +15,13 @@
 [].Text == ""
   :"Empty list turns into empty Text string"
 
+list1 = "foo,bar,baz".Split(',')
+list1.Count == 3
+  :"3 elements in '{list1}'"
+
+list1.Join('+') == 'foo+bar+baz'
+  :"Join list '{list1}' into string '{Want}'"
+
 === Test 1
 --- list(@)
 line 1
