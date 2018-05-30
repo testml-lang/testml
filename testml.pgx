@@ -31,6 +31,9 @@ code-statement:
   | import-directive
   | comment-lines
   | assignment-statement
+  | loop-statement
+  | pick-statement
+  | function-statement
   | expression-statement
 
 assignment-statement:
@@ -39,9 +42,24 @@ assignment-statement:
   code-expression
   eol?
 
+loop-statement:
+  /'%' +/
+  ( pick-statement
+  | function-statement
+  | expression-statement
+  )
+
+pick-statement:
+  pick-expression
+  ( function-statement
+  | expression-statement
+  )
+
+function-statement:
+  function-object
+
 expression-statement:
   expression-label?
-  pick-expression?
   code-expression
   assertion-expression?
   suffix-label?
@@ -54,11 +72,11 @@ suffix-label:
   / WS* COLON double-string /
 
 pick-expression:
-  LPAREN
+  LANGLE
   (
     pick-argument (/ COMMA -/ pick-argument)*
   )
-  RPAREN +
+  RANGLE +
 
 pick-argument:
   /( BANG? STAR LOWER [\-\_a-z0-9]* )/
