@@ -142,3 +142,15 @@ ok 8 - Test 2
 ok
 All tests successful.
 Result: PASS
+
+===
+--- command: testml-perl-tap -e '1 == 1'
+--- output
+ok 1
+1..1
+
+# ===
+# --- command: testml-perl-tap -e 'Diff = True' -a a.tml b.tml c.tml
+# --- output
+# ok 1
+# 1..1
