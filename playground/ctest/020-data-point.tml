@@ -83,4 +83,42 @@ Diff = 1
       "point": {
         "bar": "xxx"}}]}
 
+=== User defined data section in block
+--- input
+    === Test 1
+    some
+      stuff
+    --- foo: xxx
+
+    === Test 2
+    --- ^bar=foo
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx"},
+      "user": "some\n  stuff\n"},
+    { "label": "Test 2",
+      "point": {
+        "bar": "xxx"}}]}
+
+=== User section must contain some content
+--- input
+    === Test 1
+
+
+
+    --- foo: xxx
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx"}}]}
+
 # vim: ft= sw=2:
