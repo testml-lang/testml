@@ -1,4 +1,9 @@
 ---
+version: 0.0.30
+date:    Thu May 31 13:08:55 PDT 2018
+changes:
+- Use & as opcode for single variable function call
+---
 version: 0.0.29
 date:    Wed May 30 10:58:44 PDT 2018
 changes:
