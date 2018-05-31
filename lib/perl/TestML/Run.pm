@@ -243,6 +243,7 @@ sub initialize {
   ];
 
   if (not $self->{bridge}) {
+    @INC = (@INC, split ':', $ENV{TESTML_LIB});
     my $bridge_module = $ENV{TESTML_BRIDGE};
     eval "require $bridge_module; 1" or die "$@";
     $self->{bridge} = $bridge_module->new;

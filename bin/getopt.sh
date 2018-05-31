@@ -32,12 +32,17 @@ getopt() {
 
   while IFS= read -r line; do
     if [[ $line =~ ^([a-zA-Z]+)(,([a-z]+))?(=?)\  ]]; then
+      opt_var="option_${BASH_REMATCH[1]}"
+      if [[ -n ${BASH_REMATCH[3]} ]]; then
+        opt_var="option_${BASH_REMATCH[3]}"
+      fi
       if [[ -z ${BASH_REMATCH[4]} ]]; then
-        opt_var="option_${BASH_REMATCH[1]}"
-        if [[ -n ${BASH_REMATCH[3]} ]]; then
-          opt_var="option_${BASH_REMATCH[3]}"
-        fi
         printf -v "$opt_var" false
+      else
+        lines_var="${opt_var}_lines"
+        if [[ -n ${!lines_var} ]]; then
+          eval "$opt_var+=()"
+        fi
       fi
     fi
   done <<<"$opt_spec"
@@ -70,7 +75,12 @@ getopt() {
 
       if [[ $option == "$match" ]]; then
         if $wants_value; then
-          printf -v "$opt_var" "%s" "$1"
+          lines_var="${opt_var}_lines"
+          if [[ -n ${!lines_var} ]]; then
+            eval "$opt_var+=('$1')"
+          else
+            printf -v "$opt_var" "%s" "$1"
+          fi
           shift
         else
           printf -v "$opt_var" true

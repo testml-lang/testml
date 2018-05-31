@@ -1,6 +1,6 @@
 #! bash
 
-# shellcheck disable=1090,2034,2154
+# shellcheck disable=1090,2034,2153,2154
 GETOPT_SPEC="\
   $(basename "$0") <options...> [<testml-file>...]
 
@@ -21,6 +21,7 @@ Options:
  
 c,compile   Compile a TestML file to the cache directory
 e,eval=     Specify TestML input on command line
+a,all       Combine all input files into one text
 p,print     Print compiled TestML to stdout
 l,list      List all the TestML langauge/framework runners
 env         Show the TestML environment details
@@ -29,9 +30,10 @@ version     Print TestML version
 h,help      Show the command summary
  
 R,run=      TestML runner to use (see: testml --list)
+B,bridge=   TestML bridge module to use
+I,lib=      Directory path to find bridge modules
+P,path=     Directory path to find test files and imports
 M,module=   TestML runner module to use
-I,lib=      Directory path to find TestML modules
-P,path=     Directory path to find TestML test files
 C,config=   TestML config file
  
 x,debug     Print lots of debugging info
@@ -51,6 +53,8 @@ cmd-run() {
   for file; do
     check-input-file "$file"
 
+    add-eval-text
+
     set-testml-bin
 
     set-testml-vars
@@ -61,7 +65,7 @@ cmd-run() {
       source "$TESTML_BIN"
     fi
 
-    set-more-testml-vars
+    set-testml-lib-vars
 
     testml-run-file "$TESTML_EXEC" || true
   done
@@ -71,15 +75,17 @@ cmd-compile() {
   for file; do
     check-input-file "$file"
 
+    add-eval-text
+
     set-testml-vars
 
     if $option_print; then
-      testml-compiler "$TESTML_PATH"
+      testml-compiler "$TESTML_FILE"
 
     else
       mkdir -p "$TESTML_CACHE"
 
-      testml-compiler "$TESTML_PATH" > "$TESTML_EXEC" || {
+      testml-compiler "$TESTML_FILE" > "$TESTML_EXEC" || {
         rc=$?
         rm -f "$TESTML_EXEC"
         exit $rc
@@ -113,12 +119,15 @@ Aliases:
 }
 
 cmd-env() {
-  if [[ -n $1 ]]; then
-    export TESTML_INPUT=$1
-    set-testml-vars
-  fi
+  [[ -n $1 ]] ||
+    die "usage: testml --env <testml-file>"
 
-  env | grep '^TESTML_'
+  export TESTML_INPUT=$1
+
+  set-testml-vars
+  set-testml-lib-vars
+
+  env | grep '^TESTML_' | sort
 }
 
 make-clean() {
@@ -142,8 +151,11 @@ cmd-version() {
 }
 
 get-options() {
+  local option_eval_lines=1
   GETOPT_ARGS='@arguments' \
     getopt "$@"
+
+  setup-eval
 
   $option_debug && set -x
 
@@ -151,6 +163,18 @@ get-options() {
     make-clean
 
     [[ ${#arguments[@]} -gt 0 ]] || exit 1
+  fi
+
+  if [[ -n $option_bridge ]]; then
+    export TESTML_BRIDGE="$option_bridge"
+  fi
+  if [[ -n $option_lib ]]; then
+    TESTML_LIB="$(cd "$option_lib" && pwd)"
+    export TESTML_LIB
+  fi
+  if [[ -n $option_path ]]; then
+    TESTML_PATH="$(cd "$option_path" && pwd)"
+    export TESTML_PATH
   fi
 
   if $option_env; then
@@ -169,4 +193,35 @@ get-options() {
     export TESTML_RUN="$option_run"
 
   true
+}
+
+setup-eval() {
+  testml_eval_input=''
+
+  for line in "${option_eval[@]}"; do
+    testml_eval_input+="$line"$'\n'
+  done
+
+  testml_eval_text=$testml_eval_input
+
+  if $option_all; then
+    [[ ${#arguments[@]} -gt 0 ]] ||
+      die "--all used but no input files specified"
+    for file in "${arguments[@]}"; do
+      testml_eval_input="$testml_eval_input$(cat "$file")"$'\n'
+    done
+    arguments=('-')
+  elif [[ -n "$testml_eval_input" ]]; then
+    arguments=('-')
+  fi
+}
+
+add-eval-text() {
+  [[ $file != '-' && -n $testml_eval_text ]] || return 0
+
+  testml_eval_input="$testml_eval_text$(cat "$file")"$'\n'
+
+  file='-'
+
+  export TESTML_INPUT='-'
 }

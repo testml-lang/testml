@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# shellcheck disable=1090,2034
+# shellcheck disable=1090,2034,2154
 
 set -e
 
@@ -31,7 +31,7 @@ testml-run() {
 
     compile-testml
 
-    set-more-testml-vars
+    set-testml-lib-vars
 
     testml-run-file "$TESTML_EXEC"
   fi
@@ -44,10 +44,12 @@ run-cli() {
 }
 
 check-input-file() {
-  [[ $# == 1 && -n $1 ]] ||
-    die "Can't determine testml source file"
-  [[ -e $1 ]] ||
-    die "TestML input file '$1' does not exist"
+  if [[ $1 != '-' ]]; then
+    [[ $# == 1 && -n $1 ]] ||
+      die "Can't determine testml source file"
+    [[ -e $1 ]] ||
+      die "TestML input file '$1' does not exist"
+  fi
 
   export TESTML_INPUT=$1
 }
@@ -81,19 +83,23 @@ See 'testml --list' for a list of runners.
 set-testml-vars() {
   TESTML_DIR=$(cd "$(dirname "$TESTML_INPUT")" && pwd)
   export TESTML_DIR
-  TESTML_FILE=$(basename "$TESTML_INPUT")
-  export TESTML_FILE
-  export TESTML_PATH="$TESTML_DIR/$TESTML_FILE"
+  TESTML_FILENAME=$(basename "$TESTML_INPUT")
+  export TESTML_FILENAME
+  if [[ $TESTML_INPUT == '-' ]]; then
+    export TESTML_FILE='-'
+  else
+    export TESTML_FILE="$TESTML_DIR/$TESTML_FILENAME"
+  fi
   export TESTML_CACHE="$TESTML_DIR/.testml"
-  export TESTML_EXEC="$TESTML_CACHE/$TESTML_FILE.json"
+  export TESTML_EXEC="$TESTML_CACHE/$TESTML_FILENAME.json"
 }
 
-set-more-testml-vars() {
+set-testml-lib-vars() {
   local dir=
-  if [[ $TESTML_PATH =~ (^.*)/testml/ ]]; then
+  if [[ $TESTML_FILE =~ (^.*)/testml/ ]]; then
     dir=":${BASH_REMATCH[1]}"
   fi
-  TESTML_LIB="$TESTML_DIR$dir"
+  TESTML_LIB="${TESTML_LIB:+$TESTML_LIB:}$TESTML_DIR$dir"
   if [[ $TESTML_LANG == 'perl6' ]]; then
     TESTML_LIB=${TESTML_LIB//:/,}
   fi
@@ -103,14 +109,20 @@ set-more-testml-vars() {
 }
 
 compile-testml() {
-  [[ -e $TESTML_EXEC && ! -s $TESTML_EXEC ]] &&
+  [[ $TESTML_INPUT == '-' || -e $TESTML_EXEC && ! -s $TESTML_EXEC ]] &&
     rm -f "$TESTML_EXEC"
-  [[ $TESTML_EXEC -nt $TESTML_PATH ]] &&
+  [[ $TESTML_EXEC -nt $TESTML_FILE ]] &&
     return 0
 
   mkdir -p "$TESTML_CACHE"
 
-  testml-compiler "$TESTML_PATH" > "$TESTML_EXEC" || {
+  (
+    if [[ -n $testml_eval_input ]]; then
+      echo "$testml_eval_input" | testml-compiler -
+    else
+      testml-compiler "$TESTML_FILE"
+    fi
+  ) > "$TESTML_EXEC" || {
     local rc=$?
     rm -f "$TESTML_EXEC"
     return "$rc"
