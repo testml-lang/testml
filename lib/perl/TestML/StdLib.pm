@@ -5,6 +5,12 @@ sub new {
   bless {}, shift;
 }
 
+sub cat {
+  my ($self, @str) = @_;
+
+  join '', @str;
+}
+
 sub false {
   require boolean;
   boolean::false();

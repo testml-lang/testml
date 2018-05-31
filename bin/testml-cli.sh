@@ -80,17 +80,10 @@ cmd-compile() {
     set-testml-vars
 
     if $option_print; then
-      testml-compiler "$TESTML_FILE"
-
-    else
-      mkdir -p "$TESTML_CACHE"
-
-      testml-compiler "$TESTML_FILE" > "$TESTML_EXEC" || {
-        rc=$?
-        rm -f "$TESTML_EXEC"
-        exit $rc
-      }
+      TESTML_EXEC=''
     fi
+
+    compile-testml "$TESTML_FILE" "$TESTML_EXEC"
   done
 }
 
@@ -202,8 +195,6 @@ setup-eval() {
     testml_eval_input+="$line"$'\n'
   done
 
-  testml_eval_text=$testml_eval_input
-
   if $option_all; then
     [[ ${#arguments[@]} -gt 0 ]] ||
       die "--all used but no input files specified"
@@ -211,15 +202,21 @@ setup-eval() {
       testml_eval_input="$testml_eval_input$(cat "$file")"$'\n'
     done
     arguments=('-')
-  elif [[ -n "$testml_eval_input" ]]; then
-    arguments=('-')
+  else
+    testml_eval_text=$testml_eval_input
   fi
+
+  [[ ${#arguments[@]} -gt 0 ]] ||
+    arguments=('-')
 }
 
 add-eval-text() {
-  [[ $file != '-' && -n $testml_eval_text ]] || return 0
+  [[ -n $testml_eval_text ]] || return 0
 
-  testml_eval_input="$testml_eval_text$(cat "$file")"$'\n'
+  testml_eval_input=$testml_eval_text
+  if [[ $file != '-' ]]; then
+    testml_eval_input+="$(cat "$file")"$'\n'
+  fi
 
   file='-'
 

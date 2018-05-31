@@ -114,19 +114,23 @@ compile-testml() {
   [[ $TESTML_EXEC -nt $TESTML_FILE ]] &&
     return 0
 
-  mkdir -p "$TESTML_CACHE"
-
-  (
+  rc=0
+  output=$(
     if [[ -n $testml_eval_input ]]; then
       echo "$testml_eval_input" | testml-compiler -
     else
       testml-compiler "$TESTML_FILE"
     fi
-  ) > "$TESTML_EXEC" || {
-    local rc=$?
-    rm -f "$TESTML_EXEC"
-    return "$rc"
-  }
+  ) || rc=$?
+
+  if [[ -n $TESTML_EXEC ]]; then
+    mkdir -p "$TESTML_CACHE"
+    echo -n "$output" > "$TESTML_EXEC"
+  else
+    echo "$output"
+  fi
+
+  return $rc
 }
 
 is-tty() {

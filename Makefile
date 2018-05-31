@@ -59,7 +59,11 @@ else
 endif
 
 test-out:
+ifdef test
+	prove -v $(test)
+else
 	prove -v test/out/testml/*.tml
+endif
 
 node_modules: ../testml-node-modules
 	cp -r $< $@

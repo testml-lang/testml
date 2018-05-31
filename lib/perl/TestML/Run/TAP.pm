@@ -40,7 +40,7 @@ sub test_eq {
   ) {
     require Text::Diff;
 
-    $self->{tap}->ok(0, $label);
+    $self->{tap}->ok(0, $label ? ($label) : ());
 
     my $diff = Text::Diff::diff(
       \$want,
@@ -55,7 +55,7 @@ sub test_eq {
   }
 
   else {
-    $self->{tap}->is_eq($got, $want, $label);
+    $self->{tap}->is_eq($got, $want, $label ? ($label) : ());
   }
 }
 

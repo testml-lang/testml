@@ -111,10 +111,7 @@ sub exec {
     unshift @args, $_ for reverse @$context;
 
     if ($name =~ /^[a-z]/) {
-      ($call = $name) =~ s/-/_/g;
-      die "Can't find bridge function: '$name'"
-        unless $self->{bridge}->can($call);
-      @return = $self->{bridge}->$call(@args);
+      @return = $self->exec_bridge_function($name, @args);
     }
     elsif ($name =~ /^[A-Z]/) {
       $call = lc $name;
@@ -128,6 +125,19 @@ sub exec {
   }
 
   return [@return];
+}
+
+sub exec_bridge_function {
+  my ($self, $name, @args) = @_;
+
+  (my $call = $name) =~ s/-/_/g;
+
+  die "Can't find bridge function: '$name'"
+    unless $self->{bridge} and $self->{bridge}->can($call);
+
+  my @return = $self->{bridge}->$call(@args);
+
+  return @return;
 }
 
 sub exec_func {
@@ -243,10 +253,11 @@ sub initialize {
   ];
 
   if (not $self->{bridge}) {
-    @INC = (@INC, split ':', $ENV{TESTML_LIB});
     my $bridge_module = $ENV{TESTML_BRIDGE};
-    eval "require $bridge_module; 1" or die "$@";
-    $self->{bridge} = $bridge_module->new;
+
+    eval "require $bridge_module; 1" and do {
+      $self->{bridge} = $bridge_module->new;
+    }
   }
 
   if (not $self->{stdlib}) {
@@ -271,7 +282,7 @@ sub get_label {
     }
   }
 
-  my $block_label = $self->block->label;
+  my $block_label = $self->block ? $self->block->label : '';
 
   if ($label) {
     $label =~ s/^\+/$block_label/;
