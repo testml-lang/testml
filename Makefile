@@ -76,7 +76,7 @@ node_modules: ../testml-node-modules
 work: $(WORKTREES)
 
 $(WORKTREES) orphan-template:
-	git branch --force --track $@ origin/$@
+	git branch --track $@ origin/$@ 2>/dev/null || true
 	git worktree add -f $@ $@
 
 playground-test: playground
