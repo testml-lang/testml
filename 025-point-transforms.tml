@@ -115,7 +115,7 @@ Diff = 1
       "point": {
         "bar": "xxx\nyyy\n\n"}}]}
 
-=== Use auto fransforms on inherited point
+=== Use auto transforms on inherited point
 --- input
     === Test 1
     --- foo(+)
