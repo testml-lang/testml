@@ -229,9 +229,13 @@ class TestMLCompiler.AST extends Pegex.Tree
 
     @data ||= []
 
-    @data.push
+    block =
       label: label
       point: point
+
+    block.user = user if user.match /\S/
+
+    @data.push block
 
   got_point_single: (got)->
     value = got[5]
