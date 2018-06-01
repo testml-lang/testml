@@ -111,7 +111,7 @@ class TestMLCompiler.AST extends Pegex.Tree
     _.keys pick
 
   got_code_expression: (got)->
-    [object, calls] = got
+    [object, calls, each] = got
     expr = [object, calls...]
 
     pick = {}
@@ -124,6 +124,9 @@ class TestMLCompiler.AST extends Pegex.Tree
         expr = ['&', expr]
     else
       expr = ['.', expr...]
+
+    if each?
+      expr = ['%', expr, each]
 
     if _.isArray expr
       expr.pick = pick

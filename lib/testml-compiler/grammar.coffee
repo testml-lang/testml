@@ -163,7 +163,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
       "assignment_statement": {
         ".all": [
           {
-            ".rgx": "([a-zA-Z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*)[\\ \\t]+((?:=|\\|\\|=))[\\ \\t]+"
+            ".rgx": "([a-zA-Z][a-zA-Z0-9]*(?:\\-[a-zA-Z][a-zA-Z0-9]*)*)[\\ \\t]+((?:=|\\|\\|=))[\\ \\t]+"
           },
           {
             ".ref": "code_expression"
@@ -215,7 +215,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         ]
       },
       "point_object": {
-        ".rgx": "\\*([a-z][\\-\\_a-z0-9]*)(?::([a-zA-Z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*))?"
+        ".rgx": "\\*([a-z][\\-\\_a-z0-9]*)(?::([a-zA-Z][a-zA-Z0-9]*(?:\\-[a-zA-Z][a-zA-Z0-9]*)*))?"
       },
       "string_object": {
         ".any": [
@@ -335,7 +335,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         "+max": 1
       },
       "function_variable": {
-        ".rgx": "([a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*)"
+        ".rgx": "([a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z][a-zA-Z0-9]*)*|_)"
       },
       "call_object": {
         ".all": [
@@ -353,7 +353,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         ]
       },
       "call_name": {
-        ".rgx": "([a-zA-Z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*)"
+        ".rgx": "([a-zA-Z][a-zA-Z0-9]*(?:\\-[a-zA-Z][a-zA-Z0-9]*)*|_)"
       },
       "call_arguments": {
         ".all": [
@@ -391,7 +391,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         ".rgx": "\\)"
       },
       "index_lookup": {
-        ".rgx": ":([a-zA-Z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*)"
+        ".rgx": ":([a-zA-Z][a-zA-Z0-9]*(?:\\-[a-zA-Z][a-zA-Z0-9]*)*)"
       },
       "function_call": {
         ".all": [
@@ -607,9 +607,9 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         ]
       },
       "point_single": {
-        ".rgx": "\\-\\-\\-[\\ \\t]+(\\^?)((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF)))(?:=((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF))))?(?:(\\()([\\#\\+\\-\\~/\\@%]*)\\))?:[\\ \\t]+(.*?[\\ \\t]*)\\r?\\n(?:.*\\r?\\n)*?(?=\\-\\-\\-|===|$)"
+        ".rgx": "\\-\\-\\-[\\ \\t]+(\\^?)((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z][a-zA-Z0-9]*)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF)))(?:=((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z][a-zA-Z0-9]*)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF))))?(?:(\\()([\\#\\+\\-\\~/\\@%]*)\\))?:[\\ \\t]+(.*?[\\ \\t]*)\\r?\\n(?:.*\\r?\\n)*?(?=\\-\\-\\-|===|$)"
       },
       "point_multi": {
-        ".rgx": "\\-\\-\\-[\\ \\t]+(\\^?)((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF)))(?:=((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z0-9]+)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF))))?(?:(\\()([<\\#\\+\\-\\~/\\@%]*)\\))?\\r?\\n((?:.*\\r?\\n)*?(?=\\-\\-\\-|===|$))"
+        ".rgx": "\\-\\-\\-[\\ \\t]+(\\^?)((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z][a-zA-Z0-9]*)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF)))(?:=((?:[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z][a-zA-Z0-9]*)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF))))?(?:(\\()([<\\#\\+\\-\\~/\\@%]*)\\))?\\r?\\n((?:.*\\r?\\n)*?(?=\\-\\-\\-|===|$))"
       }
     }
