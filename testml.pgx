@@ -277,7 +277,7 @@ integer-literal:
   /(: '0' | DASH? [1-9] DIGIT* )/
 
 function-variable:
-  /( identifier-user | '_' )/
+  /( STAR? identifier-user | '_' )/
 
 identifier-name:
   / ALPHA ALNUM* (: DASH ALPHA ALNUM*)* /
