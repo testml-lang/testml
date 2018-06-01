@@ -60,3 +60,13 @@ ok 1 - Test 1
 ok
 All tests successful.
 Result: PASS
+
+===
+--- testml: test/testml/040-multiline-point.tml
+--- output
+test/testml/040-multiline-point.tml ..
+ok 1 - Test 1
+1..1
+ok
+All tests successful.
+Result: PASS
