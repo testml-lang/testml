@@ -16,9 +16,11 @@ module.exports = class TestML.Run.TAP extends TestML.Run
     return
 
   testml_begin: ->
+    @checked = false
+    @planned = false
 
   testml_end: ->
-    @tap.done_testing()
+    @tap.done_testing() unless @planned
 
     if TestML.browser and @output
       @output.value = @tap.output
@@ -26,6 +28,8 @@ module.exports = class TestML.Run.TAP extends TestML.Run
     return
 
   testml_eq: (got, want, label)->
+    @check_plan()
+
     diff = (
       _.isString(want) and
       want.match(/\n/) and (
@@ -37,13 +41,23 @@ module.exports = class TestML.Run.TAP extends TestML.Run
     @tap.is_eq got, want, label, diff
 
   testml_like: (got, want, label)->
+    @check_plan()
     @tap.like got, want, label
 
   testml_has: (got, want, label)->
+    @check_plan()
     @tap.has got, want, label
 
   testml_list_has: (got, want, label)->
+    @check_plan()
     @tap.list_has got, want, label
 
   warn: (msg)->
     @tap.diag(msg)
+
+  check_plan: ->
+    return if @checked
+
+    if plan = @vars.Plan
+      @planned = true
+      @tap.plan plan

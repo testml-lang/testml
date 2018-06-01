@@ -15,11 +15,16 @@ class TestML.TAP
       @err = (text)->
         process.stderr.write String(text) + "\n"
 
+  plan: (plan)->
+    @out "1..#{plan}"
+
   pass: (label)->
-    @out "ok #{++@count} - #{label}"
+    label = ' - ' + label if label
+    @out "ok #{++@count}#{label}"
 
   fail: (label)->
-    @out "not ok #{++@count} - #{label}"
+    label = ' - ' + label if label
+    @out "not ok #{++@count}#{label}"
 
   ok: (ok, label)->
     if ok
