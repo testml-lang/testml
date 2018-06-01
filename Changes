@@ -1,4 +1,12 @@
 ---
+version: 0.0.22
+date:    Fri Jun  1 11:06:21 PDT 2018
+changes:
+- Hash index opcode changes to ":"
+- Support Plan variable for coffee-tap
+- Improve CLI invocations
+- Support (multiple) --eval= CLI options
+---
 version: 0.0.21
 date:    Wed May 30 11:51:29 PDT 2018
 changes:
