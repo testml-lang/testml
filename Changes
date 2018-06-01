@@ -1,4 +1,14 @@
 ---
+version: 0.1.0
+date:    Fri Jun  1 10:47:24 PDT 2018
+changes:
+- All known TestML language features are complete
+- Support points in function signatures
+- Support semicolons for line endings
+- Change 'filter' to 'transform'
+- Support all kinds of collection indexing
+- Added each support
+---
 version: 0.0.30
 date:    Thu May 31 13:08:55 PDT 2018
 changes:

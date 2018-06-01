@@ -1,3 +1,3 @@
 class global.TestMLCompiler
-  @VERSION: '0.0.30'
+  @VERSION: '0.1.0'
   @env = (global.process || {}).env || {}
