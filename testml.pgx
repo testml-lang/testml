@@ -18,10 +18,10 @@ head-statement:
 head-directive: xxx
 
 testml-directive:
-  / '%TestML' + version-number eol /
+  / '%TestML' + version-number ending /
 
 import-directive:
-  '%Import' + (module-name (+ module-name)*) eol
+  '%Import' + (module-name (+ module-name)*) ending
 
 #------------------------------------------------------------------------------
 code-section:
@@ -40,7 +40,7 @@ assignment-statement:
   / ( variable-name ) +
     ( assignment-operator ) +/
   code-expression
-  eol?
+  ending
 
 loop-statement:
   /'%' +/
@@ -63,7 +63,7 @@ expression-statement:
   code-expression
   assertion-expression?
   suffix-label?
-  eol?
+  ending
 
 expression-label:
   / double-string COLON WS* /
@@ -125,7 +125,7 @@ list-object:
 
 function-object:
   function-signature?
-  /- '=>' EOL/
+  /- '=>' ending/
   .indent
   (.ondent code-statement)+
   .undent
@@ -237,6 +237,8 @@ point-multi: /
 
 #------------------------------------------------------------------------------
 
+ending: /(: SEMI (: SPACE (= NS))? | EOL?)/
+
 assignment-operator:
   /(: '=' | '||=' )/
 
@@ -246,7 +248,7 @@ blank-line:
 call-operator: DOT
 
 comment-line:
-  /(: HASH ANY* eol)/
+  /(: HASH ANY* EOL)/
 
 comment-lines:
   /(: comment-line | blank-line )+/
@@ -257,8 +259,6 @@ point-marker: '---'
 
 point-boundary:
   /(= point-marker | block-marker | eos )/
-
-eol: / EOL /
 
 eos: EOS
 
