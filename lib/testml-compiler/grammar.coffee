@@ -73,7 +73,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         ".rgx": "(?:(?:\\#.*\\r?\\n)|(\\s*\\r?\\n|\\s+$))+"
       },
       "testml_directive": {
-        ".rgx": "%TestML[\\ \\t]+([0-9]+\\.[0-9]+\\.[0-9]+)\\r?\\n"
+        ".rgx": "%TestML[\\ \\t]+([0-9]+\\.[0-9]+\\.[0-9]+)(?:;(?: (?=\\S))?|\\r?\\n?)"
       },
       "head_statement": {
         ".any": [
@@ -147,7 +147,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
             ]
           },
           {
-            ".ref": "eol"
+            ".ref": "ending"
           }
         ]
       },
@@ -157,8 +157,8 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
       "module_name": {
         ".rgx": "(\\S+)"
       },
-      "eol": {
-        ".rgx": "\\r?\\n"
+      "ending": {
+        ".rgx": "(?:;(?: (?=\\S))?|\\r?\\n?)"
       },
       "assignment_statement": {
         ".all": [
@@ -169,8 +169,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
             ".ref": "code_expression"
           },
           {
-            ".ref": "eol",
-            "+max": 1
+            ".ref": "ending"
           }
         ]
       },
@@ -289,7 +288,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
             "+max": 1
           },
           {
-            ".rgx": "[\\ \\t]*=\\>\\r?\\n"
+            ".rgx": "[\\ \\t]*=\\>(?:;(?: (?=\\S))?|\\r?\\n?)"
           },
           {
             ".ref": "indent",
@@ -528,8 +527,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
             "+max": 1
           },
           {
-            ".ref": "eol",
-            "+max": 1
+            ".ref": "ending"
           }
         ]
       },
