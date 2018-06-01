@@ -143,7 +143,7 @@ call-object:
   call-arguments?
   index-lookup?
 
-call-name: /( identifier-name )/
+call-name: /( identifier-name | '_' )/
 
 call-arguments:
   LPAREN
@@ -250,13 +250,13 @@ eol: / EOL /
 eos: EOS
 
 function-variable:
-  /( identifier-user )/
+  /( identifier-user | '_' )/
 
 identifier-name:
-  / ALPHA ALNUM* (: DASH ALNUM+)* /
+  / ALPHA ALNUM* (: DASH ALPHA ALNUM*)* /
 
 identifier-user:
-  / LOWER ALNUM* (: DASH ALNUM+)* /
+  / LOWER ALNUM* (: DASH ALPHA ALNUM*)* /
 
 module-name: /( NS+ )/
 
