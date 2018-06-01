@@ -131,6 +131,14 @@ function-object:
   .undent
   /(?= ALL | EOS)/
 
+callable-function-object:
+  function-signature
+  /- '=>' ending/
+  .indent
+  (.ondent code-statement)+
+  .undent
+  /(?= ALL | EOS)/
+
 function-signature:
   / LPAREN -/
   function-variables
@@ -169,7 +177,10 @@ lookup-index: /
 
 function-call:
   .call-operator
-  call-object
+  (
+  | call-object
+  | callable-function-object
+  )
 
 each-call:
   /+ '%' +/
