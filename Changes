@@ -28,7 +28,7 @@ changes:
 version: 0.0.26
 date:    Sun May 27 23:05:29 PDT 2018
 changes:
-- Support % data compile filter for coffee data syntax
+- Support % data compile transform for coffee data syntax
 ---
 version: 0.0.25
 date:    Sun May 27 08:26:23 PDT 2018
@@ -48,7 +48,7 @@ changes:
 version: 0.0.22
 date:    Wed May 23 23:46:39 PDT 2018
 changes:
-- Change semantics of filters+inheritance
+- Change semantics of transforms+inheritance
 ---
 version: 0.0.21
 date:    Wed May 23 10:36:21 PDT 2018
@@ -63,8 +63,8 @@ changes:
 version: 0.0.19
 date:    Tue May 22 20:15:34 PDT 2018
 changes:
-- Support ~ strip-blank-lines filter
-- Add @ and / compile filters
+- Support ~ strip-blank-lines transform
+- Add @ and / compile transforms
 - Add suffix label syntax
 ---
 version: 0.0.18
@@ -80,13 +80,13 @@ changes:
 version: 0.0.17
 date:    Thu May 17 11:11:53 PDT 2018
 changes:
-- Don't use auto filters on inherited point
+- Don't use auto transforms on inherited point
 ---
 version: 0.0.16
 date:    Thu May 17 10:55:38 PDT 2018
 changes:
 - Support point inheritance
-- Support keep-comments, keep-blanks, chomp filters
+- Support keep-comments, keep-blanks, chomp transforms
 ---
 version: 0.0.15
 date:    Thu May 17 07:51:20 PDT 2018
@@ -148,7 +148,7 @@ changes:
 version: 0.0.4
 date:    Wed May  2 16:23:55 PDT 2018
 changes:
-- Support Undent compilation time filtering
+- Support Undent compilation time transforming
 ---
 version: 0.0.3
 date:    Tue May  1 12:42:49 PDT 2018

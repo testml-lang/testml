@@ -6,7 +6,7 @@ class TestMLCompiler.AST extends Pegex.Tree
     @code = []
     @data = []
     @point = {}
-    @filters = {}
+    @transforms = {}
     {@file, @importer} = args
 
   final: ->
@@ -247,12 +247,12 @@ class TestMLCompiler.AST extends Pegex.Tree
   got_block_definition: ([label, user, points])->
     point = {}
     for p in points
-      [inherit, name, from, has_filters, filters, value] = p
+      [inherit, name, from, has_transforms, transforms, value] = p
       if name.match /^(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF)$/
         point[name] = true
       else
         point[name] =
-          @make_point(name, value, inherit, from, has_filters, filters)
+          @make_point(name, value, inherit, from, has_transforms, transforms)
 
     @data ||= []
 
@@ -281,48 +281,48 @@ class TestMLCompiler.AST extends Pegex.Tree
     return
 
 #------------------------------------------------------------------------------
-  make_point: (name, value, inherit, from, has_filters, filter_expr)->
+  make_point: (name, value, inherit, from, has_transforms, transform_expr)->
     return value unless _.isString value
 
     if inherit
       key = from || name
       value = @point[key] || ''
 
-      if not has_filters
-        filter_expr = @filters[key] || ''
+      if not has_transforms
+        transform_expr = @transforms[key] || ''
 
     else
       @point[name] = value
 
-    filters = {}
-    _.map _.split(filter_expr, ''), (f)-> filters[f] = true
+    transforms = {}
+    _.map _.split(transform_expr, ''), (f)-> transforms[f] = true
 
-    @filters[name] = if inherit then '' else filter_expr
+    @transforms[name] = if inherit then '' else transform_expr
 
     if _.isString value
-      if not filters['#']
+      if not transforms['#']
         value = value.replace /^#.*\n/gm, ''
 
       value = value.replace /^\\/gm, ''
 
-      if not filters['+'] and value.match /\n/
+      if not transforms['+'] and value.match /\n/
         value = value.replace /\n+$/, '\n'
         value = '' if value == '\n'
 
-      if filters['<']
+      if transforms['<']
         value = value.replace /^    /gm, ''
 
-      if filters['~']
+      if transforms['~']
         value = value.replace /\n+/g, '\n'
 
-      if filters['@']
+      if transforms['@']
         if value.match /\n/
           value = value.replace(/\n$/, '').split /\n/
         else
           value = value.split /\s+/
         value = [value]
 
-      else if filters['%']
+      else if transforms['%']
         if TestMLCompiler.browser
           CoffeeScript = window.CoffeeScript
         else
@@ -333,10 +333,10 @@ class TestMLCompiler.AST extends Pegex.Tree
         if _.isPlainObject(value) or _.isArray value
           value = [value]
 
-      else if filters['-']
+      else if transforms['-']
         value = value.replace /\n$/, ''
 
-    if filters['/']
+    if transforms['/']
       if _.isArray(value) and _.isArray value[0]
         value = _.map value[0], (regex)-> ['/', regex]
         value = [value]
