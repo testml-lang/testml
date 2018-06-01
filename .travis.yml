@@ -22,4 +22,7 @@ install:
 - zef install JSON::Tiny Test::Builder
 
 script:
+- git fetch --unshallow
+- git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+- git fetch origin
 - make test-all
