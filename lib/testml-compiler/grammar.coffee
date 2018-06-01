@@ -215,7 +215,21 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         ]
       },
       "point_object": {
-        ".rgx": "\\*([a-z][\\-\\_a-z0-9]*)(?::([a-zA-Z][a-zA-Z0-9]*(?:\\-[a-zA-Z][a-zA-Z0-9]*)*))?"
+        ".all": [
+          {
+            ".rgx": "\\*([a-z][\\-\\_a-z0-9]*)"
+          },
+          {
+            ".ref": "lookup_indices"
+          }
+        ]
+      },
+      "lookup_indices": {
+        ".ref": "lookup_index",
+        "+min": 0
+      },
+      "lookup_index": {
+        ".rgx": ":([a-zA-Z][a-zA-Z0-9]*(?:\\-[a-zA-Z][a-zA-Z0-9]*)*|(?:0|\\-?[1-9][0-9]*)|'((?:[^\\n\\\\']|\\\\[\\\\'])*?)'|\"((?:[^\\n\\\\\"]|\\\\[\\\\\"0nt])*?)\"|\\([a-zA-Z][a-zA-Z0-9]*(?:\\-[a-zA-Z][a-zA-Z0-9]*)*\\)|\\[[a-zA-Z][a-zA-Z0-9]*(?:\\-[a-zA-Z][a-zA-Z0-9]*)*\\])"
       },
       "string_object": {
         ".any": [
@@ -347,8 +361,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
             "+max": 1
           },
           {
-            ".ref": "index_lookup",
-            "+max": 1
+            ".ref": "lookup_indices"
           }
         ]
       },
@@ -389,9 +402,6 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
       },
       "RPAREN": {
         ".rgx": "\\)"
-      },
-      "index_lookup": {
-        ".rgx": ":([a-zA-Z][a-zA-Z0-9]*(?:\\-[a-zA-Z][a-zA-Z0-9]*)*)"
       },
       "function_call": {
         ".all": [

@@ -134,11 +134,15 @@ class TestMLCompiler.AST extends Pegex.Tree
     expr
 
   got_point_object: (got)->
-    [name, lookup] = got
+    [name, indices] = got
     object = ['*', name]
-    if lookup
-      object = ['${}', object, lookup]
+
+    indices ||= []
+    for [opcode, index] in indices
+      object = [opcode, object, index]
+
     object.pick = "*#{name}": true
+
     object
 
   got_double_string: (got)->
@@ -182,29 +186,49 @@ class TestMLCompiler.AST extends Pegex.Tree
     vars
 
   got_call_object: (got)->
-    [name, args, lookup] = got
-    if _.isPlainObject args
-      lookup = args
+    [name, args, indices] = got
+    if args?.indices
+      indices = args
       args = null
 
     callable = args? and args.length == 0
     args ||= []
-    lookup = lookup.lookup if lookup
+    indices ||= []
     object = [name, args...]
+
+    for [opcode, index] in indices
+      object = [opcode, object, index]
 
     object.pick = {}
     for a in args
       _.merge object.pick, a.pick || {}
 
-    if lookup?
-      object = ['${}', object, lookup]
-
     object.callable = callable
 
     object
 
-  got_index_lookup: (got)->
-    lookup: got
+  got_lookup_indices: (got)->
+    indices = _.map got, (index)=>
+      opcode = ':'
+      index = switch
+        when m = index.match /^"(.*)"$/ then ["$''", m[1]]
+        when m = index.match /^'(.*)'$/ then m[1]
+        when m = index.match /^\((.*)\)$/ then [m[1]]
+        when m = index.match /^\[(.*)\]$/
+          opcode = '[]'
+          [m[1]]
+        when m = index.match /^-?\d/
+          opcode = '[]'
+          Number index
+        else index
+      [opcode, index]
+
+    indices.indices = true
+
+    indices
+
+  got_lookup_index: (got)->
+    got[0]
 
   got_call_arguments: (got)->
     got = got[0]
