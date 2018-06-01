@@ -94,4 +94,38 @@ Diff = 1
     { "label": "Test 1",
       "point": {}}]}
 
+=== Anonymous function as method
+--- input
+    *foo.bar.(x, y, z)=>
+      a.Cat(y) == z
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    [".",
+      ["*","foo"],
+      ["bar"],
+      ["=>",["x","y","z"],
+        [["==",
+            [".",
+              ["a"],
+              ["Cat",
+                ["y"]]],
+            ["z"]]]]]],
+  "data": []}
+
+=== Pick/Loop function
+--- input
+    % (*foo, *bar) =>
+      foo = bar
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["%()",["*foo","*bar"],
+      ["=>",["*foo","*bar"],
+        [["=","foo",
+            ["bar"]]]]]],
+  "data": []}
+
 # vim: ft=:
