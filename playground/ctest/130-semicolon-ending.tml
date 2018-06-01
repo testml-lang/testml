@@ -1,0 +1,19 @@
+#!/usr/bin/env testml-boot
+
+Diff = 1
+*input.compile == *output
+
+=== Semicolon endings with indentation support
+--- input
+foo = =>;  x = 1; bar = 2
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","foo",
+      ["=>",[],
+        [["=","x",1]]]],
+    ["=","bar",2]],
+  "data": []}
+
+# vim: ft=:
