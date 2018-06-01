@@ -38,7 +38,7 @@ class TestML.Run
 
     '&'  : 'call_func'
     "$''": 'get_str'
-    "${}": 'get_hash'
+    ":"  : 'get_hash'
     '*'  : 'get_point'
     '='  : 'set_var'
 
