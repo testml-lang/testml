@@ -1,5 +1,6 @@
 help:
-	@echo 'make renumber 	- Renumber all test file'
+	@echo 'make renumber 	- Renumber all test files'
+	@echo 'make clean    	- Remove all generated files'
 
 renumber:
 	@( \
@@ -11,3 +12,6 @@ renumber:
 		: $$((i++)); \
 	    done \
 	)
+
+clean:
+	find . -type d | grep '\.testml' | xargs rm -fr
