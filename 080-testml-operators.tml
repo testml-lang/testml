@@ -44,4 +44,28 @@ bar ||= 'abc'
     ["||=","bar","abc"]],
   "data": []}
 
+=== Each operator %
+--- input
+ARGV % (this)=>
+  this.Type == 'str'
+['Hello', 'world'] % _.Out
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["%",
+      ["ARGV"],
+      [["=>",["this"],
+          [["==",
+              [".",
+                ["this"],
+                ["Type"]],
+              "str"]]]]],
+    ["%",
+      [["Hello","world"]],
+      [[".",
+          ["_"],
+          ["Out"]]]]],
+  "data": []}
+
 # vim: ft=:
