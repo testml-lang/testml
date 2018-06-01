@@ -23,6 +23,8 @@ test-pegex: node_modules ../pegex-js/npm
 	rm -fr node_modules/pegex
 	NODE_PATH=lib:../pegex-js/npm/lib prove -lv test/
 
+update: update-grammar
+
 update-grammar: node_modules ../pegex
 	( \
 	set -o pipefail; \

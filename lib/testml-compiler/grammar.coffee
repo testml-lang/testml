@@ -348,7 +348,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         "+max": 1
       },
       "function_variable": {
-        ".rgx": "([a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z][a-zA-Z0-9]*)*|_)"
+        ".rgx": "(\\*?[a-z][a-zA-Z0-9]*(?:\\-[a-zA-Z][a-zA-Z0-9]*)*|_)"
       },
       "call_object": {
         ".all": [
@@ -409,7 +409,14 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
             "-skip": 1
           },
           {
-            ".ref": "call_object"
+            ".any": [
+              {
+                ".ref": "call_object"
+              },
+              {
+                ".ref": "callable_function_object"
+              }
+            ]
           }
         ]
       },
@@ -418,6 +425,39 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
       },
       "DOT": {
         ".rgx": "\\."
+      },
+      "callable_function_object": {
+        ".all": [
+          {
+            ".ref": "function_signature"
+          },
+          {
+            ".rgx": "[\\ \\t]*=\\>(?:;(?: (?=\\S))?|\\r?\\n?)"
+          },
+          {
+            ".ref": "indent",
+            "-skip": 1
+          },
+          {
+            ".all": [
+              {
+                ".ref": "ondent",
+                "-skip": 1
+              },
+              {
+                ".ref": "code_statement"
+              }
+            ],
+            "+min": 1
+          },
+          {
+            ".ref": "undent",
+            "-skip": 1
+          },
+          {
+            ".rgx": "(?=[\\s\\S]|$)"
+          }
+        ]
       },
       "each_call": {
         ".all": [

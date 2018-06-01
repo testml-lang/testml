@@ -54,7 +54,9 @@ class TestMLCompiler.AST extends Pegex.Tree
     [operator, variable, expression]
 
   got_loop_statement: (got)->
-    ['%()', [], got[0]]
+    expr = got[0]
+    pick = expr.pick || {}
+    ['%()', _.keys(pick), expr]
 
   got_pick_statement: ([pick, statement])->
     ['()', pick, statement]
@@ -173,8 +175,17 @@ class TestMLCompiler.AST extends Pegex.Tree
     signature = if got.length == 2 \
       then got.shift()[0] \
       else []
+
     got.unshift '=>', signature
+
+    got.pick = {}
+    for item in signature
+      got.pick[item] = true if item.match /^\*/
+
     got
+
+  got_callable_function_object: (got)->
+    @got_function_object got
 
   got_function_variables: (got)->
     vars = [got.shift()]
