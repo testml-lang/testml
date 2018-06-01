@@ -96,7 +96,8 @@ code-object:
   | call-object
 
 point-object:
-  / STAR ( LOWER [\-\_a-z0-9]* ) (: COLON ( identifier-name ))? /
+  / STAR ( LOWER [\-\_a-z0-9]* ) /
+  lookup-indices
 
 string-object:
   | double-string
@@ -141,7 +142,7 @@ function-variables:
 call-object:
   call-name
   call-arguments?
-  index-lookup?
+  lookup-indices
 
 call-name: /( identifier-name | '_' )/
 
@@ -152,7 +153,19 @@ call-arguments:
   )?
   RPAREN
 
-index-lookup: / COLON ( identifier-name )/
+lookup-indices:
+  lookup-index*
+
+lookup-index: /
+  COLON
+  ( identifier-name
+  | integer-literal
+  | single-string
+  | double-string
+  | '(' identifier-name ')'
+  | '[' identifier-name ']'
+  )
+/
 
 function-call:
   .call-operator
@@ -248,6 +261,9 @@ point-boundary:
 eol: / EOL /
 
 eos: EOS
+
+integer-literal:
+  /(: '0' | DASH? [1-9] DIGIT* )/
 
 function-variable:
   /( identifier-user | '_' )/
