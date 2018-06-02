@@ -32,13 +32,15 @@ class TestML.Run
     ]
 
     '.'  : 'exec_expr'
+    '%'  : 'for_each'
     '%()': 'pick_loop'
     '()' : 'pick_exec'
     '=>' : 'exec_func'
 
     '&'  : 'call_func'
     "$''": 'get_str'
-    ":"  : 'get_hash'
+    ':'  : 'get_hash'
+    '[]' : 'get_list'
     '*'  : 'get_point'
     '='  : 'set_var'
 
@@ -193,6 +195,13 @@ class TestML.Run
     return unless context.length
     return context[0]
 
+  for_each: (list, expr)->
+    list = @exec(list)[0]
+
+    for item in list[0]
+      @vars._ = [item]
+      @exec expr[0]
+
   pick_loop: (list, expr)->
     for block in @data
       @block = block
@@ -234,6 +243,10 @@ class TestML.Run
   get_hash: (hash, key)->
     hash = @exec(hash)[0]
     return hash[0][key]
+
+  get_list: (list, index)->
+    list = @exec(list)[0]
+    return [list[0][index]]
 
   get_point: (name)->
     return @getp name
@@ -407,4 +420,4 @@ class TestML.Run
 #------------------------------------------------------------------------------
 
 TestML.Block = class
-  constructor: ({@label, @point})->
+  constructor: ({@label, @point, @user=''})->
