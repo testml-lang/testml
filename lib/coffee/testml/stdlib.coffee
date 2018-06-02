@@ -5,7 +5,12 @@ class TestML.StdLib
   add: (x, y)-> x + y
 
   block: (selector)->
-    @run.blocks[selector]
+    for block in @run.data
+      if block.label == selector
+        return [block]
+
+  blocks: ->
+    [@run.data]
 
   bool: (any)->
     Boolean any
