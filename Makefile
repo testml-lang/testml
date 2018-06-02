@@ -3,6 +3,8 @@ export PATH := $(TESTML_ROOT)/bin:$(PATH)
 
 TAP_RUN := coffee node perl perl6 python
 TAP_TESTS := $(TAP_RUN:%=test-%-tap)
+UNIT_RUN := python
+UNIT_TESTS := $(UNIT_RUN:%=test-%-unit)
 
 COFFEE_FILES := $(shell find lib/coffee -type f | grep -v '\.swp$$') $(shell find test | grep -E '\.coffee$$' | grep -v '\.swp$$')
 JS_FILES := $(COFFEE_FILES:lib/coffee/%.coffee=lib/node/%.js)
@@ -38,9 +40,11 @@ status:
 	@git status | grep -Ev '(^On branch|up-to-date|nothing to commit)' || true
 
 .PHONY: test
-test: test-tap
+test: test-tap test-unit
 
 test-tap: $(TAP_TESTS)
+
+test-unit: $(UNIT_TESTS)
 
 test-all: test test-out
 
@@ -57,6 +61,14 @@ ifdef test
 else
 	TESTML_RUN=$(@:test-%=%) prove -v test/testml/*.tml
 endif
+
+test-python-unit: testml-tml
+ifdef test
+	testml-python-unit $(test)
+else
+	testml-python-unit test/testml/*.tml
+endif
+
 
 test-out:
 ifdef test
