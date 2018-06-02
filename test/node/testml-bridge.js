@@ -21,6 +21,11 @@
       return x - y;
     }
 
+    mine() {
+      var Mine;
+      return new (Mine = class Mine {});
+    }
+
   };
 
 }).call(this);

@@ -89,8 +89,6 @@ class TestML.Run
     return @
 
   test: ->
-    @initialize()
-
     @testml_begin()
 
     for statement in @code
@@ -116,11 +114,7 @@ class TestML.Run
 
   #----------------------------------------------------------------------------
   exec: (expr, context=[])->
-    return [expr] if \
-      not(_.isArray expr) or
-      _.isArray(expr[0]) or
-      _.isPlainObject(expr[0]) or
-      _.isString(expr[0]) and expr[0].match /^(?:\/|\?|\!)$/
+    return [expr] unless @get_type(expr) == 'expr'
 
     args = _.clone expr
 
@@ -140,41 +134,15 @@ class TestML.Run
           return_ = value
 
       else if name.match /^[a-z]/
-        return_ = @exec_bridge_function name, args
+        return_ = @call_bridge name, args
 
       else if name.match /^[A-Z]/
-        return_ = @exec_stdlib_function name, args
+        return_ = @call_stdlib name, args
 
       else
         throw "Can't resolve TestML function '#{name}'"
 
     return if return_ == undefined then [] else [return_]
-
-  exec_bridge_function: (name, args)->
-    call = name.replace /-/g, '_'
-    throw "Can't find bridge function: '#{name}'" \
-      unless @bridge?[call]
-
-    args = _.map args, (x)=>
-      v = @exec(x)[0]
-      if _.isArray v then v[0] else v
-
-    return_ = @bridge[call](args...)
-
-    if return_ and @get_type(return_).match /^(list|hash)$/
-      return_ = [return_]
-
-    return_
-
-  exec_stdlib_function: (name, args)->
-    call = _.lowerCase name
-    throw "Unknown TestML Standard Library function: '#{name}'" \
-      unless @stdlib[call]
-
-    args = _.map args, (x)=>
-      @exec(x)[0]
-
-    @stdlib[call](args...)
 
   exec_expr: (calls...)->
     context = []
@@ -185,10 +153,11 @@ class TestML.Run
         try
           context = @exec call, context
         catch e
-          @error = ['!', e]
-      else if call[0] == 'Catch'
-        context = [@error]
-        @error = null
+          @error = @call_stdlib  'Error', "#{e}"
+      else
+        if call[0] == 'Catch'
+          context = [@error]
+          @error = null
 
     throw @error[1] if @error
 
@@ -225,7 +194,10 @@ class TestML.Run
         break
 
     if pick
-      @exec expr
+      if @get_type(expr) == 'func'
+        @exec_func expr[1..]...
+      else
+        @exec expr
 
   exec_func: (signature, statements)->
     for statement in statements
@@ -235,18 +207,18 @@ class TestML.Run
     func = @vars[name]
     throw "Tried to call '#{name}' but is not a function" \
       unless func? and @get_type(func) == 'func'
-    @exec func
+    @exec_func func[1..]...
 
   get_str: (string)->
     return @interpolate string
 
   get_hash: (hash, key)->
-    hash = @exec(hash)[0]
-    return hash[0][key]
+    hash = (@exec(hash))[0]
+    return @cook hash[0][key]
 
   get_list: (list, index)->
     list = @exec(list)[0]
-    return [list[0][index]]
+    return @cook list[0][index]
 
   get_point: (name)->
     return @getp name
@@ -328,18 +300,31 @@ class TestML.Run
         @assert_str_like_regex str, regex, label
 
   #----------------------------------------------------------------------------
-  initialize: ->
-    @data = _.map @data, (block)=>
-      new TestML.Block block
+  call_stdlib: (name, args)->
+    @stdlib ||= new(require '../testml/stdlib') @
 
-    if not @bridge
-      try
-        @bridge = new(require process.env.TESTML_BRIDGE)
+    call = _.lowerCase name
+    throw "Unknown TestML Standard Library function: '#{name}'" \
+      unless @stdlib[call]
 
-    if not @stdlib
-      @stdlib = new(require '../testml/stdlib') @
+    args = _.map args, (x)=> @uncook @exec(x)[0]
 
-    return
+    @cook @stdlib[call](args...)
+
+  call_bridge: (name, args)->
+    @bridge ||= new(require process.env.TESTML_BRIDGE)
+
+    call = name.replace /-/g, '_'
+    throw "Can't find bridge function: '#{name}'" \
+      unless @bridge[call]
+
+    args = _.map args, (x)=> @uncook @exec(x)[0]
+
+    return_ = @bridge[call](args...)
+
+    return unless return_?
+
+    @cook return_
 
   get_method: (key, args...)->
     sig = []
@@ -357,24 +342,68 @@ class TestML.Run
 
     return method
 
-  get_type: (object)->
-    type = switch
-      when object == null then 'null'
-      when typeof object == 'string' then 'str'
-      when typeof object == 'number' then 'num'
-      when typeof object == 'boolean' then 'bool'
-      when object instanceof Array then switch
-        when object[0] instanceof Array then 'list'
-        when _.isPlainObject object[0] then 'hash'
-        when object[0] == '=>' then 'func'
-        when object[0] == '/' then 'regex'
-        when object[0] == '!' then 'error'
-        else 'expr'
-      else null
+  get_type: (value)->
+    throw "Can't get type of undefined value" \
+      if typeof value == 'undefined'
 
-    throw "Can't get type of #{require('util').inspect object}" unless type
+    return 'null' if value == null
 
-    type
+    types =
+      string: 'str'
+      number: 'num'
+      boolean: 'bool'
+      testml:
+        '=>': 'func'
+        '/': 'regex'
+        '!': 'error'
+        '?': 'native'
+      group:
+        Object: 'hash'
+        Array: 'list'
+
+    type = types[typeof value] ||
+      types[name = value.constructor.name] ||
+        if name == 'Array'
+          if value.length == 0
+            'none'
+          else
+            if typeof value[0] == 'string'
+              types.testml[value[0]] || 'expr'
+            else
+              types.group[value[0].constructor.name] || 'native'
+        else
+          throw "Bad TestML internal value: '#{name}'"
+
+    return type \
+      or throw "Can't get type of #{require('util').inspect value}"
+
+  cook: (value)->
+    return [] if value == undefined
+    return null if value == null
+    name = value.constructor.name
+    return value if name.match /^(?:String|Number|Boolean)$/
+    return [value] if name.match /^(?:Array|Object)$/
+
+    return ['/', value] if name == 'RegExp'
+    return ['!', value] if name == 'TestMLError'
+    return value['func'] if name == 'TestMLFunction'
+    return ['?', value]
+
+  uncook: (value)->
+    type = @get_type value
+
+    switch
+      when type.match /^(?:str|num|bool|null)$/ then value
+      when type.match /^(?:list|hash)$/ then value[0]
+      when type.match /^(?:error|native)$/ then value[1]
+      when type == 'func'
+        new TestMLFunction value
+      when type == 'regex'
+        if typeof value[1] == 'string'
+          new RegExp value[1]
+        else value[1]
+      when type == 'none' then undefined
+      else XXX value
 
   get_label: (label_expr='')->
     label = @exec(label_expr)[0]
@@ -417,7 +446,39 @@ class TestML.Run
     string = string.replace /\{\*([\-\w]+)\}/g, transform2
 
     return string
-#------------------------------------------------------------------------------
 
+  #----------------------------------------------------------------------------
+  test_types: ->
+    class Bad
+
+    console.log "null   - #{@get_type null}"
+    console.log "none   - #{@get_type []}"
+
+    console.log "str    - #{@get_type ""}"
+    console.log "num    - #{@get_type 1}"
+    console.log "bool   - #{@get_type false}"
+
+    console.log "list   - #{@get_type [[]]}"
+    console.log "hash   - #{@get_type [{}]}"
+
+    console.log "regex  - #{@get_type ['/','']}"
+    console.log "func   - #{@get_type ['=>','']}"
+    console.log "error  - #{@get_type ['!','']}"
+    console.log "native - #{@get_type ['?','']}"
+    console.log "expr   - #{@get_type ['foo']}"
+
+    console.log "new Bad   - #{try @get_type new Bad catch e then e}"
+    console.log "new Regex - #{try @get_type /x/ catch e then e}"
+    console.log "undefined - #{try @get_type() catch e then e}"
+
+    throw "Tested TestML internal types"
+
+# (new TestML.Run).test_types()
+
+#------------------------------------------------------------------------------
 TestML.Block = class
   constructor: ({@label, @point, @user=''})->
+
+TestMLFunction = class
+  constructor: (@func)->
+
