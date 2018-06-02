@@ -57,6 +57,7 @@ module.exports = class TestML.Run.TAP extends TestML.Run
 
   check_plan: ->
     return if @checked
+    @checked = true
 
     if plan = @vars.Plan
       @planned = true
