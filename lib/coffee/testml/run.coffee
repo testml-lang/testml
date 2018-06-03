@@ -31,7 +31,7 @@ class TestML.Run
         'list,list': ''
     ]
 
-    '.'  : 'exec_expr'
+    '.'  : 'exec_dot'
     '%'  : 'for_each'
     '%()': 'pick_loop'
     '()' : 'pick_exec'
@@ -92,7 +92,7 @@ class TestML.Run
     @testml_begin()
 
     for statement in @code
-      @exec statement
+      @exec_expr statement
 
     @testml_end()
 
@@ -102,7 +102,7 @@ class TestML.Run
   getp: (name)->
     return unless @block
     value = @block.point[name]
-    value = @exec(value)[0] if _.isArray value
+    value = @exec value if _.isArray value
     value
 
   getv: (name)->
@@ -113,7 +113,10 @@ class TestML.Run
     return
 
   #----------------------------------------------------------------------------
-  exec: (expr, context=[])->
+  exec: (expr)->
+    @exec_expr(expr)[0]
+
+  exec_expr: (expr, context=[])->
     return [expr] unless @get_type(expr) == 'expr'
 
     args = _.clone expr
@@ -129,7 +132,7 @@ class TestML.Run
 
       if (value = @vars[name])?
         if args.length
-          return_ = @exec value, args...
+          return_ = @exec_expr value, args...
         else
           return_ = value
 
@@ -144,14 +147,14 @@ class TestML.Run
 
     return if return_ == undefined then [] else [return_]
 
-  exec_expr: (calls...)->
+  exec_dot: (calls...)->
     context = []
 
     @error = null
     for call in calls
       if ! @error
         try
-          context = @exec call, context
+          context = @exec_expr call, context
         catch e
           @error = @call_stdlib  'Error', ["#{e}"]
       else
@@ -165,11 +168,11 @@ class TestML.Run
     return context[0]
 
   for_each: (list, expr)->
-    list = @exec(list)[0]
+    list = @exec list
 
     for item in list[0]
       @vars._ = [item]
-      @exec expr[0]
+      @exec_expr expr[0]
 
   pick_loop: (list, expr)->
     for block in @data
@@ -179,7 +182,7 @@ class TestML.Run
         @warn "Warning: TestML 'ONLY' in use."
         @warned_only = true
 
-      @exec ['()', list, expr]
+      @exec_expr ['()', list, expr]
 
     @block = undefined
 
@@ -197,11 +200,11 @@ class TestML.Run
       if @get_type(expr) == 'func'
         @exec_func expr[1..]...
       else
-        @exec expr
+        @exec_expr expr
 
   exec_func: (signature, statements)->
     for statement in statements
-      @exec statement
+      @exec_expr statement
 
   call_func: (name)->
     func = @vars[name]
@@ -213,8 +216,8 @@ class TestML.Run
     return @interpolate string
 
   get_hash: (hash, key)->
-    hash = @exec(hash)[0]
-    key = @exec(key)[0]
+    hash = @exec hash
+    key = @exec key
     type = @get_type hash
 
     @cook switch
@@ -224,7 +227,7 @@ class TestML.Run
         "Can't lookup hash key on value of type '#{type}'"
 
   get_list: (list, index)->
-    list = @exec(list)[0]
+    list = @exec list
     return @cook list[0][index]
 
   get_point: (name)->
@@ -234,64 +237,64 @@ class TestML.Run
     if @get_type(expr) == 'func'
       @setv name, expr
     else
-      @setv(name, @exec(expr)[0])
+      @setv name, @exec expr
     return
 
 
   assert_eq: (left, right, label)->
-    @vars.Got = got = @exec(left)[0]
-    @vars.Want = want = @exec(right)[0]
-    method = @get_method('==', got, want)
+    @vars.Got = got = @exec left
+    @vars.Want = want = @exec right
+    method = @get_method '==', got, want
     @[method] got, want, label
     return
 
   assert_str_eq_str: (got, want, label)->
-    @testml_eq(got, want, @get_label label)
+    @testml_eq got, want, @get_label label
 
   assert_num_eq_num: (got, want, label)->
-    @testml_eq(got, want, @get_label label)
+    @testml_eq got, want, @get_label label
 
   assert_bool_eq_bool: (got, want, label)->
-    @testml_eq(got, want, @get_label label)
+    @testml_eq got, want, @get_label label
 
 
   assert_has: (left, right, label)->
-    got = @exec(left)[0]
-    want = @exec(right)[0]
-    method = @get_method('~~', got, want)
+    got = @exec left
+    want = @exec right
+    method = @get_method '~~', got, want
     @[method] got, want, label
     return
 
   assert_str_has_str: (got, want, label)->
     @vars.Got = got
     @vars.Want = want
-    @testml_has(got, want, @get_label label)
+    @testml_has got, want, @get_label label
 
   assert_str_has_list: (got, want, label)->
     for str in want[0]
-      @assert_str_has_str(got, str, label)
+      @assert_str_has_str got, str, label
 
   assert_list_has_str: (got, want, label)->
     @vars.Got = got
     @vars.Want = want
-    @testml_list_has(got[0], want, @get_label label)
+    @testml_list_has got[0], want, @get_label label
 
   assert_list_has_list: (got, want, label)->
     for str in want[0]
-      @assert_list_has_str(got, str, label)
+      @assert_list_has_str got, str, label
 
 
   assert_like: (left, right, label)->
-    got = @exec(left)[0]
-    want = @exec(right)[0]
-    method = @get_method('=~', got, want)
+    got = @exec left
+    want = @exec right
+    method = @get_method '=~', got, want
     @[method] got, want, label
     return
 
   assert_str_like_regex: (got, want, label)->
     @vars.Got = got
     @vars.Want = "/#{want[1]}/"
-    @testml_like(got, want[1], @get_label label)
+    @testml_like got, want[1], @get_label label
 
   assert_str_like_list: (got, want, label)->
     for regex in want[0]
@@ -314,7 +317,7 @@ class TestML.Run
     throw "Unknown TestML Standard Library function: '#{name}'" \
       unless @stdlib[call]
 
-    args = _.map args, (x)=> @uncook @exec(x)[0]
+    args = _.map args, (x)=> @uncook @exec x
 
     @cook @stdlib[call](args...)
 
@@ -325,7 +328,7 @@ class TestML.Run
     throw "Can't find bridge function: '#{name}'" \
       unless @bridge[call]
 
-    args = _.map args, (x)=> @uncook @exec(x)[0]
+    args = _.map args, (x)=> @uncook @exec x
 
     return_ = @bridge[call](args...)
 
@@ -413,7 +416,7 @@ class TestML.Run
       else XXX value
 
   get_label: (label_expr='')->
-    label = @exec(label_expr)[0]
+    label = @exec label_expr
 
     label ||= @getv('Label') || ''
     block_label = if @block? then @block.label else ''
@@ -438,7 +441,7 @@ class TestML.Run
         switch
           when @get_type(value).match /^(?:list|hash)$/ then \
             JSON.stringify(value[0]).replace /"/g, ''
-          else String(value)
+          else String value
 
     transform1 = (m, name)=>
       return '' unless (value = @vars[name])?
