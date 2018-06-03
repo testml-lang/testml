@@ -1,4 +1,9 @@
 ---
+version: 0.0.23
+date:    Sun Jun  3 08:19:50 PDT 2018
+changes:
+- Rework the entire type system internally
+---
 version: 0.0.22
 date:    Fri Jun  1 11:06:21 PDT 2018
 changes:
