@@ -183,7 +183,7 @@ function-call:
   )
 
 each-call:
-  /+ '%' +/
+  .each-operator
   code-expression
 
 assertion-expression:
@@ -257,6 +257,8 @@ blank-line:
   /( WS* EOL | WS+ EOS )/
 
 call-operator: DOT
+
+each-operator: /+ '%' +/
 
 comment-line:
   /(: HASH ANY* EOL)/
