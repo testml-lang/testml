@@ -295,6 +295,9 @@ class TestMLCompiler.AST extends Pegex.Tree
   make_point: (name, value, inherit, from, has_transforms, transform_expr)->
     return value unless _.isString value
 
+    throw "Can't use '--- #{name}=#{from}' without '^' in front" \
+      if from and not inherit
+
     if inherit
       key = from || name
       value = @point[key] || ''
