@@ -462,12 +462,16 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
       "each_call": {
         ".all": [
           {
-            ".rgx": "[\\ \\t]+%[\\ \\t]+"
+            ".ref": "each_operator",
+            "-skip": 1
           },
           {
             ".ref": "code_expression"
           }
         ]
+      },
+      "each_operator": {
+        ".rgx": "[\\ \\t]+%[\\ \\t]+"
       },
       "loop_statement": {
         ".all": [
