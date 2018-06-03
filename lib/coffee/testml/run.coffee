@@ -153,7 +153,7 @@ class TestML.Run
         try
           context = @exec call, context
         catch e
-          @error = @call_stdlib  'Error', "#{e}"
+          @error = @call_stdlib  'Error', ["#{e}"]
       else
         if call[0] == 'Catch'
           context = [@error]
@@ -213,8 +213,15 @@ class TestML.Run
     return @interpolate string
 
   get_hash: (hash, key)->
-    hash = (@exec(hash))[0]
-    return @cook hash[0][key]
+    hash = @exec(hash)[0]
+    key = @exec(key)[0]
+    type = @get_type hash
+
+    @cook switch
+      when type == 'hash' then hash[0][key]
+      when type == 'error' then hash[1][key]
+      else
+        "Can't lookup hash key on value of type '#{type}'"
 
   get_list: (list, index)->
     list = @exec(list)[0]
@@ -224,7 +231,7 @@ class TestML.Run
     return @getp name
 
   set_var: (name, expr)->
-    if @get_type expr == 'func'
+    if @get_type(expr) == 'func'
       @setv name, expr
     else
       @setv(name, @exec(expr)[0])
