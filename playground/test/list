@@ -13,3 +13,5 @@ coffee-120-function-loop
 coffee-130-function-assignment
 coffee-140-pick-func-call
 coffee-150-call-func-with-args
+coffee-160-plan
+coffee-170-block-access
