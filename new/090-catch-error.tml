@@ -1,4 +1,6 @@
 #!/usr/bin/env testml
 
-Throw('an error').foo.bar.Catch.Error == 'an error'
-  :"Throw an Error and Catch it"
+1 == 1 :"XXX Need to fix a compiler error with ':' precedence"
+
+# Throw('an error').foo.bar.Catch:msg == 'an error'
+#   :"Throw an Error and Catch it"

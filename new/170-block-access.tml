@@ -10,7 +10,8 @@ Blocks:1:label == 'Test 2'
 Blocks % =>
   _:label =~ /^Test [0-9]+$/
 
-# Blocks:0:foo == 123
+"Access a block point value":
+  Blocks:0:point:foo == 123
 
 === Test 1
 --- foo: 123

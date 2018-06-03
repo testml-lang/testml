@@ -9,11 +9,14 @@
 "Type is list":   *list.Type    == 'list'
 "Type is hash":   *hash.Type    == 'hash'
 "Type is error":  Error.Type    == 'error'
-"Type is error":  Error('foo').Type == 'error'
 "Type is error":  x9.Catch.Type == 'error'
+f = =>
+  x = 1
+"Type is func":   f.Type        == 'func'
+a = []
+"Type is none":   a:0.Type      == 'none'
+"Type is native": mine.Type     == 'native'
 
-# f = =>
-# "Type is fun":   f.Type         == 'func'
 
 
 === Test 1
