@@ -1,6 +1,16 @@
 class TestMLError
   constructor: (@msg)->
 
+___ = (desc='')->
+  # Get caller name:
+  name = 'unknown'
+  try
+    Error.prepareStackTrace = (_, stack)->
+      name = stack[1].getFunctionName()
+    Error.captureStackTrace new Error
+
+  throw "Unimplemented StdLib method: '#{name}' - #{desc}"
+
 module.exports =
 class TestML.StdLib
   constructor: (@run)->
@@ -40,9 +50,16 @@ class TestML.StdLib
     _.flattenDepth list, depth
 
   head: (list)->
+    _.head list
+
+  identity: (value)->
+    value
 
   join: (list, separator=' ')->
     _.join list, separator
+
+  length: (str)->
+    str.length
 
   lines: (text)->
     text = text.replace /\n$/, ''
@@ -56,11 +73,16 @@ class TestML.StdLib
   pairs: (list)->
     _.chunk(list, 2)
 
+  say: -> ___ 'write string to stdout'
+
   split: (string, delim=/\s+/, limit=9999999999)->
     _.split string, delim, limit
 
   str: (any)->
     String any
+
+  tail: (list)->
+    _.tail list
 
   text: (list)->
     [list..., ''].join '\n'
@@ -72,3 +94,5 @@ class TestML.StdLib
 
   type: (value)->
     @run.get_type @run.cook value
+
+  warn: -> ___ 'write string to stderr'

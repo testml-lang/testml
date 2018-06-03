@@ -35,7 +35,6 @@ class TestML.Run
     '%'  : 'for_each'
     '%()': 'pick_loop'
     '()' : 'pick_exec'
-    '=>' : 'exec_func'
 
     '&'  : 'call_func'
     "$''": 'get_str'
@@ -132,7 +131,9 @@ class TestML.Run
 
       if (value = @vars[name])?
         if args.length
-          return_ = @exec_expr value, args...
+          die "Variable value has args but is not a function" \
+            unless @get_type value == 'func'
+          return_ = @exec_func value, args
         else
           return_ = value
 
@@ -162,7 +163,7 @@ class TestML.Run
           context = [@error]
           @error = null
 
-    throw @error[1] if @error
+    throw '>>>' + @error[1] if @error
 
     return unless context.length
     return context[0]
@@ -198,11 +199,20 @@ class TestML.Run
 
     if pick
       if @get_type(expr) == 'func'
-        @exec_func expr[1..]...
+        @exec_func expr
       else
         @exec_expr expr
 
-  exec_func: (signature, statements)->
+  exec_func: ([op, signature, statements], args=[])->
+    if signature.length > 1 and args.length == 1 and @get_type(args) == 'list'
+      args = args[0]
+
+    if signature.length != args.length
+      throw "TestML function expected '#{signature.length}' arguments, but was called with '#{args.length}' arguments"
+
+    for i, v of signature
+      @vars[v] = args[i]
+
     for statement in statements
       @exec_expr statement
 
@@ -210,7 +220,7 @@ class TestML.Run
     func = @vars[name]
     throw "Tried to call '#{name}' but is not a function" \
       unless func? and @get_type(func) == 'func'
-    @exec_func func[1..]...
+    @exec_func func
 
   get_str: (string)->
     return @interpolate string
@@ -413,7 +423,7 @@ class TestML.Run
           new RegExp value[1]
         else value[1]
       when type == 'none' then undefined
-      else XXX value
+      else throw "Can't uncook '#{require('util').inspect value}'"
 
   get_label: (label_expr='')->
     label = @exec label_expr
