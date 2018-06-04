@@ -75,6 +75,9 @@ class TestML.TAP
       json = JSON.stringify got, null, 2
       @show '      this array:', json, " doesn't contain:", want, label
 
+  note: (msg)->
+    @out msg.replace /^/mg, '# '
+
   diag: (msg)->
     @err msg.replace /^/mg, '# '
 
