@@ -155,7 +155,11 @@ class TestML.Run
     for call in calls
       if ! @error
         try
-          context = @exec_expr call, context
+          if @get_type(call) == 'func'
+            @exec_func call, context[0]
+            context = []
+          else
+            context = @exec_expr call, context
         catch e
           @error = @call_stdlib  'Error', ["#{e}"]
       else
@@ -163,7 +167,7 @@ class TestML.Run
           context = [@error]
           @error = null
 
-    throw '>>>' + @error[1] if @error
+    throw 'Uncaught Error: ' + @error[1].msg if @error
 
     return unless context.length
     return context[0]
@@ -222,6 +226,8 @@ class TestML.Run
 
     for statement in statements
       @exec_expr statement
+
+    return
 
   call_func: (name)->
     func = @vars[name]
