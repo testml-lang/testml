@@ -10,6 +10,7 @@ test: build testml compiler
 test-clean: clean-test test
 
 site: $(SITE)
+	(cd $(SITE)/playground/ && rm -fr index* yaml test ctest)
 	cp -r index* yaml test ctest $(SITE)/playground/
 
 $(SITE):
