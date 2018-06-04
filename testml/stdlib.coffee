@@ -1,6 +1,8 @@
 class TestMLError
   constructor: (@msg)->
 
+
+# For stubbing out possible methods to support:
 ___ = (desc='')->
   # Get caller name:
   name = 'unknown'
@@ -11,25 +13,30 @@ ___ = (desc='')->
 
   throw "Unimplemented StdLib method: '#{name}' - #{desc}"
 
+
 module.exports =
 class TestML.StdLib
   constructor: (@run)->
 
-  add: (x, y)-> x + y
+  argv: ->
+    process.argv[2..]
 
   block: (selector)->
+    return @run.block if not selector?
+
     for block in @run.data
       if block.label == selector
         return block
 
   blocks: ->
-    @run.data
+    _.clone @run.data
 
-  bool: (any)->
-    Boolean any
+  bool: (value)->
+    not(value == undefined || value == null || value == false)
 
-  cat: (str...)->
-    str.join ''
+  cat: (strings...)->
+    strings = strings[0] if strings[0] instanceof Array
+    strings.join ''
 
   count: (list)->
     list.length
@@ -44,10 +51,20 @@ class TestML.StdLib
         env[key] = value
       env
 
-  false: -> false
+  false: ->
+    false
+
+  first: (list)->
+    _.first list
 
   flat: (list, depth=9999999999)->
     _.flattenDepth list, depth
+
+  hash: (values...)->
+    hash = {}
+    for key, val in values
+      hash[key] = val
+    hash
 
   head: (list)->
     _.head list
@@ -55,8 +72,13 @@ class TestML.StdLib
   identity: (value)->
     value
 
+  import: -> ___ 'Runtime .tml import (possibly data only)'
+
   join: (list, separator=' ')->
     _.join list, separator
+
+  last: (list)->
+    _.last list
 
   length: (str)->
     str.length
@@ -65,21 +87,43 @@ class TestML.StdLib
     text = text.replace /\n$/, ''
     text.split /\n/
 
-  null: -> null
+  list: (values...)->
+    values
 
-  num: (any)->
-    Number any
+  null: ->
+    null
 
-  pairs: (list)->
-    _.chunk(list, 2)
+  num: (value)->
+    Number value
 
-  say: -> ___ 'write string to stdout'
+  push: (list, values...)->
+    list.push values...
+    list
+
+  pop: (list)->
+    list.pop()
+    list
+
+  regex: (pattern, flags='')->
+    new RegExp pattern, flags
+
+  say: (msg)->
+    msg = "#{msg}\n" unless msg.match /\n$/
+    @run.out msg
+
+  shift: (list)->
+    list.shift()
+    list
 
   split: (string, delim=/\s+/, limit=9999999999)->
     _.split string, delim, limit
 
-  str: (any)->
-    String any
+  str: (value)->
+    String value
+
+  sum: (list...)->
+    list = list[0] if list[0] instanceof Array
+    _.sum list
 
   tail: (list)->
     _.tail list
@@ -90,9 +134,23 @@ class TestML.StdLib
   throw: (error='')->
     throw error
 
-  true: -> true
+  true: ->
+    true
 
   type: (value)->
     @run.get_type @run.cook value
 
-  warn: -> ___ 'write string to stderr'
+  unshift: (list, values...)->
+    list.unshift values...
+    list
+
+  warn: (msg)->
+    msg = "#{msg}\n" unless msg.match /\n$/
+    @run.err msg
+
+  #----------------------------------------------------------------------------
+  eq: (x, y)-> ___ 'test if x == y'
+  gt: (x, y)-> ___ 'test if x > y'
+  ge: (x, y)-> ___ 'test if x >= y'
+  lt: (x, y)-> ___ 'test if x < y'
+  le: (x, y)-> ___ 'test if x <= y'
