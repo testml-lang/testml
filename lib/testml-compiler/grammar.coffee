@@ -30,7 +30,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
     return [] if input[offset..] == ''
 
     for i in [(@indents.length - 1)...-1]
-      regex = "(?=#{@indents[i]}\\S)"
+      regex = "(?=#{@indents[i]}\\S|$)"
       if parser.match_rgx regex
         @indents.pop()
         return []
