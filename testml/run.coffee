@@ -170,10 +170,17 @@ class TestML.Run
 
   for_each: (list, expr)->
     list = @exec list
+    expr = @exec expr
 
     for item in list[0]
       @vars._ = [item]
-      @exec_expr expr[0]
+      if @get_type(expr) == 'func'
+        if expr[1].length == 0
+          @exec_func expr
+        else
+          @exec_func expr, [item]
+      else
+        @exec_expr expr
 
   pick_loop: (list, expr)->
     for block in @data
