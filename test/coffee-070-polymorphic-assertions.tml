@@ -4,7 +4,7 @@
 Cat('foo', 'bar') == 'foobar'
   :"str == str"
 
-Add(11, 31) == 42
+Sum(11, 31) == 42
   :"num == num"
 
 True == True

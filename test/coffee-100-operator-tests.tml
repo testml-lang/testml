@@ -1,0 +1,25 @@
+#!/usr/bin/env testml
+
+['food', 'fool', 'foot'] % (word)=>
+  word =~ /foo/
+    :"'{Got}' matches /foo/"
+
+foo ||= 42
+foo ||= 43
+foo == 42
+  :"||= works"
+
+foo = 0
+foo ||= 42
+foo == 0
+  :"||= works when  value is 0"
+
+foo = Null
+foo ||= 43
+foo == 43
+  :"||= works after resetting to null"
+
+# foo = None
+# foo ||= 44
+# foo == 44
+#   :"||= works after resetting to none"

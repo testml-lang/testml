@@ -1,6 +1,9 @@
 #!/usr/bin/env testml
 
-1 == 1 :"XXX Need to fix a compiler error with ':' precedence"
-
+# XXX This compiles wrong:
 # Throw('an error').foo.bar.Catch:msg == 'an error'
-#   :"Throw an Error and Catch it"
+#  :"Throw an Error and Catch it"
+
+err = Throw('an error').foo.bar.Catch
+err:msg == 'an error'
+  :"Throw an Error and Catch it"
