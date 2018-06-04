@@ -1,7 +1,0 @@
-#!/usr/bin/env testml
-
-# ImportPath = './import'
-
-# ImportData Env:TESTML_IMPORT.Split(',')
-
-1 == 1 :"XXX Write this test!!!"

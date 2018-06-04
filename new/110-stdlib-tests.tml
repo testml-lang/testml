@@ -1,0 +1,51 @@
+#!/usr/bin/env testml
+
+"ArgV returns a list":
+  ArgV.Type == 'list'
+
+% =>
+  "Block() returns current block":
+    Block:label =~ /^Test/
+
+"Block(label) finds correct block":
+  Block('Test 1'):point:foo == 42
+
+"Blocks returns a list of all blocks":
+  Blocks:1:point:foo == "I like pie\n"
+
+"Bool(0) is true":
+  Bool(0) == True
+"Bool(Null) is false":
+  Bool(Null) == False
+"Bool('') is true":
+  Bool('') == True
+"Bool(False) is false":
+  Bool(False) == False
+
+"Cat joins many strings":
+  Cat('foo', 'bar', 'baz') == 'foobarbaz'
+"Cat joins list of strings":
+  Cat(['foo', 'bar', 'baz']) == 'foobarbaz'
+
+"Count returns size of a list":
+  [10, 9, 8, 'zero'].Count == 4
+
+"Error returns error object":
+  Error('O HAI'):msg == 'O HAI'
+err1 = Throw('hello worlds').xxx.yyy.Catch
+"Throw throws error caught by Catch":
+  err1.Type == 'error'
+"Error contains a msg":
+  err1:msg == 'hello worlds'
+
+
+1 == 1 :"***TODO*** StdLib.import not yet written!!!"
+# ImportPath = './import'
+# ImportData Env:TESTML_IMPORT.Split(',')
+
+=== Test 1
+--- foo: 42
+
+=== Test 2
+--- foo
+I like pie
