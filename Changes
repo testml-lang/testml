@@ -1,4 +1,10 @@
 ---
+version: 0.0.24
+date:    Sun Jun  3 23:17:15 PDT 2018
+changes:
+- User function calls with argument passing
+- More StdLib functions
+---
 version: 0.0.23
 date:    Sun Jun  3 08:19:50 PDT 2018
 changes:
