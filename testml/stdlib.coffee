@@ -93,6 +93,9 @@ class TestML.StdLib
   null: ->
     null
 
+  none: ->
+    return
+
   num: (value)->
     Number value
 
