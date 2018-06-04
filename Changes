@@ -1,4 +1,10 @@
 ---
+version: 0.1.1
+date:    Sun Jun  3 19:11:08 PDT 2018
+changes:
+- Throw error on '--- foo=bar' (without leading ^)
+- Fixed a bug in each (%) compilation
+---
 version: 0.1.0
 date:    Fri Jun  1 10:47:24 PDT 2018
 changes:
