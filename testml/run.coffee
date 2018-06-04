@@ -42,6 +42,7 @@ class TestML.Run
     '[]' : 'get_list'
     '*'  : 'get_point'
     '='  : 'set_var'
+    '||=': 'or_set_var'
 
   block: undefined
 
@@ -263,6 +264,15 @@ class TestML.Run
       @setv name, @exec expr
     return
 
+  or_set_var: (name, expr)->
+    return if @vars[name]?
+
+    if @get_type(expr) == 'func'
+      @setv name, expr
+    else
+      @setv name, @exec expr
+    return
+
 
   assert_eq: (left, right, label)->
     @vars.Got = got = @exec left
@@ -336,7 +346,7 @@ class TestML.Run
   call_stdlib: (name, args)->
     @stdlib ||= new(require '../testml/stdlib') @
 
-    call = _.lowerCase name
+    call = _.lowerCase(name).replace /\s+/g, ''
     throw "Unknown TestML Standard Library function: '#{name}'" \
       unless @stdlib[call]
 
