@@ -17,3 +17,7 @@ class TestMLBridge extends TestML.Bridge
 
   mine: ->
     new class Mine
+
+  str_nums: (str)->
+    _.map _.split(str, ' '), (x)-> Number x
+

@@ -15,6 +15,7 @@ f = =>
 "Type is func":   f.Type        == 'func'
 a = []
 "Type is none":   a:0.Type      == 'none'
+"Type is none":   None.Type     == 'none'
 "Type is native": mine.Type     == 'native'
 
 

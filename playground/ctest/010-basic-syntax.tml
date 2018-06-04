@@ -54,4 +54,18 @@ Diff = 1
         "sha1": "53b3de1f1d480989d391f24a8886d291773347a7",
         "md5": "29a529ed285c7f5cd6c3bff4b3bb7626"}}]}
 
+=== Trailing comments after indent
+--- input
+    # Function with indented body
+    =>
+      1 == 1
+
+    # Trailing comment
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=>",[],
+      [["==",1,1]]]],
+  "data": []}
+
 # vim: ft=:
