@@ -26,6 +26,12 @@
       return new (Mine = class Mine {});
     }
 
+    str_nums(str) {
+      return _.map(_.split(str, ' '), function(x) {
+        return Number(x);
+      });
+    }
+
   };
 
 }).call(this);
