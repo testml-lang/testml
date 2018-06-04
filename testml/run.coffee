@@ -117,7 +117,7 @@ class TestML.Run
     @exec_expr(expr)[0]
 
   exec_expr: (expr, context=[])->
-    return [expr] unless @get_type(expr) == 'expr'
+    return [expr] unless @type(expr) == 'expr'
 
     args = _.clone expr
 
@@ -133,7 +133,7 @@ class TestML.Run
       if (value = @vars[name])?
         if args.length
           die "Variable value has args but is not a function" \
-            unless @get_type value == 'func'
+            unless @type value == 'func'
           return_ = @exec_func value, args
         else
           return_ = value
@@ -156,7 +156,7 @@ class TestML.Run
     for call in calls
       if ! @error
         try
-          if @get_type(call) == 'func'
+          if @type(call) == 'func'
             @exec_func call, context[0]
             context = []
           else
@@ -179,7 +179,7 @@ class TestML.Run
 
     for item in list[0]
       @vars._ = [item]
-      if @get_type(expr) == 'func'
+      if @type(expr) == 'func'
         if expr[1].length == 0
           @exec_func expr
         else
@@ -210,13 +210,13 @@ class TestML.Run
         break
 
     if pick
-      if @get_type(expr) == 'func'
+      if @type(expr) == 'func'
         @exec_func expr
       else
         @exec_expr expr
 
   exec_func: ([op, signature, statements], args=[])->
-    if signature.length > 1 and args.length == 1 and @get_type(args) == 'list'
+    if signature.length > 1 and args.length == 1 and @type(args) == 'list'
       args = args[0]
 
     if signature.length != args.length
@@ -233,7 +233,7 @@ class TestML.Run
   call_func: (name)->
     func = @vars[name]
     throw "Tried to call '#{name}' but is not a function" \
-      unless func? and @get_type(func) == 'func'
+      unless func? and @type(func) == 'func'
     @exec_func func
 
   get_str: (string)->
@@ -242,7 +242,7 @@ class TestML.Run
   get_hash: (hash, key)->
     hash = @exec hash
     key = @exec key
-    type = @get_type hash
+    type = @type hash
 
     @cook switch
       when type == 'hash' then hash[0][key]
@@ -258,7 +258,7 @@ class TestML.Run
     return @getp name
 
   set_var: (name, expr)->
-    if @get_type(expr) == 'func'
+    if @type(expr) == 'func'
       @setv name, expr
     else
       @setv name, @exec expr
@@ -267,7 +267,7 @@ class TestML.Run
   or_set_var: (name, expr)->
     return if @vars[name]?
 
-    if @get_type(expr) == 'func'
+    if @type(expr) == 'func'
       @setv name, expr
     else
       @setv name, @exec expr
@@ -372,7 +372,7 @@ class TestML.Run
   get_method: (key, args...)->
     sig = []
     for arg in args
-      sig.push @get_type arg
+      sig.push @type arg
     sig_str = sig.join ','
 
     entry = @constructor.vtable[key]
@@ -385,7 +385,7 @@ class TestML.Run
 
     return method
 
-  get_type: (value)->
+  type: (value)->
     throw "Can't get type of undefined value" \
       if typeof value == 'undefined'
 
@@ -433,7 +433,7 @@ class TestML.Run
     return ['?', value]
 
   uncook: (value)->
-    type = @get_type value
+    type = @type value
 
     switch
       when type.match /^(?:str|num|bool|null)$/ then value
@@ -467,12 +467,12 @@ class TestML.Run
     transform = (value)=>
       if label
         switch
-          when @get_type(value).match /^(?:list|hash)$/ then \
+          when @type(value).match /^(?:list|hash)$/ then \
             JSON.stringify(value[0]).replace /"/g, ''
           else String(value).replace /\n/g, '␤'
       else
         switch
-          when @get_type(value).match /^(?:list|hash)$/ then \
+          when @type(value).match /^(?:list|hash)$/ then \
             JSON.stringify(value[0]).replace /"/g, ''
           else String value
 
@@ -494,25 +494,25 @@ class TestML.Run
   test_types: ->
     class Bad
 
-    console.log "null   - #{@get_type null}"
-    console.log "none   - #{@get_type []}"
+    console.log "null   - #{@type null}"
+    console.log "none   - #{@type []}"
 
-    console.log "str    - #{@get_type ""}"
-    console.log "num    - #{@get_type 1}"
-    console.log "bool   - #{@get_type false}"
+    console.log "str    - #{@type ""}"
+    console.log "num    - #{@type 1}"
+    console.log "bool   - #{@type false}"
 
-    console.log "list   - #{@get_type [[]]}"
-    console.log "hash   - #{@get_type [{}]}"
+    console.log "list   - #{@type [[]]}"
+    console.log "hash   - #{@type [{}]}"
 
-    console.log "regex  - #{@get_type ['/','']}"
-    console.log "func   - #{@get_type ['=>','']}"
-    console.log "error  - #{@get_type ['!','']}"
-    console.log "native - #{@get_type ['?','']}"
-    console.log "expr   - #{@get_type ['foo']}"
+    console.log "regex  - #{@type ['/','']}"
+    console.log "func   - #{@type ['=>','']}"
+    console.log "error  - #{@type ['!','']}"
+    console.log "native - #{@type ['?','']}"
+    console.log "expr   - #{@type ['foo']}"
 
-    console.log "new Bad   - #{try @get_type new Bad catch e then e}"
-    console.log "new Regex - #{try @get_type /x/ catch e then e}"
-    console.log "undefined - #{try @get_type() catch e then e}"
+    console.log "new Bad   - #{try @type new Bad catch e then e}"
+    console.log "new Regex - #{try @type /x/ catch e then e}"
+    console.log "undefined - #{try @type() catch e then e}"
 
     throw "Tested TestML internal types"
 

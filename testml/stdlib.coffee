@@ -141,7 +141,7 @@ class TestML.StdLib
     true
 
   type: (value)->
-    @run.get_type @run.cook value
+    @run.type @run.cook value
 
   unshift: (list, values...)->
     list.unshift values...
