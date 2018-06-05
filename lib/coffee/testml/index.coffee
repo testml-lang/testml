@@ -1,4 +1,4 @@
 class global.TestML
-  @VERSION: '0.0.24'
+  @VERSION: '0.0.25'
   @browser: false
   @env = (global.process || {}).env || {}

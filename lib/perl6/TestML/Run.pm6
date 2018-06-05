@@ -108,6 +108,9 @@ method exec($expr, $context=[]) {
 
     if $name ~~ /^<[a..z]>/ {
       my $call = $name;
+      if not $!bridge {
+        $!bridge = (require ::(%*ENV<TESTML_BRIDGE>)).new;
+      }
       die "Can't find bridge function: '$name'"
         unless $!bridge.can($call);
       @return = $!bridge."$call"(|@args);
@@ -218,10 +221,6 @@ method initialize {
     }
   ];
 
-  if not $!bridge {
-    $!bridge = (require ::(%*ENV<TESTML_BRIDGE>)).new;
-  }
-
   if not $!stdlib {
     require TestML::StdLib;
     $!stdlib = TestML::StdLib.new;
@@ -240,7 +239,7 @@ method get-label($label-expr='') {
     }
   }
 
-  my $block-label = $.block.label;
+  my $block-label = $.block ?? $.block.label !! '';
 
   if $label {
     $label ~~ s/^\+/$block-label/;

@@ -66,7 +66,9 @@ test-python-unit: testml-tml
 ifdef test
 	testml-python-unit $(test)
 else
-	testml-python-unit test/testml/*.tml
+	testml-python-unit test/testml/*.tml \
+	  test/python/testml/0{6,7,9}0*.tml \
+	  test/python/testml/1*.tml
 endif
 
 
