@@ -52,12 +52,6 @@ module.exports = class TestML.Run.TAP extends TestML.Run
     @check_plan()
     @tap.list_has got, want, label
 
-  out: (msg)->
-    @tap.note(msg)
-
-  err: (msg)->
-    @tap.diag(msg)
-
   check_plan: ->
     return if @checked
     @checked = true
@@ -65,3 +59,9 @@ module.exports = class TestML.Run.TAP extends TestML.Run
     if plan = @vars.Plan
       @planned = true
       @tap.plan plan
+
+  out: (msg)->
+    @tap.note(msg)
+
+  err: (msg)->
+    @tap.diag(msg)
