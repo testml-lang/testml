@@ -44,6 +44,19 @@ class TestML.Run
     '='  : 'set_var'
     '||=': 'or_set_var'
 
+  @types:
+    string: 'str'
+    number: 'num'
+    boolean: 'bool'
+    testml:
+      '=>': 'func'
+      '/': 'regex'
+      '!': 'error'
+      '?': 'native'
+    group:
+      Object: 'hash'
+      Array: 'list'
+
   block: undefined
 
   file: undefined
@@ -102,7 +115,7 @@ class TestML.Run
   getp: (name)->
     return unless @block
     value = @block.point[name]
-    value = @exec value if _.isArray value
+    value = @exec value if value?
     value
 
   getv: (name)->
@@ -192,7 +205,7 @@ class TestML.Run
       @block = block
 
       if block.point.ONLY and ! @warned_only
-        @warn "Warning: TestML 'ONLY' in use."
+        @err "Warning: TestML 'ONLY' in use."
         @warned_only = true
 
       @exec_expr ['()', list, expr]
@@ -230,8 +243,8 @@ class TestML.Run
 
     return
 
-  call_func: (name)->
-    func = @vars[name]
+  call_func: (func)->
+    func = @exec func
     throw "Tried to call '#{name}' but is not a function" \
       unless func? and @type(func) == 'func'
     @exec_func func
@@ -343,67 +356,13 @@ class TestML.Run
         @assert_str_like_regex str, regex, label
 
   #----------------------------------------------------------------------------
-  call_stdlib: (name, args)->
-    @stdlib ||= new(require '../testml/stdlib') @
-
-    call = _.lowerCase(name).replace /\s+/g, ''
-    throw "Unknown TestML Standard Library function: '#{name}'" \
-      unless @stdlib[call]
-
-    args = _.map args, (x)=> @uncook @exec x
-
-    @cook @stdlib[call](args...)
-
-  call_bridge: (name, args)->
-    @bridge ||= new(require process.env.TESTML_BRIDGE)
-
-    call = name.replace /-/g, '_'
-    throw "Can't find bridge function: '#{name}'" \
-      unless @bridge[call]
-
-    args = _.map args, (x)=> @uncook @exec x
-
-    return_ = @bridge[call](args...)
-
-    return unless return_?
-
-    @cook return_
-
-  get_method: (key, args...)->
-    sig = []
-    for arg in args
-      sig.push @type arg
-    sig_str = sig.join ','
-
-    entry = @constructor.vtable[key]
-    [name, pattern, vtable] = entry
-    method = vtable[sig_str] || pattern.replace /%(\d+)/g, (m, num)->
-      sig[num - 1]
-    throw "Can't resolve #{name}(#{sig_str})" unless method
-
-    throw "Method '#{method}' does not exist" unless @[method]
-
-    return method
-
   type: (value)->
     throw "Can't get type of undefined value" \
       if typeof value == 'undefined'
 
     return 'null' if value == null
 
-    types =
-      string: 'str'
-      number: 'num'
-      boolean: 'bool'
-      testml:
-        '=>': 'func'
-        '/': 'regex'
-        '!': 'error'
-        '?': 'native'
-      group:
-        Object: 'hash'
-        Array: 'list'
-
+    types = @constructor.types
     type = types[typeof value] ||
       types[name = value.constructor.name] ||
         if name == 'Array'
@@ -439,14 +398,54 @@ class TestML.Run
       when type.match /^(?:str|num|bool|null)$/ then value
       when type.match /^(?:list|hash)$/ then value[0]
       when type.match /^(?:error|native)$/ then value[1]
-      when type == 'func'
-        new TestMLFunction value
+      when type == 'func' then new TestMLFunction value
       when type == 'regex'
-        if typeof value[1] == 'string'
-          new RegExp value[1]
+        if typeof value[1] == 'string' then new RegExp value[1]
         else value[1]
       when type == 'none' then undefined
       else throw "Can't uncook '#{require('util').inspect value}'"
+
+  call_stdlib: (name, args)->
+    @stdlib ||= new(require '../testml/stdlib') @
+
+    call = _.lowerCase(name).replace /\s+/g, ''
+    throw "Unknown TestML Standard Library function: '#{name}'" \
+      unless @stdlib[call]
+
+    args = _.map args, (x)=> @uncook @exec x
+
+    @cook @stdlib[call](args...)
+
+  call_bridge: (name, args)->
+    @bridge ||= new(require process.env.TESTML_BRIDGE)
+
+    call = name.replace /-/g, '_'
+    throw "Can't find bridge function: '#{name}'" \
+      unless @bridge[call]
+
+    args = _.map args, (x)=> @uncook @exec x
+
+    return_ = @bridge[call](args...)
+
+    return unless return_?
+
+    @cook return_
+
+  get_method: (key, args...)->
+    sig = []
+    for arg in args
+      sig.push @type arg
+    sig_str = sig.join ','
+
+    entry = @constructor.vtable[key]
+    [name, pattern, vtable] = entry
+    method = vtable[sig_str] ||
+      pattern.replace /%(\d+)/g, (m, num)-> sig[num - 1]
+
+    throw "Can't resolve #{name}(#{sig_str})" unless method
+    throw "Method '#{method}' does not exist" unless @[method]
+
+    return method
 
   get_label: (label_expr='')->
     label = @exec label_expr
@@ -485,7 +484,6 @@ class TestML.Run
       transform value
 
     string = string.replace /\{([\-\w]+)\}/g, transform1
-
     string = string.replace /\{\*([\-\w]+)\}/g, transform2
 
     return string

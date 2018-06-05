@@ -90,21 +90,21 @@ class TestML.StdLib
   list: (values...)->
     values
 
-  null: ->
-    null
-
   none: ->
     return
+
+  null: ->
+    null
 
   num: (value)->
     Number value
 
-  push: (list, values...)->
-    list.push values...
-    list
-
   pop: (list)->
     list.pop()
+    list
+
+  push: (list, values...)->
+    list.push values...
     list
 
   regex: (pattern, flags='')->
