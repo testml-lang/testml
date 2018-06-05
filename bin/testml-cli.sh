@@ -21,6 +21,7 @@ Options:
  
 c,compile   Compile a TestML file to the cache directory
 e,eval=     Specify TestML input on command line
+i,input=    Main input file (prepended to each file arg)
 a,all       Combine all input files into one text
 p,print     Print compiled TestML to stdout
 l,list      List all the TestML langauge/framework runners
@@ -194,6 +195,10 @@ setup-eval() {
   for line in "${option_eval[@]}"; do
     testml_eval_input+="$line"$'\n'
   done
+
+  if [[ -n $option_input ]]; then
+    testml_eval_input+="$(cat "$option_input")"$'\n'
+  fi
 
   if $option_all; then
     [[ ${#arguments[@]} -gt 0 ]] ||
