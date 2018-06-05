@@ -112,7 +112,6 @@ test/node/%.js: test/coffee/%.coffee
 	coffee -cp $< > $@
 
 clean:
-	rm -fr lib/perl6/.precomp/
 	rm -fr node_modules/
 	rm -f package*
 	find . -type d | grep '\.testml$$' | xargs rm -fr
