@@ -1,6 +1,6 @@
 #!/usr/bin/env testml-pl5
 
-# Diff = True
+Diff = True
 
 "Test command '{*command}'":
   *command.run-command == *output
@@ -26,6 +26,7 @@ usage:   testml <options...> [<testml-file>...]
 
     -c, --compile         Compile a TestML file to the cache directory
     -e, --eval ...        Specify TestML input on command line
+    -i, --input ...       Main input file (prepended to each file arg)
     -a, --all             Combine all input files into one text
     -p, --print           Print compiled TestML to stdout
     -l, --list            List all the TestML langauge/framework runners
