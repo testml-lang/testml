@@ -201,8 +201,11 @@ sub pick_exec {
 sub get_str {
   my ($self, $string) = @_;
 
-  $string =~ s{\{([\-\w+])\}} {
-    $self->vars->{$1} || ''
+  # XXX Hack to see input file in label:
+  $self->{vars}{File} = $ENV{TESTML_FILEVAR};
+
+  $string =~ s{\{([\-\w]+)\}} {
+    $self->{vars}{$1} || ''
   }gex;
 
   $string =~ s{\{\*([\-\w]+)\}} {

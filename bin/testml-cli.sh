@@ -225,5 +225,6 @@ add-eval-text() {
 
   file='-'
 
+  export TESTML_FILEVAR="$TESTML_INPUT"
   export TESTML_INPUT='-'
 }
