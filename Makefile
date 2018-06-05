@@ -20,6 +20,7 @@ WORKTREES := \
     pegex \
     playground \
     testml-tml \
+    rotn \
     site \
 
 export TESTML_DEVEL := $(devel)
