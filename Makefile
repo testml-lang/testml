@@ -7,3 +7,10 @@ test: lib/rotn.js
 
 %.js: %.coffee
 	coffee -cbp $< | tail -n+2 > $@
+
+clean:
+	rm -fr node_modules/
+	rm -f package*
+	find . -type d | grep '\.testml$$' | xargs rm -fr
+	find . -type d | grep '\.precomp$$' | xargs rm -fr
+	find . -name '*.pyc' | xargs rm -f
