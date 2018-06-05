@@ -1,16 +1,23 @@
+# -*- coding: utf8 -*-
+
 import re, sys
 
 class TAP:
   def __init__(self):
     self.count = 0
 
+  def plan(self, plan):
+    print "1..%d" % plan
+
   def passed(self, label):
     self.count += 1
-    print "ok %d - %s" % (self.count, label)
+    if label: label = ' - ' + label
+    print "ok %d%s" % (self.count, label.encode('utf-8'))
 
   def failed(self, label):
     self.count += 1
-    print "not ok %d - %s" % (self.count, label)
+    if label: label = ' - ' + label
+    print "not ok %d%s" % (self.count, label.encode('utf-8'))
 
   def ok(self, ok, label):
     if ok:
@@ -45,6 +52,22 @@ class TAP:
         want = re.sub(r'\n$', "\n# ", want)
         want = "'%s'" % want
       print >> sys.stderr, "#     expected: %s" % want
+
+  def like(self, got, want, label):
+    if re.search(want, got):
+      self.passed(label)
+    else:
+      self.failed(label)
+
+  def has(self, got, want, label):
+    if want in got:
+      self.passed(label)
+    else:
+      self.failed(label)
+
+
+  def note(self, msg):
+    print >> sys.stdout, re.sub(r'^', '# ', msg, flags=re.M)
 
   def diag(self, msg):
     print >> sys.stderr, re.sub(r'^', '# ', msg, flags=re.M)
