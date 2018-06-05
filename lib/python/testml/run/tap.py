@@ -12,13 +12,17 @@ class TestMLRunTAP(TestMLRun):
     TestMLRun.__init__(self, **params)
     self.tap = TAP()
 
-  def test_begin(self):
-    pass
+  def testml_begin(self):
+    self.checked = False
+    self.planned = False
 
-  def test_end(self):
-    self.tap.done_testing()
+  def testml_end(self):
+    if not self.planned:
+      self.tap.done_testing()
 
-  def test_eq(self, got, want, label):
+  def testml_eq(self, got, want, label):
+    self.check_plan()
+
     if isinstance(want, basestring) and \
       got != want and \
       re.search(r'\n', want) and (
@@ -40,5 +44,32 @@ class TestMLRunTAP(TestMLRun):
 
     else:
       self.tap.is_eq(got, want, label)
+
+  def testml_like(self, got, want,label):
+    self.check_plan()
+    self.tap.like(got, want, label)
+
+  def testml_has(self, got, want, label):
+    self.check_plan()
+    self.tap.has(got, want, label)
+
+  def testml_list_has(self, got, want, label):
+    self.check_plan()
+    self.tap.has(got, want, label)
+
+  def check_plan(self):
+    if self.checked: return
+    self.checked = True
+
+    plan = self.vars.get('Plan')
+    if plan:
+      self.planned = True
+      self.tap.plan(plan)
+
+  def out(self, msg):
+    self.tap.note(msg)
+
+  def err(self, msg):
+    self.tap.diag(msg)
 
 # vim: sw=2:

@@ -59,7 +59,7 @@ test-perl-tap test-perl6-tap test-python-tap: testml-tml
 ifdef test
 	TESTML_RUN=$(@:test-%=%) prove -v $(test)
 else
-	TESTML_RUN=$(@:test-%=%) prove -v test/testml/*.tml
+	TESTML_RUN=$(@:test-%=%) prove -v test/testml/*.tml test/$(subst -tap,,$(subst test-,,$@))/testml/*.tml
 endif
 
 test-python-unit: testml-tml
