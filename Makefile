@@ -22,6 +22,7 @@ WORKTREES := \
     testml-tml \
     rotn \
     site \
+    talk \
 
 export TESTML_DEVEL := $(devel)
 export TESTML_COMPILER_DEBUG := $(debug)
