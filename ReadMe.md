@@ -7,7 +7,7 @@ An Acmeist Data-Driven Software Testing Language
 
 # Synopsis
 
-Try [Interactive TestML](https://testml-lang.github.io/testml/)
+Try [Interactive TestML](http://testml.org/playground/)
 
 An example TestML file, `math.tml`:
 ```
