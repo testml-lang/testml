@@ -229,7 +229,6 @@
     window.onresize = function() {
       var body_width, width;
       body_width = $('body').width();
-      console.log(body_width);
       width = body_width / 3 - 6;
       if (width < 400) {
         width = body_width / 2 - 6;
@@ -237,7 +236,6 @@
       if (width < 400) {
         width = body_width - 6;
       }
-      console.log(width);
       $('#testml').width(width);
       $('#bridge').width(width);
       $('#output').width(width);
