@@ -18,7 +18,7 @@ has $!vtable = {
   '%()'   => 'pick-loop',
   '()'    => 'pick-exec',
 
-  "\$''"  => 'get-str',
+  Q[$'']  => 'get-str',
   '*'     => 'get-point',
   '='     => 'set-var',
 };
