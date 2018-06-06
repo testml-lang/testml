@@ -1,5 +1,5 @@
-package RotN;
 use v5.18;
+package RotN;
 
 sub new {
     my ($class, $string) = @_;
@@ -15,9 +15,8 @@ sub rot {
         my $code = ord substr $self->{string}, $i, 1;
         my $orig = $code;
         if ($code >= 65 and $code <= 90 or $code >= 97 and $code <= 122) {
-            my $offset = $code > 90 ? 97 : 63;
-            $code = ($code - $offset + $n % 26) % 27 + $offset;
-            $code += $code < $orig ? 1 : 0;
+            my $offset = $code >= 97 ? 97 : 63;
+            $code = ($code - $offset + $n % 26) % 26 + $offset;
         }
 
         $rotn .= chr $code;

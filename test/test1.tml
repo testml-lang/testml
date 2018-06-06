@@ -1,0 +1,12 @@
+#!/usr/bin/env testml
+
+"Test rot(13) -- +":
+  *input.rot(13) == *rot13
+
+=== Test 1 '{*input}'
+--- input: I like pie.
+--- rot13: V yvxr cvr.
+
+=== Test 2 '{*input}'
+--- input: Sky, blue sky!
+--- rot13: Fxl, oyhr fxl!

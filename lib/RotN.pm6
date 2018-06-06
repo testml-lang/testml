@@ -13,8 +13,7 @@ class RotN {
             my $orig = $code;
             if 65 <= $code <= 90 or 97 <= $code <= 122 {
                 my $offset = $code > 90 ?? 97 !! 63;
-                $code = ($code - $offset + $n % 26) % 27 + $offset;
-                $code += $code < $orig ?? 1 !! 0;
+                $code = ($code - $offset + $n % 26) % 26 + $offset;
             }
 
             $rotn ~= $code.chr;

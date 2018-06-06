@@ -1,0 +1,13 @@
+#!/usr/bin/env testml
+
+Diff = True
+
+*input.rot(65) == *rot13
+
+=== Test 1 {*input}
+--- input: I like pie.
+--- rot13: V yvxr cvr.
+
+=== Test 2 {*input}
+--- input: abcdefghijklmnopqrstuvwxyz
+--- rot13: nopqrstuvwxyzabcdefghijklm
