@@ -19,15 +19,15 @@ button {
 
 textarea {
   font-family: monospace;
-  width: 500px;
-  height: 500px;
+  width: 400px;
+  height: 400px;
   float: left;
 }
 
 div#mocha {
   margin: 0;
-  width: 500px;
-  min-height: 500px;
+  width: 400px;
+  min-height: 400px;
   border: 0px solid black;
   float: left;
 }
@@ -39,5 +39,5 @@ span.error {
 
 #explanation {
   padding-top: 15px;
-  width: 500px;
+  width: 400px;
 }
