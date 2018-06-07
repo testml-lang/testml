@@ -3,6 +3,9 @@
 Diff = True
 
 *input.rot(65) == *rot13
+*input.rot(5) == *rot5
+*input.rot(5).rot(8) == *rot13
+# *input.rot(5).rot(9).rot(-1) == *rot13
 
 === Test 1 {*input}
 --- input: I like pie.
@@ -10,4 +13,5 @@ Diff = True
 
 === Test 2 {*input}
 --- input: abcdefghijklmnopqrstuvwxyz
+--- rot5: fghijklmnopqrstuvwxyzabcde
 --- rot13: nopqrstuvwxyzabcdefghijklm
