@@ -1,0 +1,31 @@
+
+
+
+
+
+
+
+
+                                                 TestML Variable Types
+
+     * JSON Types (Language Portable)
+       * str num bool null
+       * list hash
+
+     * TestML Types
+       * none regex
+       * func expr
+       * error native
+
+     * Global scoping currently :(
+
+
+
+
+
+
+
+
+
+
+

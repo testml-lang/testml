@@ -1,0 +1,31 @@
+
+
+
+
+
+
+
+
+
+                                              TestML Compiler Test Suite
+
+     * Compiler test suite is all TestML!
+     * Used old CPAN TestML to bootstrap
+
+
+
+     $ (cd ../compiler; make test)
+
+     $ vim ../compiler-tml
+
+
+
+
+
+
+
+
+
+
+
+

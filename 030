@@ -1,0 +1,31 @@
+
+
+
+
+
+
+                                                  The Lingy Language
+
+     $ vim ../rotn/test/.testml/test1.tml.json
+
+     * Lisp in JSON
+     * version, code, data
+     * Expr -> ["op", <args...>]
+     * Str, Num, Bool, Null -> themselves
+     * List -> [[...]]
+     * Hash -> [{...}]
+
+     * TestML Types
+       * regex, func, none, error, native
+
+     * Cooked vs Raw values
+
+     $ # ../testml-tml/new/050-object-type.tml
+
+
+
+
+
+
+
+

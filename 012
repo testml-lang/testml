@@ -1,0 +1,31 @@
+
+
+
+
+
+
+
+
+
+                                                   TestML Test Suite
+
+     * TestML Tests are 100% TestML
+     * `make test` runs all tests in all languages
+
+     $ (cd ..; make test)
+
+     $ (cd ..; make test-python-tap)
+
+     $ vim ../testml-tml
+
+
+
+
+
+
+
+
+
+
+
+

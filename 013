@@ -1,0 +1,31 @@
+
+
+
+
+
+
+
+
+                                                    TestML Compiler
+
+     * Specific Runtime for each language
+     * Only one TestML Compiler
+       * npm install -g testml-compiler
+     * Written in NodeJS JavaScript
+       * Uses pegex-js
+       * CLI and Browser
+     * foo.tml => .testml/foo.tml.json
+       * `testml` compiles on demand
+     * NodeJS startup is slooooooow :(
+     * Haskell compiler coming soon
+       * Compiled to binary executables
+
+
+
+
+
+
+
+
+
+

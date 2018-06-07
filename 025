@@ -1,0 +1,31 @@
+
+
+
+
+
+
+
+
+
+
+                                                Using Comments and Only
+
+     * Line Comments work in Data Section
+     * Useful for disabling things
+
+
+
+     $ testml -R python-tap ../rotn/test/test2.tml
+
+
+
+
+
+
+
+
+
+
+
+
+

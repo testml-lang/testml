@@ -1,0 +1,31 @@
+
+
+
+
+
+
+
+
+                                              Bridge and StdLib Functions
+
+     * Variables and Functions:
+       * Upper case names belong to TestML
+         * Standard Library Methods
+         * Config variables
+       * Lower case belong to user
+         * Bridge functions
+         * General purpose variables
+
+
+
+     $ # ../lib/coffee/testml/stdlib.coffee
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,31 @@
+
+
+
+
+
+
+
+
+
+                                                Testing Command Output
+
+     * TestML is for all kinds of Testing
+     * Craft your inputs and outputs carefully
+
+     * Example of testing command output
+
+
+
+     $ # ../testml-tml/out/cli.tml
+     $ (cd ..; make test-out)
+
+
+
+
+
+
+
+
+
+
+

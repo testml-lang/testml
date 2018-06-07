@@ -1,0 +1,31 @@
+
+
+
+
+
+
+
+
+
+                                             Chained Function Expressions
+
+         *input.Lines.Reverse.Text == *output
+
+         *input.rot(13) == *rot13.rot(26)
+
+         rot(*input, 13) == *rot13.rot(26)
+
+         run(*command).(stdout, stderr, rc)=>
+           rc == 0
+           stdout =~ *patterns
+
+
+
+
+
+
+
+
+
+
+
