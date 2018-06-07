@@ -17,7 +17,7 @@ vimrc: |
   map 1 :wincmd o<cr>
   map 2 :wincmd v<cr>
   map = :e #<cr>
-  map - t/gf<cr>
+  map - t/gf
 
 ---- center
 TestML - A New Language for Software Testing
@@ -33,32 +33,40 @@ by Ingy döt Net
   * CPAN, PyPI, RubyGems, NPM, etc
 +* Publishing the same module in many langs at once
   * Acmeism
-+* I like inventing new languages
+  * My programming philosophy
+  * http://acmeism.org
++* I like inventing new languages:
   * YAML
+  * SchemaType
+  * Jemplate
   * Pegex
+  * Lingy
 
 ----
-== TestML
+== The TestML Language
 
-* TestML is a new testing language
-  * Has expression syntax and data format
+* TestML is a New Testing Language
+  * Has a syntax for code and data
+  * Has a compiler: testml-compiler
+  * Has a CLI command: testml
 +* Data driven testing
   * Apply a few assertions to 1000s of data items
 +* Will work in every modern programming language
   * Coffee, JS, Perl, Perl6, Python today
+  * 20+ langs in 2018
 +* Will work with all popular test frameworks
   * TAP, xUnit, Mocha today
 +* Perfect for multi-language (Acmeist) projects
   * Also great for everyday programming
 
 ----
-== This is Vroom
+== BTW... This is Vroom
 
 * It's just vim
 * With some clever key bindings
 * 2008 CPAN Module
   * https://metacpan.org/pod/Vroom
-* All from one text file
+* Made from one text file
 
 
 
@@ -66,6 +74,10 @@ $ less slides.vroom && ls -l
 
 ----
 == A RotN Example of using TestML
+
+* Rot13 -> Rot(n) where n=13
+* A simple library to test
+* In 5 languages at once!
 
 # lib/rotn.coffee
 
@@ -106,8 +118,9 @@ $ vim ../rotn/lib
 
 
 $ (cd ../rotn; make test)
-$ vim ../rotn
 $ testml -R python-tap ../rotn/test/test1.tml
+$ testml -R python-tap ../rotn/test/test2.tml
+$ vim ../rotn
 
 ----
 == TestML Language in a Nutshell
@@ -122,9 +135,15 @@ $ testml -R python-tap ../rotn/test/test1.tml
     --- rot13: V yvxr cvr.
 
 * Shebang line
+  Can run ./foo.tml file directly if +x
 * Labels and interpolation
+  * Can be   "1 is 1": 1 == 1
+  * or       1 == 1 :"1 is 1"
 * Assertions and expressions
+  * Usually this simple: *a.b == *c :"d"
 * Data blocks and points
+  * Lots of data
+  * The more the better
 
 ----
 == Commandline Usage
@@ -134,7 +153,7 @@ $ testml -h
 $ testml ../rotn/test/test1.tml
 $ TESTML_RUN=perl6 testml ../rotn/test/test1.tml
 $ testml -R python-tap ../rotn/test/test1.tml
-$ testml-python-unit testml ../rotn/test/test1.tml
+$ testml-python-unit ../rotn/test/test1.tml
 
 $ less ../rotn/test/.testml/test1.tml.json
 $ testml --compile --print ../rotn/test/test1.tml
@@ -144,32 +163,51 @@ $ testml -R coffee-tap -e 'Sum(111, 222, 444) == 777'
 $ TESTML_RUN=node-tap prove -v ../rotn/test/test1.tml
 
 ----
+== My General Rant\wThoughts on Testing
+
+* Too much code is bad
+  * More code requires more maintenance
++* Tests are code
+  * They add to the maintenance problem
++* Tests should be mostly data
+  * Much easier to maintain
++* TestML is mostly data
+  * Makes testing not suck
+
++* Code should be mostly data too
+  * But that's a whole 'nother talk
+
+----
 == A Brief History of TestML
 
 * 2004 Test::Base CPAN Module
 +* 2010 Acmeism and TestML .pm .rb
 +* 2017 OpenResty and TestML
 +* 2018 TestML Full Stack for All
+  * OpenWest is new TestML debut
 
 ----
-== TestML Concept Overview
+== TestML Usage Overview
 
 * Software to Test
   * In some language
   * (Preexisting test framework)
-+* TestML Framework
+* TestML Framework
   * TestML Compiler
-+* Test Suite
+* Test Suite
   * .tml files
   * Simple Assertions
   * Large Body of Data
-+* TestML Bridge class
+* TestML Bridge class
   * In software's language
-+* The `testml` CLI
+* The `testml` CLI
   * Or `prove`, etc
 
 ----
 == TestML Test Suite
+
+* TestML Tests are 100% TestML
+* `make test` runs all tests in all languages
 
 $ (cd ..; make test)
 
@@ -190,19 +228,22 @@ $ vim ../testml-tml
   * `testml` compiles on demand
 * NodeJS startup is slooooooow :(
 * Haskell compiler coming soon
-  * Compiled to binary
+  * Compiled to binary executables
 
 ----
 == TestML Compiler
 
 * Compiler is 1.0 complete
-* 300 line Pegex Grammar
+* ~300 lines Pegex Grammar
+* ~500 lines CoffeeScript
 * Compiles to TestML to Lingy
   * Lingy DSL == Lisp + JSON
 * Prints to stdout
 
+
+
 $ testml-compiler ../rotn/test/test1.tml
-$ vim ../pegex/testml.pgx  # TestML Pegex Grammar
+$ vim ../pegex/testml.pgx
 
 ----
 == TestML Compiler Test Suite
@@ -210,11 +251,14 @@ $ vim ../pegex/testml.pgx  # TestML Pegex Grammar
 * Compiler test suite is all TestML!
 * Used old CPAN TestML to bootstrap
 
+
+
 $ (cd ../compiler; make test)
 
-$ vim ../testml-tml
+$ vim ../compiler-tml
 
----- TestML Language Features
+----
+== TestML Language Features
 
 * TestML is Feature Rich
 * Simple things are Simple
@@ -223,9 +267,8 @@ $ vim ../testml-tml
 * Data Features
 * Code Features
 
-$ vim ../testml-tml
-
----- Data Features
+----
+== Data Features
 
 $ # ../compiler-tml/040-data-point.tml
 $ # ../compiler-tml/050-data-point-transforms.tml
@@ -241,7 +284,9 @@ $ # ../compiler-tml/060-data-point-pseudo.tml
   * ONLY SKIP HEAD LAST
   * TODO DIFF
 
----- TestML Statements
+----
+== TestML Statements
+
 * Implicit Block/Pick/Loop
   * Top level statements
 
@@ -249,7 +294,8 @@ $ # ../compiler-tml/060-data-point-pseudo.tml
 
     <!*baz> *foo.transform == *bar
 
----- Variable Types
+----
+== TestML Variable Types
 
 * JSON Types (Language Portable)
   * str num bool null
@@ -262,7 +308,8 @@ $ # ../compiler-tml/060-data-point-pseudo.tml
 
 * Global scoping currently :(
 
----- Assertion Operators
+----
+== Assertion Operators
 
 * == Equals
 * =~ Regex Match
@@ -270,9 +317,14 @@ $ # ../compiler-tml/060-data-point-pseudo.tml
 
 * All polymorphic
 
-$ # ../testml-tml/test/070-polymorphic-assertions.tml
 
----- Other TestML Operators
+
+$ # ../testml-tml/new/070-polymorphic-assertions.tml
+
+$ testml-python-tap ../testml-tml/new/070-polymorphic-assertions.tml
+
+----
+== Other TestML Operators
 
 * =      Assignment
 * ||=    Or assignment
@@ -284,7 +336,8 @@ $ # ../testml-tml/test/070-polymorphic-assertions.tml
 
 * TestML has NO keywords
 
----- Chained Function Expressions
+----
+== Chained Function Expressions
 
     *input.Lines.Reverse.Text == *output
 
@@ -296,34 +349,38 @@ $ # ../testml-tml/test/070-polymorphic-assertions.tml
       rc == 0
       stdout =~ *patterns
 
----- Bridge and StdLib Functions
+----
+== Bridge and StdLib Functions
 
 * Variables and Functions:
   * Upper case names belong to TestML
+    * Standard Library Methods
+    * Config variables
   * Lower case belong to user
+    * Bridge functions
+    * General purpose variables
+
+
 
 $ # ../lib/coffee/testml/stdlib.coffee
 
----- Compiler Directives
+----
+== Compiler Directives
 
 * %TestML 0.3.0
 * %Import data1 data2
   * Loads data1.tml, data2.tml files
   * Searches TESTML_PATH
 
----- Using Comments and Only
+----
+== Using Comments and Only
 
 * Line Comments work in Data Section
 * Useful for disabling things
 
-$ # ../compiler-tml/050-data-point-transforms.tml
 
----- Special Variables
 
-* Plan - TAP only
-* Diff - Enable Diff
-
-    http://testml.org/playground/?type=yaml&name=229Q&view=tap
+$ testml -R python-tap ../rotn/test/test2.tml
 
 ----
 == YAML Test Suite
@@ -342,6 +399,14 @@ $ # ../compiler-tml/050-data-point-transforms.tml
 * http://testml.org/playground
 
 ----
+== Special Variables
+
+* Plan - TAP only
+* Diff - Enable Diff
+
+    http://testml.org/playground/?type=yaml&name=229Q&view=tap
+
+----
 == Testing Command Output
 
 * TestML is for all kinds of Testing
@@ -349,7 +414,10 @@ $ # ../compiler-tml/050-data-point-transforms.tml
 
 * Example of testing command output
 
-$ ../testml-tml/out/cli.tml
+
+
+$ # ../testml-tml/out/cli.tml
+$ (cd ..; make test-out)
 
 ----
 == The Lingy Language
@@ -373,16 +441,23 @@ $ # ../testml-tml/new/050-object-type.tml
 ----
 == Contributing to TestML
 
+  TESTML NEEDS YOU!!
+
 * Need support in every language
   * And every language test framework
 * Runtime code is pretty simple
   * Less than 1000 lines to port
 * All parts in one repo
   * http://github.com/testml-lang/testml
-  * Runtime, Compiler, Test Suites, Web Site
+  * Runtime, Compiler, Test Suites
+  * Web Site, This Presentation!
 * /join #testml  (IRC freenode.net)
 
-$ vim ..    # testml repo layout
+----
+== Hire Me!
+== ingy@ingy.net
 
 ----
 == The End
+
+== Questions??

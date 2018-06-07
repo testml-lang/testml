@@ -4,5 +4,5 @@ talk:
 	vroom vroom --skip=$(skip)
 
 clean:
-	rm -f 0* .vimrc .help
+	rm -f .help
 	rm -fr .testml
