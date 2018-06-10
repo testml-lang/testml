@@ -15,6 +15,9 @@ class TestMLBridge extends TestML.Bridge
   sub: (x, y)->
     x - y
 
+  cat: (x, y)->
+    x + y
+
   mine: ->
     new class Mine
 

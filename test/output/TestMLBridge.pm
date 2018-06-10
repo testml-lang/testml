@@ -17,7 +17,7 @@ sub _clean {
 sub prove {
   my ($self, $testml_file) = @_;
 
-  $ENV{TESTML_LIB} = 'test';
+  $ENV{TESTML_LIB} = 'test/perl';
   _clean capture_merged {
     system "prove -v $testml_file";
   };
@@ -26,7 +26,7 @@ sub prove {
 sub run_command {
   my ($self, $command) = @_;
 
-  $ENV{TESTML_LIB} = 'test';
+  $ENV{TESTML_LIB} = 'test/perl';
   _clean capture_merged {
     system "$command";
   };

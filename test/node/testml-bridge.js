@@ -21,6 +21,10 @@
       return x - y;
     }
 
+    cat(x, y) {
+      return x + y;
+    }
+
     mine() {
       var Mine;
       return new (Mine = class Mine {});

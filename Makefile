@@ -44,44 +44,44 @@ status:
 .PHONY: test
 test: test-tap test-unit
 
-test-travis: test-tap test-out
+test-travis: test-tap test-output
 	# XXX test-unit is failing on travis at the moment
 
 test-tap: $(TAP_TESTS)
 
 test-unit: $(UNIT_TESTS)
 
-test-all: test test-out
+test-all: test test-output
 
 test-coffee-tap test-node-tap: testml-tml node_modules js-files
 ifdef test
 	TESTML_RUN=$(@:test-%=%) prove -v $(test)
 else
-	TESTML_RUN=$(@:test-%=%) prove -v test/testml/*.tml test/$(subst -tap,,$(subst test-,,$@))/testml/*.tml
+	TESTML_RUN=$(@:test-%=%) prove -v test/$(subst -tap,,$(subst test-,,$@))/testml/*.tml
 endif
 
 test-perl-tap test-perl6-tap test-python-tap: testml-tml
 ifdef test
 	TESTML_RUN=$(@:test-%=%) prove -v $(test)
 else
-	TESTML_RUN=$(@:test-%=%) prove -v test/testml/*.tml test/$(subst -tap,,$(subst test-,,$@))/testml/*.tml
+	TESTML_RUN=$(@:test-%=%) prove -v test/$(subst -tap,,$(subst test-,,$@))/testml/*.tml
 endif
 
 test-python-unit: testml-tml
 ifdef test
 	testml-python-unit $(test)
 else
-	testml-python-unit test/testml/*.tml \
+	testml-python-unit \
 	  test/python/testml/0{6,7,9}0*.tml \
 	  test/python/testml/1*.tml
 endif
 
 
-test-out:
+test-output:
 ifdef test
 	prove -v $(test)
 else
-	prove -v test/out/testml/*.tml
+	prove -v test/output/testml/*.tml
 endif
 
 node_modules: ../testml-node-modules

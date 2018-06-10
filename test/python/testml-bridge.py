@@ -18,6 +18,9 @@ class TestMLBridge(Base):
   def sub(self, x, y):
     return x - y
 
+  def cat(self, x, y):
+    return x + y
+
   def mine(self):
     return Mine()
 
