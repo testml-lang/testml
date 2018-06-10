@@ -4,14 +4,6 @@ set -e
 
 rm -f test/*.tml
 
-cp ../testml-tml/*.tml ../test/testml-bridge.coffee test/
-
-if [[ -d ../testml-tml/coffee ]]; then
-  cp ../test/coffee/testml-bridge.coffee test/coffee-testml-bridge.coffee
-
-  for test in ../testml-tml/coffee/*.tml; do
-    cp "$test" "test/coffee-${test#../testml-tml/coffee/}"
-  done
-fi
+cp ../testml-tml/*.tml ../test/coffee/testml-bridge.coffee test/
 
 perl -e 'print "$_\n" for map {s!^test/(.*)\.tml$!$1!;$_} @ARGV' test/*.tml > test/list
