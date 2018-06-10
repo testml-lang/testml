@@ -88,6 +88,7 @@ node_modules: ../testml-node-modules
 	cp -r $< $@
 
 ../testml-node-modules:
+	mkdir node_modules
 	npm install --save-dev diff ingy-prelude lodash
 	rm -f package*
 	mv node_modules $@
