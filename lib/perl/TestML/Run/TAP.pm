@@ -5,6 +5,8 @@ use base 'TestML::Run';
 
 use Test::Builder;
 
+# use XXX;
+
 sub run {
   my ($class, $file) = @_;
   $class->new->from_file($file)->test;
@@ -20,17 +22,23 @@ sub new {
   return $self;
 }
 
-sub test_begin {
-}
-
-sub test_end {
+sub testml_begin {
   my ($self) = @_;
 
-  $self->{tap}->done_testing;
+  $self->{checked} = 0;
+  $self->{planned} = 0;
 }
 
-sub test_eq {
+sub testml_end {
+  my ($self) = @_;
+
+  $self->{tap}->done_testing
+    unless $self->{planned};
+}
+
+sub testml_eq {
   my ($self, $got, $want, $label) = @_;
+  $self->check_plan;
 
   if ($got ne $want and
       $want =~ /\n/ and (
@@ -56,6 +64,53 @@ sub test_eq {
 
   else {
     $self->{tap}->is_eq($got, $want, $label ? ($label) : ());
+  }
+}
+
+sub testml_like {
+  my ($self, $got, $want, $label) = @_;
+  $self->check_plan;
+
+  $self->{tap}->like($got, $want, $label);
+}
+
+sub testml_has {
+  my ($self, $got, $want, $label) = @_;
+  $self->check_plan;
+
+  if (index($got, $want) != -1) {
+    $self->{tap}->ok(1, $label);
+  }
+  else {
+    $self->{tap}->ok(0, $label);
+    $self->{tap}->diag("     this string: $got\n  doesn't contain: $want");
+  }
+}
+
+sub testml_list_has {
+  my ($self, $got, $want, $label) = @_;
+  $self->check_plan;
+
+  for my $str (@$got) {
+    next if ref $str;
+    if ($str eq $want) {
+      $self->{tap}->ok(1, $label);
+      return;
+    }
+  }
+  $self->{tap}->ok(0, $label);
+  $self->{tap}->diag("     this list: @$got\n  doesn't contain: $want");
+}
+
+sub check_plan {
+  my ($self) = @_;
+
+  return if $self->{checked};
+  $self->{checked} = 1;
+
+  if (my $plan = $self->{vars}{Plan}) {
+    $self->{planned} = 1;
+    $self->{tap}->plan(tests => $plan);
   }
 }
 

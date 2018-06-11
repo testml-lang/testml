@@ -57,8 +57,6 @@ class TestML.Run
       Object: 'hash'
       Array: 'list'
 
-  block: undefined
-
   file: undefined
   version: undefined
   code: undefined
@@ -68,9 +66,10 @@ class TestML.Run
   stdlib: undefined
 
   vars: {}
-
+  block: undefined
   warned_only: false
   error: null
+  throw: null
 
   #----------------------------------------------------------------------------
   constructor: (params={})->
@@ -145,7 +144,7 @@ class TestML.Run
 
       if (value = @vars[name])?
         if args.length
-          die "Variable value has args but is not a function" \
+          die "Variable '#{name}' has args but is not a function" \
             unless @type value == 'func'
           return_ = @exec_func value, args
         else
@@ -174,8 +173,11 @@ class TestML.Run
             context = []
           else
             context = @exec_expr call, context
+          if @thrown
+            @error = @cook @thrown
+            @thrown = null
         catch e
-          @error = @call_stdlib  'Error', ["#{e}"]
+          @error = @call_stdlib 'Error', ["#{e}"]
       else
         if call[0] == 'Catch'
           context = [@error]
@@ -244,6 +246,7 @@ class TestML.Run
     return
 
   call_func: (func)->
+    name = func[0]
     func = @exec func
     throw "Tried to call '#{name}' but is not a function" \
       unless func? and @type(func) == 'func'
@@ -340,7 +343,8 @@ class TestML.Run
   assert_str_like_regex: (got, want, label)->
     @vars.Got = got
     @vars.Want = "/#{want[1]}/"
-    @testml_like got, want[1], @get_label label
+    want = @uncook want
+    @testml_like got, want, @get_label label
 
   assert_str_like_list: (got, want, label)->
     for regex in want[0]
@@ -522,4 +526,3 @@ TestML.Block = class
 
 TestMLFunction = class
   constructor: (@func)->
-

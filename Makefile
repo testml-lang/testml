@@ -122,6 +122,7 @@ clean:
 	find . -type d | grep '\.testml$$' | xargs rm -fr
 	find . -type d | grep '\.precomp$$' | xargs rm -fr
 	find . -name '*.swp' | xargs rm -f
+	find . -name '*.swo' | xargs rm -f
 	find . -name '*.pyc' | xargs rm -f
 
 realclean: clean
