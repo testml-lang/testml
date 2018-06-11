@@ -54,7 +54,7 @@ class TestML.TAP
         @show '         got:', got, '    expected:', want, label
 
   like: (got, want, label)->
-    if got.match new RegExp want
+    if got.match want
       @pass label
     else
       @fail label

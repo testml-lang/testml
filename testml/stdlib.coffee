@@ -23,16 +23,16 @@ class TestML.StdLib
 
   block: (selector)->
     return @run.block if not selector?
-
     for block in @run.data
       if block.label == selector
         return block
+    null
 
   blocks: ->
     _.clone @run.data
 
   bool: (value)->
-    not(value == undefined || value == null || value == false)
+    value != undefined && value != null && value != false
 
   cat: (strings...)->
     strings = strings[0] if strings[0] instanceof Array
@@ -90,6 +90,9 @@ class TestML.StdLib
   list: (values...)->
     values
 
+  msg: (error)->
+    error.msg
+
   none: ->
     return
 
@@ -101,10 +104,6 @@ class TestML.StdLib
 
   pop: (list)->
     list.pop()
-    list
-
-  push: (list, values...)->
-    list.push values...
     list
 
   regex: (pattern, flags='')->
@@ -135,7 +134,8 @@ class TestML.StdLib
     [list..., ''].join '\n'
 
   throw: (error='')->
-    throw error
+    @run.thrown = new TestMLError error
+    0
 
   true: ->
     true
