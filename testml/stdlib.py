@@ -53,6 +53,9 @@ class StdLib():
   def list(*values):
     return values
 
+  def msg(self, error):
+    return error.msg
+
   def none(self):
     return self.run.Nil
 
