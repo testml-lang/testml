@@ -92,15 +92,9 @@ class TestMLCompiler.AST extends Pegex.Tree
     statement
 
   got_expression_label: (got)->
-    if got.match /(?:\\\\|\\\{|.)*\{/
-      return label: ["$''", got]
-
     return label: got
 
   got_suffix_label: (got)->
-    if got.match /(?:\\\\|\\\{|.)*\{/
-      return label: ["$''", got]
-
     return label: got
 
   got_pick_expression: (got)->
