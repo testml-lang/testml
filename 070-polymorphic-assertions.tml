@@ -14,13 +14,10 @@ True == True
 # [1, 2, 3] == [1, 2, 3]
 #   :"list == list"
 
-
 # Tests for =~ (regex match) variations
 *text =~ *regex
 
 # Tests for ~~ (has/contains str or substr) variations
-
-# Like (=~) regex test blocks:
 *text ~~ *substr
 
 
