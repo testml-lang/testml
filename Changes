@@ -1,4 +1,9 @@
 ---
+version: 0.1.3
+date:    Sun Jun 10 20:35:02 MDT 2018
+changes:
+- Don't pre-interpolate labels
+---
 version: 0.1.2
 date:    Sun Jun  3 21:00:14 PDT 2018
 changes:
