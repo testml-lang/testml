@@ -31,12 +31,12 @@
   [10, 9, 8, 'zero'].Count == 4
 
 "Error returns error object":
-  Error('O HAI'):msg == 'O HAI'
+  Error('O HAI').Msg == 'O HAI'
 err1 = Throw('hello worlds').xxx.yyy.Catch
 "Throw throws error caught by Catch":
   err1.Type == 'error'
 "Error contains a msg":
-  err1:msg == 'hello worlds'
+  err1.Msg == 'hello worlds'
 
 
 1 == 1 :"***TODO*** StdLib.import not yet written!!!"
