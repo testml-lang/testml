@@ -1,4 +1,9 @@
 ---
+version: 0.0.26
+date:    Mon Jun 11 22:47:23 MDT 2018
+changes:
+- Change from () to <>
+---
 version: 0.0.25
 date:    Tue Jun  5 01:05:40 PDT 2018
 changes:
