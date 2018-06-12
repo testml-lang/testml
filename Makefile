@@ -1,7 +1,10 @@
 INGY_NPM := ../../ingy-npm
+
 export TESTML_COMPILER_ROOT := $(PWD)
+export TESTML_COMPILER_TEST := $(shell cd $(PWD)/../compiler-tml && pwd)
 export TESTML_ROOT := $(shell cd $(PWD)/.. && pwd)
-export PATH := "$(TESTML_ROOT)/bin:$(TESTML_COMPILER_ROOT)/bin:$(PATH)"
+
+export PATH := $(TESTML_ROOT)/bin:$(TESTML_COMPILER_TEST)/bin:$(TESTML_COMPILER_ROOT)/bin:$(PATH)
 export TAG_PREFIX := compiler
 
 ifneq ($(wildcard $(INGY_NPM)),)
