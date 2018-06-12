@@ -166,7 +166,7 @@ class TestML.Run
 
     @error = null
     for call in calls
-      if ! @error
+      if not @error
         try
           if @type(call) == 'func'
             @exec_func call, context[0]
@@ -206,7 +206,7 @@ class TestML.Run
     for block in @data
       @block = block
 
-      if block.point.ONLY and ! @warned_only
+      if block.point.ONLY and not @warned_only
         @err "Warning: TestML 'ONLY' in use."
         @warned_only = true
 
@@ -219,7 +219,7 @@ class TestML.Run
   pick_exec: (list, expr)->
     pick = true
     for point in list
-      if (point.match(/^\*/) and ! @block.point[point[1..]]?) or
+      if (point.match(/^\*/) and not @block.point[point[1..]]?) or
           (point.match(/^\!\*/) and @block.point[point[2..]]?)
         pick = false
         break
