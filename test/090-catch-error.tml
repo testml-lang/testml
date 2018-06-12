@@ -1,9 +1,8 @@
 #!/usr/bin/env testml
 
-# XXX This compiles wrong:
-# Throw('an error').foo.bar.Catch:msg == 'an error'
-#  :"Throw an Error and Catch it"
+Throw('an error').foo.bar.Catch.Msg == 'an error'
+  :"Throw an Error and Catch it"
 
 err = Throw('an error').foo.bar.Catch
-err:msg == 'an error'
+err.Msg == 'an error'
   :"Throw an Error and Catch it"
