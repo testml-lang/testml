@@ -1,4 +1,4 @@
-#!/usr/bin/env testml-boot
+#!/usr/bin/env testml-switch
 
 Diff = 1
 *input.compile == *output
