@@ -1,4 +1,4 @@
-#!/usr/bin/env testml-boot
+#!/usr/bin/env testml-switch
 
 Diff = 1
 *input.compile == *output
@@ -13,12 +13,12 @@ Diff = 1
 --- output
 { "testml": "0.3.0",
   "code": [
-    ["%()",["*a"],
+    ["%<>",["*a"],
       ["==",
         ["*","a"],
         "foo",
         "+ my label"]],
-    ["%()",["*b"],
+    ["%<>",["*b"],
       ["==",
         ["*","b"],
         "foo",
@@ -33,7 +33,7 @@ Diff = 1
 --- output
 { "testml": "0.3.0",
   "code": [
-    ["%()",["*a"],
+    ["%<>",["*a"],
       ["==",
         ["*","a"],
         "foo",
@@ -50,12 +50,12 @@ Diff = 1
 --- output
 { "testml": "0.3.0",
   "code": [
-    ["%()",["*a"],
+    ["%<>",["*a"],
       ["==",
         ["*","a"],
         "foo",
         "+ my label"]],
-    ["%()",["*b"],
+    ["%<>",["*b"],
       ["==",
         ["*","b"],
         "foo",
