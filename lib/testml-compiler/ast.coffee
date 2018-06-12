@@ -21,12 +21,12 @@ class TestMLCompiler.AST extends Pegex.Tree
             got.code.push ast.code...
             got.data.push ast.data...
       else
-        if statement[0] == '()'
-          statement[0] = '%()'
+        if statement[0] == '<>'
+          statement[0] = '%<>'
         else if statement[0] == '=>'
           for s in statement[2]
-            if s[0] == '()'
-              statement = ['%()', [], statement]
+            if s[0] == '<>'
+              statement = ['%<>', [], statement]
               break
 
         got.code.push statement
@@ -56,10 +56,10 @@ class TestMLCompiler.AST extends Pegex.Tree
   got_loop_statement: (got)->
     expr = got[0]
     pick = expr.pick || {}
-    ['%()', _.keys(pick), expr]
+    ['%<>', _.keys(pick), expr]
 
   got_pick_statement: ([pick, statement])->
-    ['()', pick, statement]
+    ['<>', pick, statement]
 
   got_expression_statement: (got)->
     if _.isPlainObject got[0]
@@ -87,7 +87,7 @@ class TestMLCompiler.AST extends Pegex.Tree
 
     pick = _.keys pick
     if pick.length > 0
-      statement = ['()', pick, statement]
+      statement = ['<>', pick, statement]
 
     statement
 

@@ -15,12 +15,13 @@ else
     $(error Fix your errors)
 endif
 
+j = 1
 test = test/testml/[0-9]*.tml
 export TESTML_COMPILER_BOOTSTRAP := $(boot)
 export TESTML_COMPILER_DEBUG := $(debug)
 
 test: node_modules ../compiler-tml
-	NODE_PATH=lib PERL5LIB=test prove -v $(test)
+	NODE_PATH=lib PERL5LIB=test prove -v -j$(j) $(test)
 
 test-pegex: node_modules ../pegex-js/npm
 	rm -fr node_modules/pegex
