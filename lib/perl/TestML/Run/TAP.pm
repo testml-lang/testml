@@ -39,6 +39,8 @@ sub testml_end {
 sub testml_eq {
   my ($self, $got, $want, $label) = @_;
   $self->check_plan;
+  local($SIG{__WARN__}) = sub {$self->{tap}->diag(@_) unless $_[0] =~ /^Wide/};
+
 
   if ($got ne $want and
       $want =~ /\n/ and (
@@ -70,6 +72,7 @@ sub testml_eq {
 sub testml_like {
   my ($self, $got, $want, $label) = @_;
   $self->check_plan;
+  local($SIG{__WARN__}) = sub {$self->{tap}->diag(@_) unless $_[0] =~ /^Wide/};
 
   $self->{tap}->like($got, $want, $label);
 }
@@ -77,6 +80,7 @@ sub testml_like {
 sub testml_has {
   my ($self, $got, $want, $label) = @_;
   $self->check_plan;
+  local($SIG{__WARN__}) = sub {$self->{tap}->diag(@_) unless $_[0] =~ /^Wide/};
 
   if (index($got, $want) != -1) {
     $self->{tap}->ok(1, $label);
@@ -90,6 +94,7 @@ sub testml_has {
 sub testml_list_has {
   my ($self, $got, $want, $label) = @_;
   $self->check_plan;
+  local($SIG{__WARN__}) = sub {$self->{tap}->diag(@_) unless $_[0] =~ /^Wide/};
 
   for my $str (@$got) {
     next if ref $str;

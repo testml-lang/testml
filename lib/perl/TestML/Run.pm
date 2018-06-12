@@ -623,8 +623,7 @@ sub transform {
       return encode_json($value->[0]);
     }
     else {
-      # $value =~ s/\n/␤/g;
-      $value =~ s/\n/\\n/g;
+      $value =~ s/\n/␤/g;
       return "$value";
     }
   }
