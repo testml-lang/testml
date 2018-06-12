@@ -49,9 +49,9 @@ class TestMLRun:
     ],
 
     '.'  : 'exec_dot',
-    '%'  : 'for_each',
-    '%()': 'pick_loop',
-    '()' : 'pick_exec',
+    '%'  : 'each_exec',
+    '%<>': 'each_pick',
+    '<>' : 'pick_exec',
 
     '&'  : 'call_func',
     "$''": 'get_str',
@@ -225,7 +225,7 @@ class TestMLRun:
 
     if len(context): return context[0]
 
-  def for_each(self, list_, expr):
+  def each_exec(self, list_, expr):
     list_ = self.exec_(list_)
     expr = self.exec_(expr)
 
@@ -239,7 +239,7 @@ class TestMLRun:
       else:
         self.exec_func(expr)
 
-  def pick_loop(self, list_, expr):
+  def each_pick(self, list_, expr):
     for block in self.data:
       self.block = block
 
@@ -247,7 +247,7 @@ class TestMLRun:
         self.err("Warning: TestML 'ONLY' in use.")
         self.warned_only = True
 
-      self.exec_expr(['()', list_, expr])
+      self.exec_expr(['<>', list_, expr])
 
     self.block = None
 

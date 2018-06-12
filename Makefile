@@ -26,6 +26,7 @@ WORKTREES := \
 
 export TESTML_DEVEL := $(devel)
 export TESTML_COMPILER_DEBUG := $(debug)
+j = 1
 
 status:
 	@for d in $(WORKTREES); do \
@@ -55,16 +56,16 @@ test-all: test test-output
 
 test-coffee-tap test-node-tap: testml-tml node_modules js-files
 ifdef test
-	TESTML_RUN=$(@:test-%=%) prove -v $(test)
+	TESTML_RUN=$(@:test-%=%) prove -v -j$(j) $(test)
 else
-	TESTML_RUN=$(@:test-%=%) prove -v test/$(subst -tap,,$(subst test-,,$@))/testml/*.tml
+	TESTML_RUN=$(@:test-%=%) prove -v -j$(j) test/$(subst -tap,,$(subst test-,,$@))/testml/*.tml
 endif
 
 test-perl-tap test-perl6-tap test-python-tap: testml-tml
 ifdef test
-	TESTML_RUN=$(@:test-%=%) prove -v $(test)
+	TESTML_RUN=$(@:test-%=%) prove -v -j$(j) $(test)
 else
-	TESTML_RUN=$(@:test-%=%) prove -v test/$(subst -tap,,$(subst test-,,$@))/testml/*.tml
+	TESTML_RUN=$(@:test-%=%) prove -v -j$(j) test/$(subst -tap,,$(subst test-,,$@))/testml/*.tml
 endif
 
 test-python-unit: testml-tml
@@ -79,9 +80,9 @@ endif
 
 test-output:
 ifdef test
-	prove -v $(test)
+	prove -v -j$(j) $(test)
 else
-	prove -v test/output/testml/*.tml
+	prove -v -j$(j) test/output/testml/*.tml
 endif
 
 node_modules: ../testml-node-modules

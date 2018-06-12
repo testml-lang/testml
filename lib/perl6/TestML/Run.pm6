@@ -15,8 +15,8 @@ has $!vtable = {
   '=~'    => 'assert-like',
 
   '.'     => 'exec-expr',
-  '%()'   => 'pick-loop',
-  '()'    => 'pick-exec',
+  '%<>'   => 'each-pick',
+  '<>'    => 'pick-exec',
 
   Q[$'']  => 'get-str',
   '*'     => 'get-point',
@@ -149,11 +149,11 @@ method exec-expr(*@args) {
   return |$context;
 }
 
-method pick-loop($list, $expr) {
+method each-pick($list, $expr) {
   for |$!data -> $block {
     $!block = $block;
 
-    self.exec(['()', $list, $expr]);
+    self.exec(['<>', $list, $expr]);
   }
 
   $!block = Nil;

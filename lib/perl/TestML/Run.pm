@@ -37,9 +37,9 @@ our $vtable = {
   ],
 
   '.'     => 'exec_dot',
-  '%'     => 'for_each',
-  '%()'   => 'pick_loop',
-  '()'    => 'pick_exec',
+  '%'     => 'each_exec',
+  '%<>'   => 'each_pick',
+  '<>'    => 'pick_exec',
 
   '&'     => 'call_func',
   q{$''}  => 'get_str',
@@ -217,7 +217,7 @@ sub exec_dot {
   return @$context;
 }
 
-sub for_each {
+sub each_exec {
   my ($self, $list, $expr) = @_;
   $list = $self->exec($list);
   $expr = $self->exec($expr);
@@ -238,13 +238,13 @@ sub for_each {
   }
 }
 
-sub pick_loop {
+sub each_pick {
   my ($self, $list, $expr) = @_;
 
   for my $block (@{$self->{data}}) {
     $self->{block} = $block;
 
-    $self->exec_expr(['()', $list, $expr]);
+    $self->exec_expr(['<>', $list, $expr]);
   }
 
   delete $self->{block};

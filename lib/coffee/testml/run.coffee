@@ -32,9 +32,9 @@ class TestML.Run
     ]
 
     '.'  : 'exec_dot'
-    '%'  : 'for_each'
-    '%()': 'pick_loop'
-    '()' : 'pick_exec'
+    '%'  : 'each_exec'
+    '%<>': 'each_pick'
+    '<>' : 'pick_exec'
 
     '&'  : 'call_func'
     "$''": 'get_str'
@@ -188,7 +188,7 @@ class TestML.Run
     return unless context.length
     return context[0]
 
-  for_each: (list, expr)->
+  each_exec: (list, expr)->
     list = @exec list
     expr = @exec expr
 
@@ -202,7 +202,7 @@ class TestML.Run
       else
         @exec_expr expr
 
-  pick_loop: (list, expr)->
+  each_pick: (list, expr)->
     for block in @data
       @block = block
 
@@ -210,7 +210,7 @@ class TestML.Run
         @err "Warning: TestML 'ONLY' in use."
         @warned_only = true
 
-      @exec_expr ['()', list, expr]
+      @exec_expr ['<>', list, expr]
 
     @block = undefined
 
