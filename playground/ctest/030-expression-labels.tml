@@ -37,11 +37,10 @@ Diff = 1
       ["==",
         ["*","a"],
         "foo",
-        ["$''","+ '{*a}' is 'foo'"]]]],
+        "+ '{*a}' is 'foo'"]]],
   "data": []}
 
 === Label on assertion
---- ONLY
 --- input
 *a == "foo"
   :"+ my label"
