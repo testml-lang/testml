@@ -88,7 +88,7 @@ path = array:[foo]
 --- output
 { "testml": "0.3.0",
   "code": [
-    ["%()",["*foo"],
+    ["%<>",["*foo"],
       ["==",
         [":",
           ["*","foo"],
