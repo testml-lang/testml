@@ -1,7 +1,8 @@
-import re
+# -*- coding: utf8 -*-
+
+import re, sys
 
 from testml.run import TestMLRun
-from testml.tap import TAP
 
 class TestMLRunTAP(TestMLRun):
   @staticmethod
@@ -10,7 +11,7 @@ class TestMLRunTAP(TestMLRun):
 
   def __init__(self, **params):
     TestMLRun.__init__(self, **params)
-    self.tap = TAP()
+    self.count = 0
 
   def testml_begin(self):
     self.checked = False
@@ -18,7 +19,7 @@ class TestMLRunTAP(TestMLRun):
 
   def testml_end(self):
     if not self.planned:
-      self.tap.done_testing()
+      self.tap_done()
 
   def testml_eq(self, got, want, label):
     self.check_plan()
@@ -32,7 +33,7 @@ class TestMLRunTAP(TestMLRun):
 
       import difflib
 
-      self.tap.failed(label)
+      self.tap_fail(label)
 
       diff = ''
       for line in difflib.unified_diff(
@@ -40,22 +41,22 @@ class TestMLRunTAP(TestMLRun):
         'want', 'got', n=3
       ): diff += line
 
-      self.tap.diag(diff)
+      self.tap_diag(diff)
 
     else:
-      self.tap.is_eq(got, want, label)
+      self.tap_is(got, want, label)
 
   def testml_like(self, got, want,label):
     self.check_plan()
-    self.tap.like(got, want, label)
+    self.tap_like(got, want, label)
 
   def testml_has(self, got, want, label):
     self.check_plan()
-    self.tap.has(got, want, label)
+    self.tap_has(got, want, label)
 
   def testml_list_has(self, got, want, label):
     self.check_plan()
-    self.tap.has(got, want, label)
+    self.tap_has(got, want, label)
 
   def check_plan(self):
     if self.checked: return
@@ -64,12 +65,75 @@ class TestMLRunTAP(TestMLRun):
     plan = self.vars.get('Plan')
     if plan:
       self.planned = True
-      self.tap.plan(plan)
+      self.tap_plan(plan)
 
-  def out(self, msg):
-    self.tap.note(msg)
+  def tap_plan(self, plan):
+    print "1..%d" % plan
 
-  def err(self, msg):
-    self.tap.diag(msg)
+  def tap_pass(self, label):
+    self.count += 1
+    if label: label = ' - ' + label
+    print "ok %d%s" % (self.count, label.encode('utf-8'))
+
+  def tap_fail(self, label):
+    self.count += 1
+    if label: label = ' - ' + label
+    print "not ok %d%s" % (self.count, label.encode('utf-8'))
+
+  def tap_ok(self, ok, label):
+    if ok:
+      self.tap_pass(label)
+
+    else:
+      self.tap_fail(label)
+
+  def tap_is(self, got, want, label):
+    if got == want:
+      self.tap_pass(label)
+
+    else:
+      self.tap_fail(label)
+
+      if label:
+        print >> sys.stderr, "#   Failed test '%s'" % label
+
+      else:
+        print >> sys.stderr, "#   Failed test"
+
+      if isinstance(got, basestring):
+        got = re.sub(r'^', '# ', got)
+        got = re.sub(r'^\#\ ', '', got)
+        got = re.sub(r'\n$', "\n# ", got)
+        got = "'%s'" % got
+      print >> sys.stderr, "#          got: %s" % got
+
+      if isinstance(want, basestring):
+        want = re.sub(r'^', '# ', want)
+        want = re.sub(r'^\#\ ', '', want)
+        want = re.sub(r'\n$', "\n# ", want)
+        want = "'%s'" % want
+      print >> sys.stderr, "#     expected: %s" % want
+
+  def tap_like(self, got, want, label):
+    if re.search(want, got):
+      self.tap_pass(label)
+    else:
+      self.tap_fail(label)
+
+  def tap_has(self, got, want, label):
+    if want in got:
+      self.tap_pass(label)
+    else:
+      self.tap_fail(label)
+
+
+  def tap_note(self, msg):
+    print >> sys.stdout, re.sub(r'^', '# ', msg, flags=re.M)
+
+  def tap_diag(self, msg):
+    print >> sys.stderr, re.sub(r'^', '# ', msg, flags=re.M)
+
+  def tap_done(self):
+    print "1..%s" % self.count
 
 # vim: sw=2:
