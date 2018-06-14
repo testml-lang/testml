@@ -1,9 +1,9 @@
 use TestML::Run;
-use Test::Builder;
+use TestML::TAP;
 
 unit class TestML::Run::TAP is TestML::Run;
 
-has Test::Builder $.tap = Test::Builder.new;
+has TestML::TAP $.tap = TestML::TAP.new;
 
 method run($file) {
   self.new.from-file($file).test;
@@ -11,8 +11,6 @@ method run($file) {
 }
 
 method test-begin {
-  $.tap.plan(*);
-  return;
 }
 
 method test-end {
@@ -20,7 +18,7 @@ method test-end {
   return;
 }
 
-method test-eq($got, $want, $label) {
+method testml-eq($got, $want, $label) {
   if $want ~~ Str and
     $got ne $want and
     $want ~~ /\n/ and (
@@ -36,4 +34,35 @@ method test-eq($got, $want, $label) {
   }
 
   return;
+}
+
+method testml-like($got, $want, $label) {
+  # self.check-plan;
+  $.tap.like($got, $want, $label);
+}
+
+method testml-has($got, $want, $label) {
+  # self.check-plan;
+
+  if (index($got, $want) !~~ Nil) {
+    self.tap.pass($label);
+  }
+  else {
+    self.tap.fail($label);
+    self.tap.diag("     this string: $got\n  doesn't contain: $want");
+  }
+}
+
+method testml-list-has($got, $want, $label) {
+  # self.check-plan;
+
+  for @$got -> $str {
+    next unless $str ~~ Str;
+    if $str eq $want {
+      self.tap.pass($label);
+      return;
+    }
+  }
+  self.tap.fail($label);
+  self.tap.diag("     this list: {$got.perl}\n  doesn't contain: $want");
 }
