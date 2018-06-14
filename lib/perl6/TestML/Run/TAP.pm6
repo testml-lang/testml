@@ -3,7 +3,7 @@ use TestML::TAP;
 
 unit class TestML::Run::TAP is TestML::Run;
 
-has TestML::TAP $.tap = TestML::TAP.new;
+has TestML::TAP $.tap .= new;
 
 method run($file) {
   self.new.from-file($file).test;
