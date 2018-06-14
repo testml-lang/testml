@@ -69,7 +69,7 @@ class TestML.Run
   block: undefined
   warned_only: false
   error: null
-  throw: null
+  thrown: null
 
   #----------------------------------------------------------------------------
   constructor: (params={})->
@@ -258,13 +258,7 @@ class TestML.Run
   get_hash: (hash, key)->
     hash = @exec hash
     key = @exec key
-    type = @type hash
-
-    @cook switch
-      when type == 'hash' then hash[0][key]
-      when type == 'error' then hash[1][key]
-      else
-        "Can't lookup hash key on value of type '#{type}'"
+    @cook hash[0][key]
 
   get_list: (list, index)->
     list = @exec list
