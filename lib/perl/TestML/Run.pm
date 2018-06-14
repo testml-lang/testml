@@ -6,7 +6,7 @@ use JSON::PP;
 use boolean;
 use utf8;
 
-# use XXX;
+use XXX;
 
 our $vtable = {
   '=='    => [
@@ -40,19 +40,18 @@ our $vtable = {
   '%'     => 'each_exec',
   '%<>'   => 'each_pick',
   '<>'    => 'pick_exec',
-
   '&'     => 'call_func',
+
   q{$''}  => 'get_str',
   ':'     => 'get_hash',
   '[]'    => 'get_list',
   '*'     => 'get_point',
+
   '='     => 'set_var',
   '||='   => 'or_set_var',
 };
 
 my $types = {
-  'ARRAY' => 'list',
-  'HASH' => 'hash',
   '=>' => 'func',
   '/' => 'regex',
   '!' => 'error',
@@ -116,13 +115,12 @@ sub getp {
   my ($self, $name) = @_;
   return unless $self->{block};
   my $value = $self->{block}{point}{$name};
-  $value = $self->exec($value) if defined $value;
-  return $value;
+  $self->exec($value) if defined $value;
 }
 
 sub getv {
   my ($self, $name) = @_;
-  return $self->{vars}{$name};
+  $self->{vars}{$name};
 }
 
 sub setv {
@@ -276,6 +274,8 @@ sub pick_exec {
       $self->exec_expr($expr);
     }
   }
+
+  return;
 }
 
 sub exec_func {
@@ -288,7 +288,7 @@ sub exec_func {
     $args = $args->[0];
   }
 
-  die "TestML function expected '${\scalar @$signature}' arguments, but was called with '#${\scalar @$args}' arguments"
+  die "TestML function expected '${\scalar @$signature}' arguments, but was called with '${\scalar @$args}' arguments"
     if @$signature != @$args;
 
   my $i = 0;
@@ -314,7 +314,7 @@ sub call_func {
 
 sub get_str {
   my ($self, $string) = @_;
-  return $self->interpolate($string);
+  $self->interpolate($string);
 }
 
 sub get_hash {
@@ -328,13 +328,12 @@ sub get_list {
   my ($self, $list, $index) = @_;
   $list = $self->exec($list);
   return [] if not @{$list->[0]};
-  return $self->cook($list->[0][$index]);
+  $self->cook($list->[0][$index]);
 }
 
 sub get_point {
   my ($self, $name) = @_;
-
-  return $self->getp($name);
+  $self->getp($name);
 }
 
 sub set_var {
@@ -521,23 +520,6 @@ sub uncook {
   XXX::ZZZ("Can't uncook this value of type '$type':", $value);
 }
 
-sub call_stdlib {
-  my ($self, $name, @args) = @_;
-
-  if (not $self->{stdlib}) {
-    require TestML::StdLib;
-    $self->{stdlib} = TestML::StdLib->new($self);
-  }
-
-  my $call = lc $name;
-  die "Unknown TestML Standard Library function: '$name'"
-    unless $self->{stdlib}->can($call);
-
-  @args = map {$self->uncook($self->exec($_))} @args;
-
-  $self->cook($self->{stdlib}->$call(@args));
-}
-
 sub call_bridge {
   my ($self, $name, @args) = @_;
 
@@ -558,7 +540,24 @@ sub call_bridge {
 
   return unless @return;
 
-  return $self->cook($return[0]);
+  $self->cook($return[0]);
+}
+
+sub call_stdlib {
+  my ($self, $name, @args) = @_;
+
+  if (not $self->{stdlib}) {
+    require TestML::StdLib;
+    $self->{stdlib} = TestML::StdLib->new($self);
+  }
+
+  my $call = lc $name;
+  die "Unknown TestML Standard Library function: '$name'"
+    unless $self->{stdlib}->can($call);
+
+  @args = map {$self->uncook($self->exec($_))} @args;
+
+  $self->cook($self->{stdlib}->$call(@args));
 }
 
 sub get_method {
@@ -660,8 +659,5 @@ sub new {
     func => $func,
   }, $class;
 }
-
-sub label { $_[0]->{label} }
-sub point { $_[0]->{point} }
 
 1;

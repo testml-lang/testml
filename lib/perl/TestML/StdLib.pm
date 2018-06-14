@@ -55,8 +55,8 @@ sub env {
 }
 
 sub error {
-  my ($self, $error) = (@_, '');
-  TestMLError->new($error);
+  my ($self, $msg) = (@_, '');
+  TestMLError->new($msg);
 }
 
 sub false {

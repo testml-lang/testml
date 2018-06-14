@@ -1,1 +1,1 @@
-unit class TestML::Bridge;
+class TestML::Bridge {}
