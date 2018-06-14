@@ -25,15 +25,17 @@ method blocks {
   $.run.data;
 }
 
-method bool($value) {
-  $value.defined and $value.^name ne 'Bool' || $value;
+multi method bool (Bool:D $value) {
+  $value;
 }
+multi method bool (Any:U --> False){}
+multi method bool (Any:D --> True){}
 
-method cat(+@strings) {
-  my $strings = @strings[0].^name eq 'Array'
-  ?? @strings[0]
-  !! @strings;
+multi method cat(Array $strings) {
   $strings.join('');
+}
+multi method cat(+@strings) {
+  @strings.join('');
 }
 
 method count($list) {
@@ -76,8 +78,8 @@ method split($string, $delim) {
   $string.split($delim).Array;
 }
 
-method sum(+@list) {
-  sum(|@list);
+method sum(+list){
+  list.sum;
 }
 
 method text($list) {
