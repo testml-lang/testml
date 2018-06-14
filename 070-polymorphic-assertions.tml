@@ -21,7 +21,7 @@ True == True
 *text ~~ *substr
 
 
-=== Test 1: '{Got}' =~ '{Want}' -- string matches regex
+=== Test 1: '{Got}' =~ {Want} -- string matches regex
 --- text
 I see pie
 I see me
@@ -29,15 +29,15 @@ I see you
 
 --- regex(/): I see
 
-=== Test 2: '{Got}' =~ '{Want}'
+=== Test 2: '{Got}' =~ {Want}
 --- ^text
 --- ^regex(@/)
 
-=== Test 3: '{Got}' =~ '{Want}'
+=== Test 3: '{Got}' =~ {Want}
 --- ^text(@)
 --- ^regex(/)
 
-=== Test 4: '{Got}' =~ '{Want}'
+=== Test 4: '{Got}' =~ {Want}
 --- ^text(@)
 --- ^regex(@/)
 
@@ -57,11 +57,11 @@ I see
 --- ^text
 --- substr(@): pie you
 
-=== Test 6: '{Got}' ~~ '{Want}' -- list has string in it
+=== Test 7: '{Got}' ~~ '{Want}' -- list has string in it
 --- ^text(@)
 --- substr: I see me
 
-=== Test 6: '{Got}' ~~ '{Want}'
+=== Test 8: '{Got}' ~~ '{Want}'
 --- ^text(@)
 --- substr(@)
 I see me
