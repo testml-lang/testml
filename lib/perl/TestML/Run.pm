@@ -1,14 +1,22 @@
 use strict; use warnings;
+package TestMLFunction;
+
+sub new {
+  my ($class, $func) = @_;
+  return bless {func => $func}, $class;
+}
+
 package TestML::Run;
 
-use Scalar::Util;
 use JSON::PP;
-use boolean;
+
 use utf8;
+use boolean;
+use Scalar::Util;
 
-use XXX;
+# use XXX;
 
-our $vtable = {
+my $vtable = {
   '=='    => [
     'assert_eq',
     'assert_%1_eq_%2', {
@@ -69,8 +77,10 @@ sub new {
     version => $testml->{testml},
     code => $testml->{code},
     data => $testml->{data},
+
     bridge => $params{bridge},
     stdlib => $params{stdlib},
+
     vars => {},
     block => undef,
     warned_only => false,
@@ -107,25 +117,6 @@ sub test {
 
   $self->testml_end;
 
-  return;
-}
-
-#------------------------------------------------------------------------------
-sub getp {
-  my ($self, $name) = @_;
-  return unless $self->{block};
-  my $value = $self->{block}{point}{$name};
-  $self->exec($value) if defined $value;
-}
-
-sub getv {
-  my ($self, $name) = @_;
-  $self->{vars}{$name};
-}
-
-sub setv {
-  my ($self, $name, $value) = @_;
-  $self->{vars}{$name} = $value;
   return;
 }
 
@@ -178,106 +169,6 @@ sub exec_expr {
   return [@return];
 }
 
-sub exec_dot {
-  my ($self, @args) = @_;
-
-  my $context = [];
-
-  delete $self->{error};
-  for my $call (@args) {
-    if (not $self->{error}) {
-      eval {
-        if ($self->type($call) eq 'func') {
-          $self->exec_func($call, $context->[0]);
-          $context = [];
-        }
-        else {
-          $context = $self->exec_expr($call, $context);
-        }
-      };
-      if ($@) {
-        $self->{error} = $self->call_stdlib('Error', "$@");
-      }
-      elsif ($self->{thrown}) {
-        $self->{error} = $self->cook(delete $self->{thrown});
-      }
-    }
-    else {
-      if ($call->[0] eq 'Catch') {
-        $context = [delete $self->{error}];
-      }
-    }
-  }
-
-  die "Uncaught Error: ${\ $self->{error}[1]{msg}}"
-    if $self->{error};
-
-  return @$context;
-}
-
-sub each_exec {
-  my ($self, $list, $expr) = @_;
-  $list = $self->exec($list);
-  $expr = $self->exec($expr);
-
-  for my $item (@{$list->[0]}) {
-    $self->{vars}{_} = [$item];
-    if ($self->type($expr) eq 'func') {
-      if (@{$expr->[1]} == 0) {
-        $self->exec_func($expr);
-      }
-      else {
-        $self->exec_func($expr, [$item]);
-      }
-    }
-    else {
-      $self->exec_expr($expr);
-    }
-  }
-}
-
-sub each_pick {
-  my ($self, $list, $expr) = @_;
-
-  for my $block (@{$self->{data}}) {
-    $self->{block} = $block;
-
-    $self->exec_expr(['<>', $list, $expr]);
-  }
-
-  delete $self->{block};
-
-  return;
-}
-
-sub pick_exec {
-  my ($self, $list, $expr) = @_;
-
-  my $pick = 1;
-  for my $point (@$list) {
-    if (
-      ($point =~ /^\*/ and
-        not exists $self->{block}{point}{substr($point, 1)}) or
-      ($point =~ /^!*/) and
-        exists $self->{block}{point}{substr($point, 2)}
-    ) {
-      $pick = 0;
-      last;
-    }
-  }
-
-  if ($pick) {
-    if ($self->type($expr) eq 'func') {
-      $self->exec_func($expr);
-    }
-    else {
-      $self->exec_expr($expr);
-    }
-  }
-
-  return;
-}
-
 sub exec_func {
   my ($self, $function, $args) = @_;
   $args //= [];
@@ -303,61 +194,48 @@ sub exec_func {
   return;
 }
 
-sub call_func {
-  my ($self, $func) = @_;
-  my $name = $func->[0];
-  $func = $self->exec($func);
-  die "Tried to call '$name' but is not a function"
-    unless defined $func and $self->type($func) eq 'func';
-  $self->exec_func($func);
-}
+#------------------------------------------------------------------------------
+sub call_bridge {
+  my ($self, $name, @args) = @_;
 
-sub get_str {
-  my ($self, $string) = @_;
-  $self->interpolate($string);
-}
-
-sub get_hash {
-  my ($self, $hash, $key) = @_;
-  $hash = $self->exec($hash);
-  $key = $self->exec($key);
-  $self->cook($hash->[0]{$key});
-}
-
-sub get_list {
-  my ($self, $list, $index) = @_;
-  $list = $self->exec($list);
-  return [] if not @{$list->[0]};
-  $self->cook($list->[0][$index]);
-}
-
-sub get_point {
-  my ($self, $name) = @_;
-  $self->getp($name);
-}
-
-sub set_var {
-  my ($self, $name, $expr) = @_;
-
-  $self->setv($name, $self->exec($expr));
-
-  return;
-}
-
-sub or_set_var {
-  my ($self, $name, $expr) = @_;
-  return if defined $self->{vars}{$name};
-
-  if ($self->type($expr) eq 'func') {
-    $self->setv($name, $expr);
+  if (not $self->{bridge}) {
+    my $bridge_module = $ENV{TESTML_BRIDGE};
+    eval "require $bridge_module; 1" or die $@;
+    $self->{bridge} = $bridge_module->new;
   }
-  else {
-    $self->setv($name, $self->exec($expr));
-  }
-  return;
+
+  (my $call = $name) =~ s/-/_/g;
+
+  die "Can't find bridge function: '$name'"
+    unless $self->{bridge} and $self->{bridge}->can($call);
+
+  @args = map {$self->uncook($self->exec($_))} @args;
+
+  my @return = $self->{bridge}->$call(@args);
+
+  return unless @return;
+
+  $self->cook($return[0]);
 }
 
+sub call_stdlib {
+  my ($self, $name, @args) = @_;
 
+  if (not $self->{stdlib}) {
+    require TestML::StdLib;
+    $self->{stdlib} = TestML::StdLib->new($self);
+  }
+
+  my $call = lc $name;
+  die "Unknown TestML Standard Library function: '$name'"
+    unless $self->{stdlib}->can($call);
+
+  @args = map {$self->uncook($self->exec($_))} @args;
+
+  $self->cook($self->{stdlib}->$call(@args));
+}
+
+#------------------------------------------------------------------------------
 sub assert_eq {
   my ($self, $left, $right, $label) = @_;
   my $got = $self->{vars}{Got} = $self->exec($left);
@@ -462,6 +340,180 @@ sub assert_list_like_list {
 }
 
 #------------------------------------------------------------------------------
+sub exec_dot {
+  my ($self, @args) = @_;
+
+  my $context = [];
+
+  delete $self->{error};
+  for my $call (@args) {
+    if (not $self->{error}) {
+      eval {
+        if ($self->type($call) eq 'func') {
+          $self->exec_func($call, $context->[0]);
+          $context = [];
+        }
+        else {
+          $context = $self->exec_expr($call, $context);
+        }
+      };
+      if ($@) {
+        $self->{error} = $self->call_stdlib('Error', "$@");
+      }
+      elsif ($self->{thrown}) {
+        $self->{error} = $self->cook(delete $self->{thrown});
+      }
+    }
+    else {
+      if ($call->[0] eq 'Catch') {
+        $context = [delete $self->{error}];
+      }
+    }
+  }
+
+  die "Uncaught Error: ${\ $self->{error}[1]{msg}}"
+    if $self->{error};
+
+  return @$context;
+}
+
+sub each_exec {
+  my ($self, $list, $expr) = @_;
+  $list = $self->exec($list);
+  $expr = $self->exec($expr);
+
+  for my $item (@{$list->[0]}) {
+    $self->{vars}{_} = [$item];
+    if ($self->type($expr) eq 'func') {
+      if (@{$expr->[1]} == 0) {
+        $self->exec_func($expr);
+      }
+      else {
+        $self->exec_func($expr, [$item]);
+      }
+    }
+    else {
+      $self->exec_expr($expr);
+    }
+  }
+}
+
+sub each_pick {
+  my ($self, $list, $expr) = @_;
+
+  for my $block (@{$self->{data}}) {
+    $self->{block} = $block;
+
+    $self->exec_expr(['<>', $list, $expr]);
+  }
+
+  delete $self->{block};
+
+  return;
+}
+
+sub pick_exec {
+  my ($self, $list, $expr) = @_;
+
+  my $pick = 1;
+  for my $point (@$list) {
+    if (
+      ($point =~ /^\*/ and
+        not exists $self->{block}{point}{substr($point, 1)}) or
+      ($point =~ /^!*/) and
+        exists $self->{block}{point}{substr($point, 2)}
+    ) {
+      $pick = 0;
+      last;
+    }
+  }
+
+  if ($pick) {
+    if ($self->type($expr) eq 'func') {
+      $self->exec_func($expr);
+    }
+    else {
+      $self->exec_expr($expr);
+    }
+  }
+
+  return;
+}
+
+sub call_func {
+  my ($self, $func) = @_;
+  my $name = $func->[0];
+  $func = $self->exec($func);
+  die "Tried to call '$name' but is not a function"
+    unless defined $func and $self->type($func) eq 'func';
+  $self->exec_func($func);
+}
+
+sub get_str {
+  my ($self, $string) = @_;
+  $self->interpolate($string);
+}
+
+sub get_hash {
+  my ($self, $hash, $key) = @_;
+  $hash = $self->exec($hash);
+  $key = $self->exec($key);
+  $self->cook($hash->[0]{$key});
+}
+
+sub get_list {
+  my ($self, $list, $index) = @_;
+  $list = $self->exec($list);
+  return [] if not @{$list->[0]};
+  $self->cook($list->[0][$index]);
+}
+
+sub get_point {
+  my ($self, $name) = @_;
+  $self->getp($name);
+}
+
+sub set_var {
+  my ($self, $name, $expr) = @_;
+
+  $self->setv($name, $self->exec($expr));
+
+  return;
+}
+
+sub or_set_var {
+  my ($self, $name, $expr) = @_;
+  return if defined $self->{vars}{$name};
+
+  if ($self->type($expr) eq 'func') {
+    $self->setv($name, $expr);
+  }
+  else {
+    $self->setv($name, $self->exec($expr));
+  }
+  return;
+}
+
+#------------------------------------------------------------------------------
+sub getp {
+  my ($self, $name) = @_;
+  return unless $self->{block};
+  my $value = $self->{block}{point}{$name};
+  $self->exec($value) if defined $value;
+}
+
+sub getv {
+  my ($self, $name) = @_;
+  $self->{vars}{$name};
+}
+
+sub setv {
+  my ($self, $name, $value) = @_;
+  $self->{vars}{$name} = $value;
+  return;
+}
+
+#------------------------------------------------------------------------------
 sub type {
   my ($self, $value) = @_;
 
@@ -520,46 +572,7 @@ sub uncook {
   XXX::ZZZ("Can't uncook this value of type '$type':", $value);
 }
 
-sub call_bridge {
-  my ($self, $name, @args) = @_;
-
-  if (not $self->{bridge}) {
-    my $bridge_module = $ENV{TESTML_BRIDGE};
-    eval "require $bridge_module; 1" or die $@;
-    $self->{bridge} = $bridge_module->new;
-  }
-
-  (my $call = $name) =~ s/-/_/g;
-
-  die "Can't find bridge function: '$name'"
-    unless $self->{bridge} and $self->{bridge}->can($call);
-
-  @args = map {$self->uncook($self->exec($_))} @args;
-
-  my @return = $self->{bridge}->$call(@args);
-
-  return unless @return;
-
-  $self->cook($return[0]);
-}
-
-sub call_stdlib {
-  my ($self, $name, @args) = @_;
-
-  if (not $self->{stdlib}) {
-    require TestML::StdLib;
-    $self->{stdlib} = TestML::StdLib->new($self);
-  }
-
-  my $call = lc $name;
-  die "Unknown TestML Standard Library function: '$name'"
-    unless $self->{stdlib}->can($call);
-
-  @args = map {$self->uncook($self->exec($_))} @args;
-
-  $self->cook($self->{stdlib}->$call(@args));
-}
-
+#------------------------------------------------------------------------------
 sub get_method {
   my ($self, $key, @args) = @_;
   my @sig = ();
@@ -647,17 +660,6 @@ sub transform2 {
   return '' unless $self->{block};
   my $value = $self->{block}{point}{$name} // return '';
   $self->transform($value, $label);
-}
-
-#------------------------------------------------------------------------------
-package TestMLFunction;
-
-sub new {
-  my ($class, $func) = @_;
-
-  return bless {
-    func => $func,
-  }, $class;
 }
 
 1;

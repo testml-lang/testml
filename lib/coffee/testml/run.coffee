@@ -2,6 +2,9 @@ require '../testml'
 require 'ingy-prelude' if TestML.env['TESTML_DEVEL']
 lodash = require 'lodash'
 
+TestMLFunction = class
+  constructor: (@func)->
+
 module.exports =
 class TestML.Run
   @vtable:
@@ -35,12 +38,13 @@ class TestML.Run
     '%'  : 'each_exec'
     '%<>': 'each_pick'
     '<>' : 'pick_exec'
-
     '&'  : 'call_func'
+
     "$''": 'get_str'
     ':'  : 'get_hash'
     '[]' : 'get_list'
     '*'  : 'get_point'
+
     '='  : 'set_var'
     '||=': 'or_set_var'
 
@@ -111,20 +115,6 @@ class TestML.Run
     return
 
   #----------------------------------------------------------------------------
-  getp: (name)->
-    return unless @block
-    value = @block.point[name]
-    value = @exec value if value?
-    value
-
-  getv: (name)->
-    return @vars[name]
-
-  setv: (name, value)->
-    @vars[name] = value
-    return
-
-  #----------------------------------------------------------------------------
   exec: (expr)->
     @exec_expr(expr)[0]
 
@@ -161,75 +151,6 @@ class TestML.Run
 
     return if return_ == undefined then [] else [return_]
 
-  exec_dot: (calls...)->
-    context = []
-
-    @error = null
-    for call in calls
-      if not @error
-        try
-          if @type(call) == 'func'
-            @exec_func call, context[0]
-            context = []
-          else
-            context = @exec_expr call, context
-          if @thrown
-            @error = @cook @thrown
-            @thrown = null
-        catch e
-          @error = @call_stdlib 'Error', ["#{e}"]
-      else
-        if call[0] == 'Catch'
-          context = [@error]
-          @error = null
-
-    throw 'Uncaught Error: ' + @error[1].msg if @error
-
-    return unless context.length
-    return context[0]
-
-  each_exec: (list, expr)->
-    list = @exec list
-    expr = @exec expr
-
-    for item in list[0]
-      @vars._ = [item]
-      if @type(expr) == 'func'
-        if expr[1].length == 0
-          @exec_func expr
-        else
-          @exec_func expr, [item]
-      else
-        @exec_expr expr
-
-  each_pick: (list, expr)->
-    for block in @data
-      @block = block
-
-      if block.point.ONLY and not @warned_only
-        @err "Warning: TestML 'ONLY' in use."
-        @warned_only = true
-
-      @exec_expr ['<>', list, expr]
-
-    @block = undefined
-
-    return
-
-  pick_exec: (list, expr)->
-    pick = true
-    for point in list
-      if (point.match(/^\*/) and not @block.point[point[1..]]?) or
-          (point.match(/^\!\*/) and @block.point[point[2..]]?)
-        pick = false
-        break
-
-    if pick
-      if @type(expr) == 'func'
-        @exec_func expr
-      else
-        @exec_expr expr
-
   exec_func: ([op, signature, statements], args=[])->
     if signature.length > 1 and args.length == 1 and @type(args) == 'list'
       args = args[0]
@@ -245,45 +166,34 @@ class TestML.Run
 
     return
 
-  call_func: (func)->
-    name = func[0]
-    func = @exec func
-    throw "Tried to call '#{name}' but is not a function" \
-      unless func? and @type(func) == 'func'
-    @exec_func func
+  #----------------------------------------------------------------------------
+  call_stdlib: (name, args)->
+    @stdlib ||= new(require '../testml/stdlib') @
 
-  get_str: (string)->
-    return @interpolate string
+    call = _.lowerCase(name).replace /\s+/g, ''
+    throw "Unknown TestML Standard Library function: '#{name}'" \
+      unless @stdlib[call]
 
-  get_hash: (hash, key)->
-    hash = @exec hash
-    key = @exec key
-    @cook hash[0][key]
+    args = _.map args, (x)=> @uncook @exec x
 
-  get_list: (list, index)->
-    list = @exec list
-    return @cook list[0][index]
+    @cook @stdlib[call](args...)
 
-  get_point: (name)->
-    return @getp name
+  call_bridge: (name, args)->
+    @bridge ||= new(require process.env.TESTML_BRIDGE)
 
-  set_var: (name, expr)->
-    if @type(expr) == 'func'
-      @setv name, expr
-    else
-      @setv name, @exec expr
-    return
+    call = name.replace /-/g, '_'
+    throw "Can't find bridge function: '#{name}'" \
+      unless @bridge[call]
 
-  or_set_var: (name, expr)->
-    return if @vars[name]?
+    args = _.map args, (x)=> @uncook @exec x
 
-    if @type(expr) == 'func'
-      @setv name, expr
-    else
-      @setv name, @exec expr
-    return
+    return_ = @bridge[call](args...)
 
+    return unless return_?
 
+    @cook return_
+
+  #----------------------------------------------------------------------------
   assert_eq: (left, right, label)->
     @vars.Got = got = @exec left
     @vars.Want = want = @exec right
@@ -354,6 +264,128 @@ class TestML.Run
         @assert_str_like_regex str, regex, label
 
   #----------------------------------------------------------------------------
+  exec_dot: (calls...)->
+    context = []
+
+    @error = null
+    for call in calls
+      if not @error
+        try
+          if @type(call) == 'func'
+            @exec_func call, context[0]
+            context = []
+          else
+            context = @exec_expr call, context
+          if @thrown
+            @error = @cook @thrown
+            @thrown = null
+        catch e
+          @error = @call_stdlib 'Error', ["#{e}"]
+      else
+        if call[0] == 'Catch'
+          context = [@error]
+          @error = null
+
+    throw 'Uncaught Error: ' + @error[1].msg if @error
+
+    return unless context.length
+    return context[0]
+
+  each_exec: (list, expr)->
+    list = @exec list
+    expr = @exec expr
+
+    for item in list[0]
+      @vars._ = [item]
+      if @type(expr) == 'func'
+        if expr[1].length == 0
+          @exec_func expr
+        else
+          @exec_func expr, [item]
+      else
+        @exec_expr expr
+
+  each_pick: (list, expr)->
+    for block in @data
+      @block = block
+
+      if block.point.ONLY and not @warned_only
+        @err "Warning: TestML 'ONLY' in use."
+        @warned_only = true
+
+      @exec_expr ['<>', list, expr]
+
+    @block = undefined
+
+    return
+
+  pick_exec: (list, expr)->
+    pick = true
+    for point in list
+      if (point.match(/^\*/) and not @block.point[point[1..]]?) or
+          (point.match(/^\!\*/) and @block.point[point[2..]]?)
+        pick = false
+        break
+
+    if pick
+      if @type(expr) == 'func'
+        @exec_func expr
+      else
+        @exec_expr expr
+
+  call_func: (func)->
+    name = func[0]
+    func = @exec func
+    throw "Tried to call '#{name}' but is not a function" \
+      unless func? and @type(func) == 'func'
+    @exec_func func
+
+  get_str: (string)->
+    return @interpolate string
+
+  get_hash: (hash, key)->
+    hash = @exec hash
+    key = @exec key
+    @cook hash[0][key]
+
+  get_list: (list, index)->
+    list = @exec list
+    return @cook list[0][index]
+
+  get_point: (name)->
+    return @getp name
+
+  set_var: (name, expr)->
+    if @type(expr) == 'func'
+      @setv name, expr
+    else
+      @setv name, @exec expr
+    return
+
+  or_set_var: (name, expr)->
+    return if @vars[name]?
+
+    if @type(expr) == 'func'
+      @setv name, expr
+    else
+      @setv name, @exec expr
+    return
+
+  #----------------------------------------------------------------------------
+  getp: (name)->
+    return unless @block
+    value = @block.point[name]
+    value = @exec value if value?
+    value
+
+  getv: (name)->
+    return @vars[name]
+
+  setv: (name, value)->
+    @vars[name] = value
+    return
+
+  #----------------------------------------------------------------------------
   type: (value)->
     throw "Can't get type of undefined value" \
       if typeof value == 'undefined'
@@ -403,32 +435,7 @@ class TestML.Run
       when type == 'none' then undefined
       else throw "Can't uncook '#{require('util').inspect value}'"
 
-  call_stdlib: (name, args)->
-    @stdlib ||= new(require '../testml/stdlib') @
-
-    call = _.lowerCase(name).replace /\s+/g, ''
-    throw "Unknown TestML Standard Library function: '#{name}'" \
-      unless @stdlib[call]
-
-    args = _.map args, (x)=> @uncook @exec x
-
-    @cook @stdlib[call](args...)
-
-  call_bridge: (name, args)->
-    @bridge ||= new(require process.env.TESTML_BRIDGE)
-
-    call = name.replace /-/g, '_'
-    throw "Can't find bridge function: '#{name}'" \
-      unless @bridge[call]
-
-    args = _.map args, (x)=> @uncook @exec x
-
-    return_ = @bridge[call](args...)
-
-    return unless return_?
-
-    @cook return_
-
+  #----------------------------------------------------------------------------
   get_method: (key, args...)->
     sig = []
     for arg in args
@@ -461,62 +468,28 @@ class TestML.Run
     return @interpolate label, true
 
   interpolate: (string, label=false)->
-    transform = (value)=>
-      if label
-        switch
-          when @type(value).match /^(?:list|hash)$/ then \
-            JSON.stringify(value[0]).replace /"/g, ''
-          else String(value).replace /\n/g, '␤'
-      else
-        switch
-          when @type(value).match /^(?:list|hash)$/ then \
-            JSON.stringify(value[0]).replace /"/g, ''
-          else String value
-
-    transform1 = (m, name)=>
-      return '' unless (value = @vars[name])?
-      transform value
-
-    transform2 = (m, name)=>
-      return '' unless (value = @block?.point[name])?
-      transform value
-
-    string = string.replace /\{([\-\w]+)\}/g, transform1
-    string = string.replace /\{\*([\-\w]+)\}/g, transform2
-
+    string = string.replace /\{([\-\w]+)\}/g, \
+      (m, name)=> @transform1 name, label
+    string = string.replace /\{\*([\-\w]+)\}/g, \
+      (m, name)=> @transform2 name, label
     return string
 
-  #----------------------------------------------------------------------------
-  test_types: ->
-    class Bad
+  transform: (value, label)=>
+    if label
+      switch
+        when @type(value).match /^(?:list|hash)$/ then \
+          JSON.stringify(value[0]).replace /"/g, ''
+        else String(value).replace /\n/g, '␤'
+    else
+      switch
+        when @type(value).match /^(?:list|hash)$/ then \
+          JSON.stringify(value[0]).replace /"/g, ''
+        else String value
 
-    console.log "null   - #{@type null}"
-    console.log "none   - #{@type []}"
+  transform1: (name, label)=>
+    return '' unless (value = @vars[name])?
+    @transform value, label
 
-    console.log "str    - #{@type ""}"
-    console.log "num    - #{@type 1}"
-    console.log "bool   - #{@type false}"
-
-    console.log "list   - #{@type [[]]}"
-    console.log "hash   - #{@type [{}]}"
-
-    console.log "regex  - #{@type ['/','']}"
-    console.log "func   - #{@type ['=>','']}"
-    console.log "error  - #{@type ['!','']}"
-    console.log "native - #{@type ['?','']}"
-    console.log "expr   - #{@type ['foo']}"
-
-    console.log "new Bad   - #{try @type new Bad catch e then e}"
-    console.log "new Regex - #{try @type /x/ catch e then e}"
-    console.log "undefined - #{try @type() catch e then e}"
-
-    throw "Tested TestML internal types"
-
-# (new TestML.Run).test_types()
-
-#------------------------------------------------------------------------------
-TestML.Block = class
-  constructor: ({@label, @point, @user=''})->
-
-TestMLFunction = class
-  constructor: (@func)->
+  transform2: (name, label)=>
+    return '' unless (value = @block?.point[name])?
+    @transform value, label

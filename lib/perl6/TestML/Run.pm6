@@ -72,6 +72,7 @@ has $!warned-only = False;
 has $!error;
 has $.thrown is rw;
 
+#------------------------------------------------------------------------------
 method new(:$file='', :$testml={}, :$bridge, :$stdlib) {
   my $self = self.bless:
     file => $file,
@@ -103,22 +104,6 @@ method test {
 
   self.test-end;
 
-  return;
-}
-
-#------------------------------------------------------------------------------
-method getp($name) {
-  return unless $!block;
-  my $value = $!block<point>{$name};
-  self.exec($value) if $value.defined;
-}
-
-method getv($name) {
-  $!vars{$name};
-}
-
-method setv($name, $value) {
-  $!vars{$name} = $value;
   return;
 }
 
@@ -165,6 +150,156 @@ method exec-expr($expr, $context=[]) {
   return @return;
 }
 
+method exec-func($function, $args is copy = []) {
+  my ($op, $signature, $statements) = $function;
+
+  if $signature > 1 and $args == 1 and self.type($args) eq 'list' {
+    $args = $args[0];
+  }
+
+  die "TestML function expected '{$signature.Int}' arguments, but was called with '{$args.Int}' arguments"
+    if $signature != $args;
+
+  my $i = 0;
+  for @$signature -> $v {
+    $!vars{$v} = $args[$i++];
+  }
+
+  for @$statements -> $statement {
+    self.exec-expr($statement);
+  }
+
+  return;
+}
+
+#------------------------------------------------------------------------------
+method call-bridge($name, +@args) {
+  $!bridge ||= (require ::(%*ENV<TESTML_BRIDGE>)).new;
+
+  my $call = $name;
+
+  die "Can't find bridge function: '$name'"
+    unless $!bridge.can($call);
+
+  @args = [ @args.map: { self.uncook(self.exec($_)) } ];
+
+  my @return = $!bridge."$call"(|@args);
+
+  return unless @return;
+
+  self.cook(@return[0]);
+}
+
+method call-stdlib($name, +@args) {
+  $!stdlib ||=  (require ::("TestML::StdLib")).new:
+    run => self;
+
+  my $call = $name.lc;
+  die "Unknown TestML Standard Library function: '$name'"
+    unless $!stdlib.can($call);
+
+  @args = [ @args.map: { self.uncook(self.exec($_)) }, ];
+
+  self.cook($!stdlib."$call"(|@args));
+}
+
+#------------------------------------------------------------------------------
+method assert-eq($left, $right, $label='') {
+  my $got = $!vars<Got> = self.exec($left);
+  my $want = $!vars<Want> = self.exec($right);
+  my $method = self.get-method('==', $got, $want);
+  self."$method"($got, $want, $label);
+  return;
+}
+
+method assert-str-eq-str($got, $want, $label) {
+  self.testml-eq($got, $want, self.get-label($label));
+}
+
+method assert-num-eq-num($got, $want, $label) {
+  self.testml-eq($got, $want, self.get-label($label));
+}
+
+method assert-bool-eq-bool($got, $want, $label) {
+  self.testml-eq($got, $want, self.get-label($label));
+}
+
+
+method assert-has($left, $right, $label='') {
+  my $got = self.exec($left);
+  my $want = self.exec($right);
+  my $method = self.get-method('~~', $got, $want);
+  self."$method"($got, $want, $label);
+  return;
+}
+
+method assert-str-has-str($got, $want, $label) {
+  $!vars<Got> = $got;
+  $!vars<Want> = $want;
+  self.testml-has($got, $want, self.get-label($label));
+}
+
+method assert-str-has-list($got, $want, $label) {
+  my $list = $want[0];
+  for @$list -> $str {
+    self.assert-str-has-str($got, $str, $label);
+  }
+}
+
+method assert-list-has-str($got, $want, $label) {
+  $!vars<Got> = $got;
+  $!vars<Want> = $want;
+  self.testml-list-has($got[0], $want, self.get-label($label));
+}
+
+method assert-list-has-list($got, $want, $label) {
+  my $list = $want[0];
+  for @$list -> $str {
+    self.assert-list-has-str($got, $str, $label);
+  }
+}
+
+
+method assert-like($left, $right, $label='') {
+  my $got = self.exec($left);
+  my $want = self.exec($right);
+  my $method = self.get-method('=~', $got, $want);
+  self."$method"($got, $want, $label);
+  return;
+}
+
+method assert-str-like-regex($got, $want, $label) {
+  $!vars<Got> = $got;
+  $!vars<Want> = "/{$want[1]}/";
+  my $regex = self.uncook($want);
+  self.testml-like($got, $regex, self.get-label($label));
+}
+
+method assert-str-like-list($got, $want, $label) {
+  my $list = $want[0];
+  for @$list -> $regex {
+    self.assert-str-like-regex($got, $regex, $label);
+  }
+}
+
+method assert-list-like-regex($got, $want, $label) {
+  my $list = $got[0];
+  for @$list -> $str {
+    self.assert-str-like-regex($str, $want, $label);
+  }
+}
+
+method assert-list-like-list($got, $want, $label) {
+  my $list-got = $got[0];
+  my $list-want = $want[0];
+  for @$list-got -> $str {
+    for @$list-want -> $regex {
+      self.assert-str-like-regex($str, $regex, $label);
+    }
+  }
+}
+
+#------------------------------------------------------------------------------
 method exec-dot(+@args) {
   my $context = [];
 
@@ -267,28 +402,6 @@ method pick-exec($list, $expr) {
   return;
 }
 
-method exec-func($function, $args is copy = []) {
-  my ($op, $signature, $statements) = $function;
-
-  if $signature > 1 and $args == 1 and self.type($args) eq 'list' {
-    $args = $args[0];
-  }
-
-  die "TestML function expected '{$signature.Int}' arguments, but was called with '{$args.Int}' arguments"
-    if $signature != $args;
-
-  my $i = 0;
-  for @$signature -> $v {
-    $!vars{$v} = $args[$i++];
-  }
-
-  for @$statements -> $statement {
-    self.exec-expr($statement);
-  }
-
-  return;
-}
-
 method call-func($func is copy) {
   my $name = $func[0];
   $func = self.exec($func);
@@ -335,100 +448,20 @@ method or-set-var($name, $expr) {
   return;
 }
 
+#------------------------------------------------------------------------------
+method getp($name) {
+  return unless $!block;
+  my $value = $!block<point>{$name};
+  self.exec($value) if $value.defined;
+}
 
-method assert-eq($left, $right, $label='') {
-  my $got = $!vars<Got> = self.exec($left);
-  my $want = $!vars<Want> = self.exec($right);
-  my $method = self.get-method('==', $got, $want);
-  self."$method"($got, $want, $label);
+method getv($name) {
+  $!vars{$name};
+}
+
+method setv($name, $value) {
+  $!vars{$name} = $value;
   return;
-}
-
-method assert-str-eq-str($got, $want, $label) {
-  self.testml-eq($got, $want, self.get-label($label));
-}
-
-method assert-num-eq-num($got, $want, $label) {
-  self.testml-eq($got, $want, self.get-label($label));
-}
-
-method assert-bool-eq-bool($got, $want, $label) {
-  self.testml-eq($got, $want, self.get-label($label));
-}
-
-
-method assert-has($left, $right, $label='') {
-  my $got = self.exec($left);
-  my $want = self.exec($right);
-  my $method = self.get-method('~~', $got, $want);
-  self."$method"($got, $want, $label);
-  return;
-}
-
-method assert-str-has-str($got, $want, $label) {
-  $!vars<Got> = $got;
-  $!vars<Want> = $want;
-  self.testml-has($got, $want, self.get-label($label));
-}
-
-method assert-str-has-list($got, $want, $label) {
-  my $list = $want[0];
-  for @$list -> $str {
-    self.assert-str-has-str($got, $str, $label);
-  }
-}
-
-method assert-list-has-str($got, $want, $label) {
-  $!vars<Got> = $got;
-  $!vars<Want> = $want;
-  self.testml-list-has($got[0], $want, self.get-label($label));
-}
-
-method assert-list-has-list($got, $want, $label) {
-  my $list = $want[0];
-  for @$list -> $str {
-    self.assert-list-has-str($got, $str, $label);
-  }
-}
-
-
-method assert-like($left, $right, $label='') {
-  my $got = self.exec($left);
-  my $want = self.exec($right);
-  my $method = self.get-method('=~', $got, $want);
-  self."$method"($got, $want, $label);
-  return;
-}
-
-method assert-str-like-regex($got, $want, $label) {
-  $!vars<Got> = $got;
-  $!vars<Want> = "/{$want[1]}/";
-  my $regex = self.uncook($want);
-  self.testml-like($got, $regex, self.get-label($label));
-}
-
-method assert-str-like-list($got, $want, $label) {
-  my $list = $want[0];
-  for @$list -> $regex {
-    self.assert-str-like-regex($got, $regex, $label);
-  }
-}
-
-method assert-list-like-regex($got, $want, $label) {
-  my $list = $got[0];
-  for @$list -> $str {
-    self.assert-str-like-regex($str, $want, $label);
-  }
-}
-
-method assert-list-like-list($got, $want, $label) {
-  my $list-got = $got[0];
-  my $list-want = $want[0];
-  for @$list-got -> $str {
-    for @$list-want -> $regex {
-      self.assert-str-like-regex($str, $regex, $label);
-    }
-  }
 }
 
 #------------------------------------------------------------------------------
@@ -481,36 +514,7 @@ method uncook($value) {
   die "Can't uncook this value of type '$type': {$value.gist}"
 }
 
-method call-bridge($name, +@args) {
-  $!bridge ||= (require ::(%*ENV<TESTML_BRIDGE>)).new;
-
-  my $call = $name;
-
-  die "Can't find bridge function: '$name'"
-    unless $!bridge.can($call);
-
-  @args = [ @args.map: { self.uncook(self.exec($_)) } ];
-
-  my @return = $!bridge."$call"(|@args);
-
-  return unless @return;
-
-  self.cook(@return[0]);
-}
-
-method call-stdlib($name, +@args) {
-  $!stdlib ||=  (require ::("TestML::StdLib")).new:
-    run => self;
-
-  my $call = $name.lc;
-  die "Unknown TestML Standard Library function: '$name'"
-    unless $!stdlib.can($call);
-
-  @args = [ @args.map: { self.uncook(self.exec($_)) }, ];
-
-  self.cook($!stdlib."$call"(|@args));
-}
-
+#------------------------------------------------------------------------------
 method get-method($key, +@args) {
   my @sig;
   for |@args -> $arg {
@@ -589,6 +593,5 @@ method transform2($name, $label) {
   my $value = $.block<point>{$name} // return '';
   self.transform($value, $label);
 }
-
 
 } # class TestML::Run
