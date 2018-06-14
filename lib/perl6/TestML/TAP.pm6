@@ -6,16 +6,14 @@ method plan($plan) {
   self.out("1..$plan\n");
 }
 
-method pass($label) {
-  my $label_ = $label;
-  $label_ = " - $label_" if $label;
-  self.out("ok {++$.count}$label_");
+method pass($label is copy) {
+  $label = " - $label" if $label;
+  self.out("ok {++$.count}$label");
   return;
 }
 
-method fail($label) {
-  my $label_ = $label;
-  $label_ = " - $label_" if $label;
+method fail($label is copy) {
+  $label = " - $label" if $label;
   self.out("not ok {++$.count}$label");
   return;
 }
@@ -62,7 +60,7 @@ method done {
   self.out("1..{$.count}");
 }
 
-method show($got-prefix, $got, $want-prefix, $want, $label) {
+method show($got-prefix, $got is copy, $want-prefix, $want is copy, $label) {
   if $label {
     self.err("#   Failed test '$label'");
   }
@@ -70,17 +68,15 @@ method show($got-prefix, $got, $want-prefix, $want, $label) {
     self.err("#   Failed test");
   }
 
-  my $got_ = $got;
-  if $got_ ~~ Str {
-    $got_ = "'{$got_}'"
+  if $got ~~ Str {
+    $got = "'{$got}'"
   }
-  self.diag("$got-prefix $got_");
+  self.diag("$got-prefix $got");
 
-  my $want_ = $want;
-  if $want_ ~~ Str {
-    $want_ = "'{$want_}'"
+  if $want ~~ Str {
+    $want = "'{$want}'"
   }
-  self.diag("$want-prefix $want_");
+  self.diag("$want-prefix $want");
 }
 
 method out($str) {
