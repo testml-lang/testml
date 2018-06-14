@@ -4,15 +4,11 @@ import json, os, re, sys
 
 from testml.util import *
 
-class TestMLNil():
-  pass
-
-class TestMLNull():
-  pass
-
 class TestMLFunction():
   def __init__(self, func):
     self.func = func
+class TestMLNull(): pass
+class TestMLNil(): pass
 
 class TestMLRun:
   Nil = TestMLNil()
@@ -52,12 +48,13 @@ class TestMLRun:
     '%'  : 'each_exec',
     '%<>': 'each_pick',
     '<>' : 'pick_exec',
-
     '&'  : 'call_func',
+
     "$''": 'get_str',
     ':'  : 'get_hash',
     '[]' : 'get_list',
     '*'  : 'get_point',
+
     '='  : 'set_var',
     '||=': 'or_set_var',
   }
@@ -78,10 +75,9 @@ class TestMLRun:
     }
   }
 
+  #----------------------------------------------------------------------------
   def __init__(self, **params):
     testml = params.get('testml', {})
-
-    self.block = None
 
     self.file = params.get('file')
     self.version = testml.get('testml')
@@ -92,9 +88,10 @@ class TestMLRun:
     self.stdlib = params.get('stdlib')
 
     self.vars = {}
-
+    self.block = None
     self.warned_only = False
     self.error = None
+    self.thrown = None
 
   def from_file(self, file_):
     self.file = file_
@@ -118,21 +115,6 @@ class TestMLRun:
       self.exec_expr(statement)
 
     self.testml_end()
-
-  #----------------------------------------------------------------------------
-  def getp(self, name):
-    if not self.block:
-      return
-    value = self.block['point'].get(name)
-    if value is not None:
-      value = self.exec_(value)
-    return value
-
-  def getv(self, name):
-    return self.vars.get(name)
-
-  def setv(self, name, value):
-    self.vars[name] = value
 
   #----------------------------------------------------------------------------
   def exec_(self, expr):
@@ -195,122 +177,46 @@ class TestMLRun:
     for statement in statements:
       self.exec_expr(statement)
 
-  def call_func(self, func):
-    func = self.exec_(func)
-    if func is None or self.type_(func) != 'func':
-      die("Tried to call '%s' but is not a function" % name)
-    self.exec_func(func)
+  #----------------------------------------------------------------------------
+  def call_bridge(self, name, args):
+    if not self.bridge:
+      bridge_module = __import__(os.environ['TESTML_BRIDGE'])
+      self.bridge = (bridge_module.TestMLBridge)()
 
-  def exec_dot(self, *calls):
-    context = []
+    call = getattr(self.bridge, re.sub(r'-', '_', name))
+    if not call:
+      die("Can't find bridge function: '%s'" % name)
 
-    self.error = None
-    for call in calls:
-      if self.error is None:
-        try:
-          if self.type_(call) == 'func':
-            self.exec_func(call, context[0])
-            context = []
-          else:
-            context = self.exec_expr(call, context)
-        except Exception as e:
-          self.error = self.call_stdlib('Error', [str(e)])
-      else:
-        if call[0] == 'Catch':
-          context = [self.error]
-          self.error = None
+    args = list(map(
+      (lambda x: self.uncook(self.exec_(x))),
+      list(args)))
 
-    if self.error:
-      raise Exception('Uncaught Error: ' + self.error[1].msg)
+    return_ = call(*args)
 
-    if len(context): return context[0]
+    if return_ is None: return self.Nil
 
-  def each_exec(self, list_, expr):
-    list_ = self.exec_(list_)
-    expr = self.exec_(expr)
+    return self.cook(return_)
 
-    for item in list_[0]:
-      self.vars['_'] = [item]
-      if self.type_(expr) == 'func':
-        if len(expr[1]) == 0:
-          self.exec_func(expr)
-        else:
-          self.exec_func(expr, [item])
-      else:
-        self.exec_func(expr)
+  def call_stdlib(self, name, args):
+    if not self.stdlib:
+      from testml.stdlib import StdLib
+      self.stdlib = StdLib(self)
 
-  def each_pick(self, list_, expr):
-    for block in self.data:
-      self.block = block
+    call = getattr(self.stdlib, name.lower())
+    if not call:
+      die("Unknown TestML Standard Library function: '%s'" % name)
 
-      if block['point'].get('ONLY') and not self.warned_only:
-        self.err("Warning: TestML 'ONLY' in use.")
-        self.warned_only = True
+    args = list(map(
+      (lambda x: self.uncook(self.exec_(x))),
+      list(args)))
 
-      self.exec_expr(['<>', list_, expr])
+    return_ = call(*args)
 
-    self.block = None
+    if return_ is None: return self.Nil
 
-  def pick_exec(self, list_, expr):
-    pick = True
-    for point in list_:
-      if (re.match(r'\*', point) and
-          not self.block['point'].get(point[1:])) or \
-         (re.match(r'\!\*', point) and
-          self.block['point'].get(point[2:])):
-        pick = False
-        break
+    return self.cook(return_)
 
-    if pick:
-      if self.type_(expr) == 'func':
-        self.exec_func(expr)
-      else:
-        self.exec_expr(expr)
-
-  def get_str(self, string):
-    return self.interpolate(string)
-
-  def get_hash(self, hash_, key):
-    hash_ = self.exec_(hash_)
-    key = self.exec_(key)
-    type_ = self.type_(hash_)
-
-    if type_ == 'hash': return self.cook(hash_[0].get(key))
-    if type_ == 'error':
-      if key != 'msg':
-        die("Invalid Error property '%s'" % key)
-      return self.cook(hash_[1].msg)
-    else:
-      die("Can't lookup hash key on value of type '%s'" % type_)
-
-  def get_list(self, list_, index):
-    list_ = self.exec_(list_)
-    try:
-      value = list_[0][index]
-    except:
-      value = self.Nil
-
-    return self.cook(value)
-
-  def get_point(self, name):
-    return self.getp(name)
-
-  def set_var(self, name, expr):
-    if self.type_(expr) == 'func':
-      self.setv(name, expr)
-    else:
-      self.setv(name, self.exec_(expr))
-
-  def or_set_var(self, name, expr):
-    if self.vars.get(name) is not None: return
-
-    if self.type_(expr) == 'func':
-      self.setv(name, expr)
-    else:
-      self.setv(name, self.exec_(expr))
-    return
-
-
+  #----------------------------------------------------------------------------
   def assert_eq(self, left, right, label=''):
     self.vars['Got'] = got = self.exec_(left)
     self.vars['Want'] = want = self.exec_(right)
@@ -377,6 +283,137 @@ class TestMLRun:
         self.assert_str_like_regex(str_, regex, label)
 
   #----------------------------------------------------------------------------
+  def exec_dot(self, *calls):
+    context = []
+
+    self.error = None
+    for call in calls:
+      if self.error is None:
+        try:
+          if self.type_(call) == 'func':
+            self.exec_func(call, context[0])
+            context = []
+          else:
+            context = self.exec_expr(call, context)
+        except Exception as e:
+          self.error = self.call_stdlib('Error', [str(e)])
+      else:
+        if call[0] == 'Catch':
+          context = [self.error]
+          self.error = None
+
+    if self.error:
+      raise Exception('Uncaught Error: ' + self.error[1].msg)
+
+    if len(context): return context[0]
+
+  def each_exec(self, list_, expr):
+    list_ = self.exec_(list_)
+    expr = self.exec_(expr)
+
+    for item in list_[0]:
+      self.vars['_'] = [item]
+      if self.type_(expr) == 'func':
+        if len(expr[1]) == 0:
+          self.exec_func(expr)
+        else:
+          self.exec_func(expr, [item])
+      else:
+        self.exec_func(expr)
+
+  def each_pick(self, list_, expr):
+    for block in self.data:
+      self.block = block
+
+      if block['point'].get('ONLY') and not self.warned_only:
+        self.err("Warning: TestML 'ONLY' in use.")
+        self.warned_only = True
+
+      self.exec_expr(['<>', list_, expr])
+
+    self.block = None
+
+  def pick_exec(self, list_, expr):
+    pick = True
+    for point in list_:
+      if (re.match(r'\*', point) and
+          not self.block['point'].get(point[1:])) or \
+         (re.match(r'\!\*', point) and
+          self.block['point'].get(point[2:])):
+        pick = False
+        break
+
+    if pick:
+      if self.type_(expr) == 'func':
+        self.exec_func(expr)
+      else:
+        self.exec_expr(expr)
+
+  def call_func(self, func):
+    func = self.exec_(func)
+    if func is None or self.type_(func) != 'func':
+      die("Tried to call '%s' but is not a function" % name)
+    self.exec_func(func)
+
+  def get_str(self, string):
+    return self.interpolate(string)
+
+  def get_hash(self, hash_, key):
+    hash_ = self.exec_(hash_)
+    key = self.exec_(key)
+    type_ = self.type_(hash_)
+
+    if type_ == 'hash': return self.cook(hash_[0].get(key))
+    if type_ == 'error':
+      if key != 'msg':
+        die("Invalid Error property '%s'" % key)
+      return self.cook(hash_[1].msg)
+    else:
+      die("Can't lookup hash key on value of type '%s'" % type_)
+
+  def get_list(self, list_, index):
+    list_ = self.exec_(list_)
+    try:
+      value = list_[0][index]
+    except:
+      value = self.Nil
+
+    return self.cook(value)
+
+  def get_point(self, name):
+    return self.getp(name)
+
+  def set_var(self, name, expr):
+    if self.type_(expr) == 'func':
+      self.setv(name, expr)
+    else:
+      self.setv(name, self.exec_(expr))
+
+  def or_set_var(self, name, expr):
+    if self.vars.get(name) is not None: return
+
+    if self.type_(expr) == 'func':
+      self.setv(name, expr)
+    else:
+      self.setv(name, self.exec_(expr))
+    return
+
+  #----------------------------------------------------------------------------
+  def getp(self, name):
+    if not self.block:
+      return
+    value = self.block['point'].get(name)
+    if value is not None:
+      value = self.exec_(value)
+    return value
+
+  def getv(self, name):
+    return self.vars.get(name)
+
+  def setv(self, name, value):
+    self.vars[name] = value
+
+  #----------------------------------------------------------------------------
   def type_(self, value):
     if value is None:
       return 'null'
@@ -421,44 +458,7 @@ class TestMLRun:
     if type_ == 'none': return self.Nil
     die("Can't uncook '%s'" % repr(value))
 
-  def call_stdlib(self, name, args):
-    if not self.stdlib:
-      from testml.stdlib import StdLib
-      self.stdlib = StdLib(self)
-
-    call = getattr(self.stdlib, name.lower())
-    if not call:
-      die("Unknown TestML Standard Library function: '%s'" % name)
-
-    args = list(map(
-      (lambda x: self.uncook(self.exec_(x))),
-      list(args)))
-
-    return_ = call(*args)
-
-    if return_ is None: return self.Nil
-
-    return self.cook(return_)
-
-  def call_bridge(self, name, args):
-    if not self.bridge:
-      bridge_module = __import__(os.environ['TESTML_BRIDGE'])
-      self.bridge = (bridge_module.TestMLBridge)()
-
-    call = getattr(self.bridge, re.sub(r'-', '_', name))
-    if not call:
-      die("Can't find bridge function: '%s'" % name)
-
-    args = list(map(
-      (lambda x: self.uncook(self.exec_(x))),
-      list(args)))
-
-    return_ = call(*args)
-
-    if return_ is None: return self.Nil
-
-    return self.cook(return_)
-
+  #----------------------------------------------------------------------------
   def get_method(self, key, *args):
     sig = []
     for arg in args:
@@ -499,31 +499,32 @@ class TestMLRun:
     return self.interpolate(label, True)
 
   def interpolate(self, string, label=False):
-    def transform(value):
-      if label:
-        if re.search(r'^(?:list|hash)$', self.type_(value)):
-          return repr(value[0])
-        else:
-          return re.sub(r'\n', u'␤', str(value))
-      else:
-        if re.search(r'^(?:list|hash)$', self.type_(value)):
-          return repr(value[0])
-        else:
-          return str(value)
-
-    def transform1(m):
-      value = self.vars.get(m.group(1))
-      return transform(value) if value else ''
-
-    def transform2(m):
-      if not self.block: return ''
-      value = self.block['point'].get(m.group(1))
-      return transform(value) if value else ''
-
-    string = re.sub(r'\{([\-\w]+)\}', transform1, string)
-    string = re.sub(r'\{\*([\-\w]+)\}', transform2, string)
+    string = re.sub(
+        r'\{([\-\w]+)\}', (lambda m: self.transform1(m, label)), string)
+    string = re.sub(
+        r'\{\*([\-\w]+)\}', (lambda m: self.transform2(m, label)), string)
 
     return string
 
+  def transform(self, value, label):
+    if label:
+      if re.search(r'^(?:list|hash)$', self.type_(value)):
+        return repr(value[0])
+      else:
+        return re.sub(r'\n', u'␤', str(value))
+    else:
+      if re.search(r'^(?:list|hash)$', self.type_(value)):
+        return repr(value[0])
+      else:
+        return str(value)
+
+  def transform1(self, m, label):
+    value = self.vars.get(m.group(1))
+    return self.transform(value, label) if value else ''
+
+  def transform2(self, m, label):
+    if not self.block: return ''
+    value = self.block['point'].get(m.group(1))
+    return self.transform(value, label) if value else ''
 
 # vim: sw=2:
