@@ -358,6 +358,10 @@ sub exec_dot {
         }
       };
       if ($@) {
+        if ($ENV{TESTML_DEVEL}) {
+            require Carp;
+            Carp::cluck($@);
+        }
         $self->{error} = $self->call_stdlib('Error', "$@");
       }
       elsif ($self->{thrown}) {
