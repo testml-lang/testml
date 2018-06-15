@@ -13,7 +13,6 @@ JS_FILES := $(subst coffee,node,$(JS_FILES))
 
 WORKTREES := \
     compiler \
-    compiler-site \
     compiler-tml \
     gh-pages \
     node \
