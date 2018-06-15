@@ -121,4 +121,36 @@ Diff = 1
       "point": {
         "foo": "xxx"}}]}
 
+=== Quoted points
+--- input
+    === Test 1
+    --- a: 'foo'
+    --- b: "foo"
+    --- c: 'foo\nbar'
+    --- d: "foo\nbar\tbar\s"
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "a": "foo",
+        "b": "foo",
+        "c": "foo\\nbar",
+        "d": "foo\nbar\tbar "}}]}
+
+=== Empty single line point
+--- input
+    === Test 1
+    --- a:
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "a": ""}}]}
+
 # vim: ft= sw=2:
