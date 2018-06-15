@@ -153,4 +153,31 @@ Diff = 1
       "point": {
         "a": ""}}]}
 
+=== Repeated inheritance uses same transform
+--- input
+    === Test 1
+    --- a(@")
+    foo\tbar
+    baz
+
+    === Test 2
+    --- ^a
+
+    === Test 3
+    --- ^a
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "a": [["foo\tbar","baz"]]}},
+    { "label": "Test 2",
+      "point": {
+        "a": [["foo\tbar","baz"]]}},
+    { "label": "Test 3",
+      "point": {
+        "a": [["foo\tbar","baz"]]}}]}
+
 # vim: ft= sw=2:
