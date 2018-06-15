@@ -364,4 +364,22 @@ Diff = 1
           { "foo": [22]}],
         "boo": [["foo",123]]}}]}
 
+=== Double quoted string semantics
+--- input
+    === Test1
+    --- foo(")
+    foo\tbar
+    foo\nbar
+    foo\\bar
+    --- ^bar=foo(@")
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test1",
+      "point": {
+        "foo": "foo\tbar\nfoo\nbar\nfoo\\bar\n",
+        "bar": [["foo\tbar","foo\nbar","foo\\bar"]]}}]}
+
 # vim: ft= sw=2:
