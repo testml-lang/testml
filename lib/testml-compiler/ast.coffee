@@ -28,6 +28,8 @@ class TestMLCompiler.AST extends Pegex.Tree
             if s[0] == '<>'
               statement = ['%<>', [], statement]
               break
+        else if statement[0] == '%' and _.keys(statement[1].pick).length
+          statement = ['%<>', _.keys(statement[1].pick), statement]
 
         got.code.push statement
 
