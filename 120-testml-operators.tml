@@ -1,7 +1,7 @@
 #!/usr/bin/env testml-switch
 
 Diff = 1
-*input.compile == *output
+*input.undent.compile == *output
 
 === Assertion operators ==, =~ and ~~
 --- input
@@ -67,5 +67,31 @@ ARGV % (this)=>
         ["_"],
         ["Out"]]]],
   "data": []}
+
+
+=== Each operator % loop on list point
+--- input
+    *list % (this)=>
+      this.Bool == True
+
+    === Test 1
+    --- list(@): foo bar
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["%<>",["*list"],
+      ["%",
+        ["*","list"],
+        ["=>",["this"],
+          [["==",
+              [".",
+                ["this"],
+                ["Bool"]],
+              ["True"]]]]]]],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "list": [["foo","bar"]]}}]}
 
 # vim: ft=:
