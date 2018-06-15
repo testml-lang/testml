@@ -142,11 +142,8 @@ class TestMLCompiler.AST extends Pegex.Tree
     object
 
   got_double_string: (got)->
-    value = got.replace /\\n/g, '\n'
-      .replace /\\t/g, '\t'
-
+    value = @decode got
     value = ["$''", value] if value.match /^(?:\\\\|[^\\])*?\{/
-
     value
 
   got_number_object: (got)->
@@ -270,13 +267,13 @@ class TestMLCompiler.AST extends Pegex.Tree
     @data.push block
 
   got_point_single: (got)->
-    value = got[5]
+    value = got[5].replace /^\ +/, ''
     if value.match /^-?\d+(\.\d+)?$/
       value = Number value
     else if m = value.match /^'(.*)'\s*$/
       value = m[1]
     else if m = value.match /^"(.*)"\s*$/
-      value = m[1]
+      value = @decode m[1]
 
     got[5] = value
 
@@ -286,6 +283,16 @@ class TestMLCompiler.AST extends Pegex.Tree
     return
 
 #------------------------------------------------------------------------------
+  decoder:
+    n: '\n'
+    t: '\t'
+    s: ' '
+    '\\': '\\'
+
+  decode: (str)->
+    str.replace /\\(.)/g, (m, char)=>
+      @decoder[char] || ''
+
   make_point: (name, value, inherit, from, has_transforms, transform_expr)->
     return value unless _.isString value
 
@@ -343,6 +350,13 @@ class TestMLCompiler.AST extends Pegex.Tree
 
       else if transforms['-']
         value = value.replace /\n$/, ''
+
+    if transforms['"']
+      if _.isArray(value) and _.isArray value[0]
+        value[0] = _.map value[0], (str)=>
+          if _.isString(str) then @decode(str) else str
+      else
+        value = @decode(value) if _.isString value
 
     if transforms['/']
       if _.isArray(value) and _.isArray value[0]
