@@ -312,7 +312,7 @@ class TestMLCompiler.AST extends Pegex.Tree
     transforms = {}
     _.map _.split(transform_expr, ''), (f)-> transforms[f] = true
 
-    @transforms[name] = if inherit then '' else transform_expr
+    @transforms[name] = transform_expr unless inherit
 
     if _.isString value
       if not transforms['#']
