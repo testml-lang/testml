@@ -1,0 +1,84 @@
+{
+  "_from": "coffeescript",
+  "_id": "coffeescript@2.3.1",
+  "_inBundle": false,
+  "_integrity": "sha512-DNJmSPMyiz+OjWYyuDXNBcFutDjP2TS2owsZ8YvT65hA8c5IdHWIBqdA3Yf/XHoK23d/f1HqLjQbEJJZJoeV1w==",
+  "_location": "/coffeescript",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "coffeescript",
+    "name": "coffeescript",
+    "escapedName": "coffeescript",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/coffeescript/-/coffeescript-2.3.1.tgz",
+  "_shasum": "a25f69c251d25805c9842e57fc94bfc453ef6aed",
+  "_spec": "coffeescript",
+  "_where": "/Users/ingy/src/TestML/testml/orphan",
+  "author": {
+    "name": "Jeremy Ashkenas"
+  },
+  "bin": {
+    "coffee": "./bin/coffee",
+    "cake": "./bin/cake"
+  },
+  "browser": "./lib/coffeescript/browser",
+  "bugs": {
+    "url": "https://github.com/jashkenas/coffeescript/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {},
+  "deprecated": false,
+  "description": "Unfancy JavaScript",
+  "devDependencies": {
+    "babel-core": "6.26.3",
+    "babel-preset-env": "1.6.1",
+    "babel-preset-minify": "0.4.0",
+    "codemirror": "^5.37.0",
+    "docco": "~0.8.0",
+    "highlight.js": "~9.12.0",
+    "jison": ">=0.4.18",
+    "markdown-it": "~8.4.1",
+    "underscore": "~1.9.0",
+    "webpack": "~4.6.0"
+  },
+  "directories": {
+    "lib": "./lib/coffeescript"
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "register.js",
+    "repl.js"
+  ],
+  "homepage": "https://coffeescript.org",
+  "keywords": [
+    "javascript",
+    "language",
+    "coffeescript",
+    "compiler"
+  ],
+  "license": "MIT",
+  "main": "./lib/coffeescript/index",
+  "name": "coffeescript",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jashkenas/coffeescript.git"
+  },
+  "scripts": {
+    "test": "node ./bin/cake test",
+    "test-harmony": "node --harmony ./bin/cake test"
+  },
+  "version": "2.3.1"
+}
