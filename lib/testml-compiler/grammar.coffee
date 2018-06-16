@@ -3,7 +3,7 @@ require('pegex').require 'grammar'
 class TestMLCompiler.DevGrammar extends Pegex.Grammar
   constructor: ->
     super()
-    @file = '../pegex/testml.pgx'
+    @file = 'pegex/testml.pgx'
 
 class TestMLCompiler.Grammar extends Pegex.Grammar
   constructor: ->

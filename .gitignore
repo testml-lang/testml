@@ -1,7 +1,6 @@
-/gh-pages/
 /node_modules/
-/npm/
-/pegex-js/
+/pegex/
+/test/testml/
 /testml-compiler-*.tgz
 /testml-compiler-*/
 .testml/
