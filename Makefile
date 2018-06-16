@@ -60,3 +60,4 @@ clean: ingy-npm-clean
 
 realclean: clean
 	rm -fr node_modules pegex test/testml
+	git worktree prune
