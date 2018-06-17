@@ -23,7 +23,7 @@
   "_resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.10.tgz",
   "_shasum": "1b7793cf7259ea38fb3661d4d38b3260af8ae4e7",
   "_spec": "lodash",
-  "_where": "/Users/ingy/src/TestML/testml/orphan",
+  "_where": "/Users/ingy/src/TestML/testml/node_modules",
   "author": {
     "name": "John-David Dalton",
     "email": "john.david.dalton@gmail.com",

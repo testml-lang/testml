@@ -22,7 +22,7 @@
   "_resolved": "https://registry.npmjs.org/diff/-/diff-3.5.0.tgz",
   "_shasum": "800c0dd1e0a8bfbc95835c202ad220fe317e5a12",
   "_spec": "diff",
-  "_where": "/Users/ingy/src/TestML/testml/orphan",
+  "_where": "/Users/ingy/src/TestML/testml/node_modules",
   "browser": "./dist/diff.js",
   "bugs": {
     "url": "http://github.com/kpdecker/jsdiff/issues",
