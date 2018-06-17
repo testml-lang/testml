@@ -14,6 +14,7 @@ MODULES := \
     pegex \
     underscore \
     webpack \
+    ../../ingy-npm \
 
 update:
 	rm -fr [a-z]* .bin
