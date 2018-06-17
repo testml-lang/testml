@@ -8,13 +8,13 @@ _exports = window.exports
 window.exports = {}
 
 ```
-# include node_modules/pegex/lib/pegex/index.js
-# include node_modules/pegex/lib/pegex/grammar.js
-# include node_modules/pegex/lib/pegex/receiver.js
-# include node_modules/pegex/lib/pegex/tree.js
-# include node_modules/pegex/lib/pegex/input.js
-# include node_modules/pegex/lib/pegex/optimizer.js
-# include node_modules/pegex/lib/pegex/parser.js
+# include ../node_modules/pegex/lib/pegex/index.js
+# include ../node_modules/pegex/lib/pegex/grammar.js
+# include ../node_modules/pegex/lib/pegex/receiver.js
+# include ../node_modules/pegex/lib/pegex/tree.js
+# include ../node_modules/pegex/lib/pegex/input.js
+# include ../node_modules/pegex/lib/pegex/optimizer.js
+# include ../node_modules/pegex/lib/pegex/parser.js
 # include npm/lib/testml-compiler/index.js
 # include npm/lib/testml-compiler/grammar.js
 # include npm/lib/testml-compiler/ast.js

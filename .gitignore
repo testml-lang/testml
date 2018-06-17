@@ -1,4 +1,5 @@
 /node_modules/
+/npm/
 /pegex/
 /test/testml/
 /testml-compiler-*.tgz
