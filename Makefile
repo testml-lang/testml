@@ -1,33 +1,41 @@
-SITE := ../gh-pages
+WORK := \
+    gh-pages \
+    playground \
 
-build: coffeescript node_modules
+STATUS := $(WORK)
+
+include ../.makefile/status.mk
+
+publish: site
+	make -C gh-pages publish
+	make -C playground publish
+
+site: gh-pages playground build
+	cp -r docs/* $<
+	rm -f $</v2/*.html
+	make -C playground site
+
+build: coffeescript ../node_modules
 	cake doc:site
 
 .PHONY: test
-test: build
+test: site
 	(sleep 0.5; open http://localhost:1234/) &
-	(cd docs && static -p 1234)
-
-site: $(SITE) build
-	cp -r docs/* $<
-	rm -f $</v2/*.html
+	(cd gh-pages && static -p 1234)
 
 coffeescript:
 	git clone --depth=1 http://github.com/jashkenas/$@
 
-node_modules: ../../testml-site-node-modules
-	cp -r $< $@
+$(WORK):
+	git branch --track $@ origin/$@ 2>/dev/null || true
+	git worktree add -f $@ $@
 
-../../testml-site-node-modules:
-	npm install .
-	rm -f package-lock.json
-	mv node_modules $@
-
-$(SITE):
-	(cd .. && make gh-pages)
+../node_modules:
+	make -C .. node_modules
 
 clean:
-	rm -fr coffeescript
-	rm -fr node_modules
 	rm -f package-lock.json
 	rm -f docs/v2/index.html
+
+realclean: clean
+	rm -fr $(WORK) coffeescript
