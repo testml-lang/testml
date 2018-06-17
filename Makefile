@@ -1,6 +1,20 @@
+# Maybe use something based on `git rev-parse --git-dir`
+TOP := ../..
 SITE := ../gh-pages
 
+export TOP := $(TOP)
+
 build: index.js
+
+update: yaml-test-suite $(TOP)/compiler-tml $(TOP)/testml-tml
+	bin/make-yaml
+	bin/make-test
+	bin/make-ctest
+
+publish: build update
+	git add -A .
+	git commit -m 'Update tests' || true
+	git push || true
 
 .PHONY: test
 test: build testml compiler
@@ -9,36 +23,31 @@ test: build testml compiler
 
 test-clean: clean-test test
 
-site: $(SITE)
+site: $(SITE) build update
 	(cd $(SITE)/playground/ && rm -fr index* yaml test ctest)
 	cp -r index* yaml test ctest $(SITE)/playground/
 
 $(SITE):
 	(cd .. && make gh-pages)
 
-testml: ../node/npm
+testml: $(TOP)/node/npm
 	ln -s $< $@
 
-compiler: ../compiler/npm
+compiler: $(TOP)/compiler/npm
 	ln -s $< $@
 
 index.js: index.coffee
 	coffee -cp $< > $@
 
-../node/npm: ../node
-	(cd .. && make js-files)
+$(TOP)/node/npm: $(TOP)/node
+	(cd $(TOP) && make js-files)
 	(cd $< && make npm)
 
-../compiler/npm: ../compiler
+$(TOP)/compiler/npm: $(TOP)/compiler
 	(cd $< && make npm)
 
-../node ../compiler ../compiler-tml ../testml-tml:
-	(cd .. && make $(@:../%=%))
-
-update: yaml-test-suite ../compiler-tml ../testml-tml
-	bin/make-yaml
-	bin/make-test
-	bin/make-ctest
+$(TOP)/node $(TOP)/compiler $(TOP)/compiler-tml $(TOP)/testml-tml:
+	(cd $(TOP) && make $(@:$(TOP)/%=%))
 
 yaml-test-suite:
 	git clone -b master --depth=1 git@github.com:yaml/$@
@@ -48,5 +57,5 @@ clean:
 	rm -f testml compiler
 
 clean-test:
-	rm -fr ../node/npm
-	rm -fr ../compiler/npm
+	rm -fr $(TOP)/node/npm
+	rm -fr $(TOP)/compiler/npm

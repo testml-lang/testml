@@ -4,6 +4,6 @@ set -e
 
 rm -f test/*.tml
 
-cp ../testml-tml/*.tml ../test/coffee/testml-bridge.coffee test/
+cp $TOP/testml-tml/*.tml $TOP/test/coffee/testml-bridge.coffee test/
 
 perl -e 'print "$_\n" for map {s!^test/(.*)\.tml$!$1!;$_} @ARGV' test/*.tml > test/list
