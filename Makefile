@@ -1,9 +1,18 @@
 MODULES := \
+    babel-core \
+    babel-preset-env \
+    babel-preset-minify \
+    codemirror \
     coffeescript \
     diff \
+    docco \
+    highlight.js \
     ingy-prelude \
+    jison \
     lodash \
+    markdown-it \
     underscore \
+    webpack \
 
 update:
 	rm -fr [a-z]* .bin
