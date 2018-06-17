@@ -6,13 +6,17 @@
 /node/
 /node_modules/
 /pegex/
-/orphan-template/
+/orphan/
 /playground/
 /rotn/
 /site/
 /talk/
+/test/testml/
 /testml-tml/
 /package*
+exe-*/
+pkg-*/
+run-*/
 .precomp/
 .testml/
 

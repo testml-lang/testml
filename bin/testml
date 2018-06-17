@@ -90,7 +90,8 @@ set-testml-vars() {
   else
     export TESTML_FILE="$TESTML_DIR/$TESTML_FILENAME"
   fi
-  export TESTML_CACHE="$TESTML_DIR/.testml"
+  TESTML_CACHE="$(abs-dir-path "$TESTML_INPUT")/.testml"
+  export TESTML_CACHE
   export TESTML_EXEC="$TESTML_CACHE/$TESTML_FILENAME.json"
 }
 
@@ -139,6 +140,24 @@ is-tty() {
 
 can() {
   can_path=$(which "$1") || return $?
+}
+
+abs-dir-path() {
+  [[ $1 != '-' ]] || { pwd; return; }
+  [[ -f $1 ]] || die "'$1' is not a file"
+  local file_path=$1
+  local file_name=
+  file_name=$(basename "$1")
+  local file_dir=
+  file_dir=$(cd "$(dirname -- "$1")" && (pwd -P 2>/dev/null || pwd))
+  (
+    cd "$file_dir"
+    link=$(readlink -- "$file_name")
+    if [[ -n $link ]]; then
+      cd "$(dirname -- "$link")"
+    fi
+    pwd -P 2>/dev/null || pwd
+  )
 }
 
 die() {

@@ -1,7 +1,9 @@
 export TESTML_ROOT := $(PWD)
-export PATH := $(TESTML_ROOT)/bin:$(PATH)
+export TESTML_COMPILER_ROOT := $(PWD)/compiler
+export PATH := $(TESTML_ROOT)/bin:$(TESTML_COMPILER_ROOT)/bin:$(PATH)
 
-TAP_RUN := coffee node perl perl6 python
+ALL_LANG := coffee node perl5 perl6 python
+TAP_RUN := $(ALL_LANG)
 TAP_TESTS := $(TAP_RUN:%=test-%-tap)
 UNIT_RUN := python
 UNIT_TESTS := $(UNIT_RUN:%=test-%-unit)
@@ -11,35 +13,34 @@ JS_FILES := $(COFFEE_FILES:lib/coffee/%.coffee=lib/node/%.js)
 JS_FILES := $(JS_FILES:test/%.coffee=test/%.js)
 JS_FILES := $(subst coffee,node,$(JS_FILES))
 
-WORKTREES := \
+xALL_LANG := node perl5 perl6
+RUN := $(xALL_LANG:%=run-%)
+PKG := $(xALL_LANG:%=pkg-%)
+EXE := $(xALL_LANG:%=exe-%)
+
+WORK := \
+    $(EXE) $(PKG) $(RUN) \
     compiler \
     compiler-tml \
     gh-pages \
     node \
+    node_modules \
+    orphan \
     pegex \
     playground \
-    testml-tml \
     rotn \
     site \
     talk \
+    testml-tml \
+
+STATUS := $(WORK) \
+    test/testml
 
 export TESTML_DEVEL := $(devel)
 export TESTML_COMPILER_DEBUG := $(debug)
 j = 1
 
-status:
-	@for d in $(WORKTREES); do \
-	    [ -d $$d ] || continue; \
-	    ( \
-		echo "=== $$d"; \
-		cd $$d; \
-		git status | grep -Ev '(^On branch|up-to-date|nothing to commit)'; \
-		git log --graph --decorate --pretty=oneline --abbrev-commit -10 | grep wip; \
-		echo; \
-	    ); \
-	done
-	@echo "=== master"
-	@git status | grep -Ev '(^On branch|up-to-date|nothing to commit)' || true
+include .makefile/status.mk
 
 .PHONY: test
 test: test-tap test-unit
@@ -53,27 +54,27 @@ test-unit: $(UNIT_TESTS)
 
 test-all: test test-output
 
-test-coffee-tap test-node-tap: testml-tml node_modules js-files
+test-coffee-tap test-node-tap: test/testml compiler node_modules js-files
 ifdef test
 	TESTML_RUN=$(@:test-%=%) prove -v -j$(j) $(test)
 else
 	TESTML_RUN=$(@:test-%=%) prove -v -j$(j) test/$(subst -tap,,$(subst test-,,$@))/testml/*.tml
 endif
 
-test-perl-tap test-perl6-tap test-python-tap: testml-tml
+test-perl5-tap test-perl6-tap test-python-tap: test/testml compiler node_modules
 ifdef test
 	TESTML_RUN=$(@:test-%=%) prove -v -j$(j) $(test)
 else
 	TESTML_RUN=$(@:test-%=%) prove -v -j$(j) test/$(subst -tap,,$(subst test-,,$@))/testml/*.tml
 endif
 
-test-python-unit: testml-tml
+test-python-unit: test/testml
 ifdef test
 	testml-python-unit $(test)
 else
 	testml-python-unit \
-	  test/python/testml/0{6,7,9}0*.tml \
-	  test/python/testml/1*.tml
+	test/python/testml/0{6,7,9}0*.tml \
+	test/python/testml/1*.tml
 endif
 
 
@@ -81,26 +82,18 @@ test-output:
 ifdef test
 	prove -v -j$(j) $(test)
 else
-	prove -v -j$(j) test/output/testml/*.tml
+	prove -v -j$(j) test/output/*.tml
 endif
 
-node_modules: ../testml-node-modules
-	cp -r $< $@
+work: $(WORK)
 
-../testml-node-modules:
-	mkdir node_modules
-	npm install --save-dev diff ingy-prelude lodash
-	rm -f package*
-	mv node_modules $@
-
-work: $(WORKTREES)
-
-$(WORKTREES) orphan-template:
+$(WORK):
 	git branch --track $@ origin/$@ 2>/dev/null || true
 	git worktree add -f $@ $@
 
-playground-test: playground
-	make -C $< test
+test/testml:
+	git branch --track testml-tml origin/testml-tml 2>/dev/null || true
+	git worktree add -f $@ testml-tml
 
 npm: node js-files
 	(cd $<; make clean npm)
@@ -117,7 +110,6 @@ test/node/%.js: test/coffee/%.coffee
 	coffee -cp $< > $@
 
 clean:
-	rm -fr node_modules/
 	rm -f package*
 	find . -type d | grep '\.testml$$' | xargs rm -fr
 	find . -type d | grep '\.precomp$$' | xargs rm -fr
@@ -126,5 +118,5 @@ clean:
 	find . -name '*.pyc' | xargs rm -f
 
 realclean: clean
-	rm -fr $(WORKTREES) orphan-template
+	rm -fr $(WORK) test/testml
 	git worktree prune
