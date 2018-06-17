@@ -1,1 +1,1 @@
-../../coffeescript/documentation/examples/overview.coffee
+#!/usr/bin/env testml
