@@ -1,0 +1,65 @@
+{
+  "_from": "pegex",
+  "_id": "pegex@0.1.7",
+  "_inBundle": false,
+  "_integrity": "sha512-fdlEnHnEb3csS4Nth7wxDavya+Vvk5TUcuzNo8bC2nARKdJzLVBNliaI0iEmW32+q0mZBD7WOrrT7eFJM/TB4A==",
+  "_location": "/pegex",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "pegex",
+    "name": "pegex",
+    "escapedName": "pegex",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/pegex/-/pegex-0.1.7.tgz",
+  "_shasum": "19fd8a38cabf6df0619c0792c063482614172a97",
+  "_spec": "pegex",
+  "_where": "/Users/ingy/src/TestML/testml/node_modules",
+  "author": {
+    "name": "Ingy döt Net",
+    "email": "ingy@ingy.net",
+    "url": "http://ingy.net"
+  },
+  "bugs": {
+    "url": "https://github.com/ingydotnet/pegex-js/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "Acmeist PEG Parser Framework",
+  "devDependencies": {
+    "coffeescript": ">=2.2.2",
+    "js-yaml": ">=3.10.0"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "engines": {
+    "node": ">=0.4.0"
+  },
+  "homepage": "http://pegex.org",
+  "keywords": [
+    "pegex",
+    "parsing",
+    "language",
+    "acmeism"
+  ],
+  "license": "MIT",
+  "main": "./lib/pegex/index.js",
+  "name": "pegex",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ingydotnet/pegex-js.git"
+  },
+  "scripts": {
+    "test": "coffee -e '(require \"./test/lib/Test/Harness\").run()' test/*.coffee"
+  },
+  "version": "0.1.7"
+}

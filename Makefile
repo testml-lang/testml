@@ -11,6 +11,7 @@ MODULES := \
     jison \
     lodash \
     markdown-it \
+    pegex \
     underscore \
     webpack \
 

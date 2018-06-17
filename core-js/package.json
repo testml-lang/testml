@@ -1,37 +1,33 @@
 {
-  "_args": [
-    [
-      "core-js@2.5.7",
-      "/Users/ingy/src/TestML/testml"
-    ]
-  ],
-  "_development": true,
-  "_from": "core-js@2.5.7",
+  "_from": "core-js@^2.4.0",
   "_id": "core-js@2.5.7",
   "_inBundle": false,
   "_integrity": "sha512-RszJCAxg/PP6uzXVXL6BsxSXx/B05oJAQ2vkJRjyjrEcNVycaqOmNb5OTxZPE3xa5gwZduqza6L9JOCenh/Ecw==",
   "_location": "/core-js",
   "_phantomChildren": {},
   "_requested": {
-    "type": "version",
+    "type": "range",
     "registry": true,
-    "raw": "core-js@2.5.7",
+    "raw": "core-js@^2.4.0",
     "name": "core-js",
     "escapedName": "core-js",
-    "rawSpec": "2.5.7",
+    "rawSpec": "^2.4.0",
     "saveSpec": null,
-    "fetchSpec": "2.5.7"
+    "fetchSpec": "^2.4.0"
   },
   "_requiredBy": [
     "/babel-register",
     "/babel-runtime"
   ],
   "_resolved": "https://registry.npmjs.org/core-js/-/core-js-2.5.7.tgz",
-  "_spec": "2.5.7",
-  "_where": "/Users/ingy/src/TestML/testml",
+  "_shasum": "f972608ff0cead68b841a16a932d0b183791814e",
+  "_spec": "core-js@^2.4.0",
+  "_where": "/Users/ingy/src/TestML/testml/node_modules/babel-runtime",
   "bugs": {
     "url": "https://github.com/zloirock/core-js/issues"
   },
+  "bundleDependencies": false,
+  "deprecated": false,
   "description": "Standard library",
   "devDependencies": {
     "LiveScript": "1.3.x",
