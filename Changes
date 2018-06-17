@@ -1,4 +1,9 @@
 ---
+version: 0.1.6
+date:    Sun Jun 17 17:01:57 MDT 2018
+changes:
+- Fix repeated point inheritance
+---
 version: 0.1.5
 date:    Fri Jun 15 11:16:39 MDT 2018
 changes:
