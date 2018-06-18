@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 if (not $ENV{TESTML_COMPILER_BOOTSTRAP}) {
-  exec("testml-perl-tap", @ARGV) or die;
+  exec("testml-perl5-tap", @ARGV) or die;
 }
 else {
   exec("testml-boot", @ARGV) or die;
