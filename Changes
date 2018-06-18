@@ -1,4 +1,9 @@
 ---
+version: 0.0.28
+date:    Mon Jun 18 08:04:44 MDT 2018
+changes:
+- Change interpolation opcode from $'' to "
+---
 version: 0.0.27
 date:    Sun Jun 17 20:13:02 MDT 2018
 changes:
