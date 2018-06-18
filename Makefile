@@ -18,8 +18,10 @@ RUN := $(xALL_LANG:%=run-%)
 PKG := $(xALL_LANG:%=pkg-%)
 EXE := $(xALL_LANG:%=exe-%)
 
+#     $(EXE) $(PKG) $(RUN) \
+
 WORK := \
-    $(EXE) $(PKG) $(RUN) \
+    exe-perl5 pkg-node run-perl5 \
     compiler \
     compiler-tml \
     gh-pages \
