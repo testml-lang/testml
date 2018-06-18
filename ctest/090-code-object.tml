@@ -52,7 +52,7 @@ d = "this\tthat"
     ["=","a","one\ntwo\n"],
     ["=","b","three\n"],
     ["=","c",
-      ["$''","{a}{b}four\n"]],
+      ["\"","{a}{b}four\n"]],
     ["=","d","this\tthat"]],
   "data": []}
 
