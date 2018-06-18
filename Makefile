@@ -1,7 +1,10 @@
-INGY_NPM := ../../ingy-npm
 export TESTML_ROOT := $(PWD)/..
 export PATH := $(TESTML_COMPILER_ROOT)/bin:$(PATH)
 export TAG_PREFIX := node
+
+#------------------------------------------------------------------------------
+NODE_MODULES_DIR := ../node_modules
+INGY_NPM := ../../ingy-npm
 
 ifneq ($(wildcard $(INGY_NPM)),)
     include $(INGY_NPM)/share/ingy-npm.mk
@@ -11,10 +14,14 @@ else
     $(error Fix your errors)
 endif
 
+#------------------------------------------------------------------------------
 test = test/*.tml
 
-test: node_modules
+test: $(NODE_MODULES_DIR)
 	NODE_PATH=lib prove -v $(test)
 
-clean: ingy-npm-clean
-	rm -fr node_modules
+$(NODE_MODULES_DIR):
+	(cd .. && make node_modules)
+
+clean:
+	rm -fr npm testml-*.tgz
