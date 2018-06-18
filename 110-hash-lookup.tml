@@ -39,7 +39,7 @@ path = hash:"foo bar"
     ["=","path",
       [":",
         ["hash"],
-        ["$''","foo bar"]]]],
+        ["\"","foo bar"]]]],
   "data": []}
 
 === Single-quote string index
