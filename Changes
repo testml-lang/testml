@@ -1,4 +1,9 @@
 ---
+version: 0.0.27
+date:    Sun Jun 17 20:13:02 MDT 2018
+changes:
+- Test release
+---
 version: 0.0.26
 date:    Mon Jun 11 22:47:23 MDT 2018
 changes:
