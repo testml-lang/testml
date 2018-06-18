@@ -32,7 +32,8 @@ WORK := \
     playground \
     rotn \
     site \
-    talk \
+    talk/openwest-2018 \
+    talk/tpc-2018 \
     testml-tml \
 
 STATUS := $(WORK) \
