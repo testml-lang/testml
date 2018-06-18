@@ -50,7 +50,7 @@ my $vtable = {
   '<>'    => 'pick_exec',
   '&'     => 'call_func',
 
-  q{$''}  => 'get_str',
+  '"'     => 'get_str',
   ':'     => 'get_hash',
   '[]'    => 'get_list',
   '*'     => 'get_point',

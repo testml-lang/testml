@@ -42,7 +42,7 @@ has $!vtable = {
   '<>'   => 'pick-exec',
   '&'    => 'call-func',
 
-  Q[$''] => 'get-str',
+  '"'    => 'get-str',
   ':'    => 'get-hash',
   '[]'   => 'get-list',
   '*'    => 'get-point',

@@ -50,7 +50,7 @@ class TestMLRun:
     '<>' : 'pick_exec',
     '&'  : 'call_func',
 
-    "$''": 'get_str',
+    '"'  : 'get_str',
     ':'  : 'get_hash',
     '[]' : 'get_list',
     '*'  : 'get_point',
