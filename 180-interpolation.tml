@@ -1,0 +1,7 @@
+#!/usr/bin/env testml
+
+greeting = 'Hello'
+object = 'world'
+
+"Test interpolation for '{greeting}, {object}'":
+  "{greeting}, {object}!" == 'Hello, world!'
