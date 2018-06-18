@@ -53,11 +53,9 @@ pegex:
 	git branch --track $@ origin/$@ 2>/dev/null || true
 	git worktree add -f $@ $@
 
-test/testml: compiler-tml
-	git branch --track $< origin/$< 2>/dev/null || true
-	git worktree add -f $@ $<
-
-compiler-tml:
+test/testml:
+	git branch --track compiler-tml origin/compiler-tml 2>/dev/null || true
+	git worktree add -f $@ compiler-tml
 
 clean:
 	rm -f tmp-grammar

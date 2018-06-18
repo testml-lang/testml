@@ -48,7 +48,7 @@ class TestMLCompiler.Compiler
       "[#{m1.replace /\n */g, ''}]"
     json = json.replace /\ \[\n +"/g, ' ["'
     json = json.replace /("=>",)\n *(\[[^\n]*\])/g, '$1$2'
-    json = json.replace /("\$''",)\n */g, '$1'
+    json = json.replace /("\\"",)\n */g, '$1'
     json = json.replace /\n *([\}\]])/g, '$1'
     json = json.replace /^(\ +\["%<>",)\n\ +/mg, '$1'
     json = json.replace /\ \[\n +\[/g, ' [['

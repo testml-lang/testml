@@ -145,7 +145,7 @@ class TestMLCompiler.AST extends Pegex.Tree
 
   got_double_string: (got)->
     value = @decode got
-    value = ["$''", value] if value.match /^(?:\\\\|[^\\])*?\{/
+    value = ["\"", value] if value.match /^(?:\\\\|[^\\])*?\{/
     value
 
   got_number_object: (got)->
@@ -215,7 +215,7 @@ class TestMLCompiler.AST extends Pegex.Tree
     indices = _.map got, (index)=>
       opcode = ':'
       index = switch
-        when m = index.match /^"(.*)"$/ then ["$''", m[1]]
+        when m = index.match /^"(.*)"$/ then ["\"", m[1]]
         when m = index.match /^'(.*)'$/ then m[1]
         when m = index.match /^\((.*)\)$/ then [m[1]]
         when m = index.match /^\[(.*)\]$/
