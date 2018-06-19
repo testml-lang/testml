@@ -273,9 +273,9 @@ $ ->
   window.onresize = ->
     body_width = $('body').width()
     width = body_width / 3 - 6
-    if width < 400
+    if width < 275
       width = body_width / 2 - 6
-    if width < 400
+    if width < 275
       width = body_width - 6
     $('#testml').width(width)
     $('#bridge').width(width)
