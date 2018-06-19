@@ -1,4 +1,9 @@
 ---
+version: 0.1.8
+date:    Tue Jun 19 07:47:24 MDT 2018
+changes:
+- Leading backslash no longer an escape
+---
 version: 0.1.7
 date:    Mon Jun 18 07:30:18 MDT 2018
 changes:
