@@ -12,7 +12,7 @@ class RotN {
             my $code = $.string.substr($i, 1).ord;
             my $orig = $code;
             if 65 <= $code <= 90 or 97 <= $code <= 122 {
-                my $offset = $code > 90 ?? 97 !! 63;
+                my $offset = $code > 90 ?? 97 !! 65;
                 $code = ($code - $offset + $n % 26) % 26 + $offset;
             }
 

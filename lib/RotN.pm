@@ -15,7 +15,7 @@ sub rot {
         my $code = ord substr $self->{string}, $i, 1;
         my $orig = $code;
         if ($code >= 65 and $code <= 90 or $code >= 97 and $code <= 122) {
-            my $offset = $code >= 97 ? 97 : 63;
+            my $offset = $code >= 97 ? 97 : 65;
             $code = ($code - $offset + $n % 26) % 26 + $offset;
         }
 

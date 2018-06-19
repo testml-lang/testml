@@ -5,7 +5,9 @@ Diff = True
 *input.rot(65) == *rot13
 *input.rot(5) == *rot5
 *input.rot(5).rot(8) == *rot13
-# *input.rot(5).rot(9).rot(-1) == *rot13
+
+# JS has a bug with modulo (%) negative number:
+#*input.rot(5).rot(9).rot(-1) == *rot13
 
 === Test 1 {*input}
 --- input: I like pie.
