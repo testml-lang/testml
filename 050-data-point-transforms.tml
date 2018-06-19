@@ -143,14 +143,13 @@ Diff = 1
     # Comment
      # Not Comment
     # Comment
-    \# Not Comment
 --- output
 { "testml": "0.3.0",
   "code": [],
   "data": [
     { "label": "Test 1",
       "point": {
-        "foo": " # Not Comment\n# Not Comment\n"}}]}
+        "foo": " # Not Comment\n"}}]}
 
 === Regex transform
 --- input
@@ -381,5 +380,20 @@ Diff = 1
       "point": {
         "foo": "foo\tbar\nfoo\nbar\nfoo\\bar\n",
         "bar": [["foo\tbar","foo\nbar","foo\\bar"]]}}]}
+
+=== Leading backslash no longer an escape
+--- input
+    === Test 1
+    --- foo
+    # Comment
+    \n
+    \# Not Comment
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "\\n\n\\# Not Comment\n"}}]}
 
 # vim: ft= sw=2:
