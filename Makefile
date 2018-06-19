@@ -121,5 +121,5 @@ clean:
 	find . -name '*.pyc' | xargs rm -f
 
 realclean: clean
-	rm -fr $(WORK) test/testml
+	rm -fr $(WORK) talk/ test/testml
 	git worktree prune
