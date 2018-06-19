@@ -320,8 +320,6 @@ class TestMLCompiler.AST extends Pegex.Tree
       if not transforms['#']
         value = value.replace /^#.*\n/gm, ''
 
-      value = value.replace /^\\/gm, ''
-
       if not transforms['+'] and value.match /\n/
         value = value.replace /\n+$/, '\n'
         value = '' if value == '\n'
