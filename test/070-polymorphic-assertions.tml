@@ -10,10 +10,6 @@ Sum(11, 31) == 42
 True == True
   :"bool == bool"
 
-# XXX Deep equality not yet supported
-# [1, 2, 3] == [1, 2, 3]
-#   :"list == list"
-
 # Tests for =~ (regex match) variations
 *text =~ *regex
 
