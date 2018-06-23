@@ -21,7 +21,7 @@ EXE := $(xALL_LANG:%=exe-%)
 #     $(EXE) $(PKG) $(RUN) \
 
 WORK := \
-    exe-perl5 pkg-node run-perl5 \
+    exe-perl5 pkg-node \
     compiler \
     compiler-tml \
     gh-pages \
@@ -31,6 +31,7 @@ WORK := \
     pegex \
     playground \
     rotn \
+    run/perl5 \
     site \
     talk/openwest-2018 \
     talk/tpc-2018 \
@@ -121,5 +122,6 @@ clean:
 	find . -name '*.pyc' | xargs rm -f
 
 realclean: clean
-	rm -fr $(WORK) talk/ test/testml
+	rm -fr $(WORK) test/testml
 	git worktree prune
+	rmdir run talk
