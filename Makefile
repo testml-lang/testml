@@ -58,6 +58,7 @@ test/testml:
 	git worktree add -f $@ compiler-tml
 
 clean:
+	rm -fr remove testml-compiler-*
 	rm -f tmp-grammar
 	rm -fr npm test/testml/.testml
 
