@@ -1,3 +1,5 @@
+/Next
+
 *.pyc
 /compiler/
 /compiler-site/
@@ -5,8 +7,9 @@
 /gh-pages/
 /node/
 /node_modules/
-/pegex/
+/note/
 /orphan/
+/pegex/
 /playground/
 /rotn/
 /site/
@@ -16,7 +19,7 @@
 /package*
 exe-*/
 pkg-*/
-run-*/
+/run/
 .precomp/
 .testml/
 
