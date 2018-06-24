@@ -1,0 +1,19 @@
+- Simplest assertion
+  - "foo" == "foo"
+- Numeric assertion
+- Bridge call, no arguments
+- Bridge call, with arguments
+- Pick operator
+  - <*x, !*y>
+- Assertion labels
+  - Prefix
+  - Suffix
+- Label variable
+- "+" in Label includes Block Label
+
+- Data block
+- Diff variable
+- Multiline point
+
+- TestML Types
+  - String, Num
