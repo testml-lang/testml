@@ -27,6 +27,7 @@ WORK := \
     gh-pages \
     node \
     node_modules \
+    note \
     orphan \
     pegex \
     playground \
