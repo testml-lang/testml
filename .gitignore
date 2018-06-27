@@ -8,16 +8,12 @@
 /compiler/
 /eg/
 /exe/
-/gh-pages/
 /node/
-/node_modules/
 /note/
 /orphan/
-/pegex/
-/playground/
 /site/
 /talk/
-/test/testml/
+/test/run-tml/
 /pkg/
 /run/
 

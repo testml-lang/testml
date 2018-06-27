@@ -1,1 +1,0 @@
-class TestML::Bridge {}
