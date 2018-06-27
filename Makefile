@@ -14,29 +14,21 @@ JS_FILES := $(JS_FILES:test/%.coffee=test/%.js)
 JS_FILES := $(subst coffee,node,$(JS_FILES))
 
 xALL_LANG := node perl5 perl6
-RUN := $(xALL_LANG:%=run-%)
-PKG := $(xALL_LANG:%=pkg-%)
-EXE := $(xALL_LANG:%=exe-%)
+RUN := $(xALL_LANG:%=run/%)
+PKG := $(xALL_LANG:%=pkg/%)
+EXE := $(xALL_LANG:%=exe/%)
 
-#     $(EXE) $(PKG) $(RUN) \
+PKG := pkg-node
+RUN := run/node run/perl5
 
 WORK := \
-    exe-perl5 pkg-node \
-    compiler \
-    compiler-tml \
-    gh-pages \
-    node \
-    node_modules \
+    compiler/coffee \
+    eg/rotn \
     note \
-    orphan \
-    pegex \
-    playground \
-    rotn \
-    run/perl5 \
+    $(PKG) \
+    $(RUN) \
     site \
-    talk/openwest-2018 \
-    talk/tpc-2018 \
-    testml-tml \
+    talk \
 
 STATUS := $(WORK) \
     test/testml
@@ -94,7 +86,7 @@ work: $(WORK)
 
 $(WORK):
 	git branch --track $@ origin/$@ 2>/dev/null || true
-	git worktree add -f $@ $@
+	git worktree add -f $(subst -,/,$@) $@
 
 test/testml:
 	git branch --track testml-tml origin/testml-tml 2>/dev/null || true
@@ -125,4 +117,4 @@ clean:
 realclean: clean
 	rm -fr $(WORK) test/testml
 	git worktree prune
-	rmdir run talk
+	rm -fr compiler eg pkg run

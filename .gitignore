@@ -1,9 +1,13 @@
 /Next
 
+.precomp/
 *.pyc
+.testml/
+/package*
+
 /compiler/
-/compiler-site/
-/compiler-tml/
+/eg/
+/exe/
 /gh-pages/
 /node/
 /node_modules/
@@ -11,16 +15,10 @@
 /orphan/
 /pegex/
 /playground/
-/rotn/
 /site/
 /talk/
 /test/testml/
-/testml-tml/
-/package*
-exe-*/
-pkg-*/
+/pkg/
 /run/
-.precomp/
-.testml/
 
 /test/fail/
