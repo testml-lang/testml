@@ -6,7 +6,7 @@ export TOP := $(TOP)
 
 build: index.js
 
-update: yaml-test-suite $(TOP)/compiler-tml $(TOP)/testml-tml
+update: compiler-tml testml-tml yaml-test-suite
 	bin/make-yaml
 	bin/make-test
 	bin/make-ctest
@@ -17,7 +17,7 @@ publish: build update
 	git push || true
 
 .PHONY: test
-test: build testml compiler
+test: build testml-js compiler-js
 	(sleep 0.5; open http://localhost:1234/) &
 	static -p 1234
 
@@ -30,23 +30,25 @@ site: $(SITE) build update
 $(SITE):
 	(cd .. && make gh-pages)
 
-testml: $(TOP)/node/npm
-	ln -s $< $@
+compiler-tml testml-tml:
+	git branch --track $@ origin/$@ 2>/dev/null || true
+	git worktree add -f $@ $@
 
-compiler: $(TOP)/compiler/npm
-	ln -s $< $@
+testml-js: $(TOP)/run/node/npm
+
+compiler-js: $(TOP)/compiler/coffee/npm
 
 index.js: index.coffee
 	coffee -cp $< > $@
 
-$(TOP)/node/npm: $(TOP)/node
+$(TOP)/run/node/npm: $(TOP)/run/node
 	(cd $(TOP) && make js-files)
 	(cd $< && make npm)
 
-$(TOP)/compiler/npm: $(TOP)/compiler
+$(TOP)/compiler/coffee/npm: $(TOP)/compiler/coffee
 	(cd $< && make npm)
 
-$(TOP)/node $(TOP)/compiler $(TOP)/compiler-tml $(TOP)/testml-tml:
+$(TOP)/run/node $(TOP)/compiler/coffee:
 	(cd $(TOP) && make $(@:$(TOP)/%=%))
 
 yaml-test-suite:
@@ -54,8 +56,8 @@ yaml-test-suite:
 
 clean:
 	rm -fr yaml-test-suite
-	rm -f testml compiler
+	rm -fr testml-tml compiler-tml
 
 clean-test:
-	rm -fr $(TOP)/node/npm
-	rm -fr $(TOP)/compiler/npm
+	rm -fr $(TOP)/run/node/npm
+	rm -fr $(TOP)/compiler/coffee/npm

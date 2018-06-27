@@ -4,6 +4,6 @@ set -e
 
 rm -f ctest/*.tml
 
-cp $TOP/compiler-tml/*.tml ctest/
+cp compiler-tml/*.tml ctest/
 
 perl -e 'print "$_\n" for map {s!^ctest/(.*)\.tml$!$1!;$_} @ARGV' ctest/*.tml > ctest/list
