@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/babel-plugin-transform-remove-debugger/-/babel-plugin-transform-remove-debugger-6.9.4.tgz",
   "_shasum": "42b727631c97978e1eb2d199a7aec84a18339ef2",
   "_spec": "babel-plugin-transform-remove-debugger@^6.9.4",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/babel-preset-minify",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/babel-preset-minify",
   "author": {
     "name": "amasad"
   },

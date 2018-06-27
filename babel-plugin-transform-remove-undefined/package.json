@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/babel-plugin-transform-remove-undefined/-/babel-plugin-transform-remove-undefined-0.4.3.tgz",
   "_shasum": "d40b0da7f91c08c06cc72b767474c01c4894de02",
   "_spec": "babel-plugin-transform-remove-undefined@^0.4.3",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/babel-preset-minify",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/babel-preset-minify",
   "author": {
     "name": "shinew"
   },

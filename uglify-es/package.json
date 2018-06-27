@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/uglify-es/-/uglify-es-3.3.9.tgz",
   "_shasum": "0c1c4f0700bed8dbc124cdb304d2592ca203e677",
   "_spec": "uglify-es@^3.3.4",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/uglifyjs-webpack-plugin",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/uglifyjs-webpack-plugin",
   "author": {
     "name": "Mihai Bazon",
     "email": "mihai.bazon@gmail.com",

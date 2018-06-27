@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/leb/-/leb-0.3.0.tgz",
   "_shasum": "32bee9fad168328d6aea8522d833f4180eed1da3",
   "_spec": "leb@^0.3.0",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/@webassemblyjs/leb128",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/@webassemblyjs/leb128",
   "author": {
     "name": "Dan Bornstein",
     "email": "danfuzz@milk.com",

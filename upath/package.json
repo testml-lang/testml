@@ -1,5 +1,5 @@
 {
-  "_from": "upath@^1.0.0",
+  "_from": "upath@^1.0.5",
   "_id": "upath@1.1.0",
   "_inBundle": false,
   "_integrity": "sha512-bzpH/oBhoS/QI/YtbkqCg6VEiPYjSZtrHQM6/QnJS6OL9pKUFLqb3aFh4Scvwm45+7iAgiMkLhSbaZxUqmrprw==",
@@ -8,20 +8,20 @@
   "_requested": {
     "type": "range",
     "registry": true,
-    "raw": "upath@^1.0.0",
+    "raw": "upath@^1.0.5",
     "name": "upath",
     "escapedName": "upath",
-    "rawSpec": "^1.0.0",
+    "rawSpec": "^1.0.5",
     "saveSpec": null,
-    "fetchSpec": "^1.0.0"
+    "fetchSpec": "^1.0.5"
   },
   "_requiredBy": [
     "/chokidar"
   ],
   "_resolved": "https://registry.npmjs.org/upath/-/upath-1.1.0.tgz",
   "_shasum": "35256597e46a581db4793d0ce47fa9aebfc9fabd",
-  "_spec": "upath@^1.0.0",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/chokidar",
+  "_spec": "upath@^1.0.5",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/chokidar",
   "author": {
     "name": "Angelos Pikoulas",
     "email": "agelos.pikoulas@gmail.com"

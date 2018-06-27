@@ -23,7 +23,7 @@
   "_resolved": "https://registry.npmjs.org/underscore/-/underscore-1.9.1.tgz",
   "_shasum": "06dce34a0e68a7babc29b365b8e74b8925203961",
   "_spec": "underscore",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules",
   "author": {
     "name": "Jeremy Ashkenas",
     "email": "jeremy@documentcloud.org"

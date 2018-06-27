@@ -1,5 +1,5 @@
 {
-  "_from": "fsevents@^1.1.2",
+  "_from": "fsevents@^1.2.2",
   "_id": "fsevents@1.2.4",
   "_inBundle": false,
   "_integrity": "sha512-z8H8/diyk76B7q5wg+Ud0+CqzcAF3mBBI/bA5ne5zrRUUIvNkJY//D3BqyH571KuAC4Nr7Rw7CjWX4r0y9DvNg==",
@@ -8,20 +8,20 @@
   "_requested": {
     "type": "range",
     "registry": true,
-    "raw": "fsevents@^1.1.2",
+    "raw": "fsevents@^1.2.2",
     "name": "fsevents",
     "escapedName": "fsevents",
-    "rawSpec": "^1.1.2",
+    "rawSpec": "^1.2.2",
     "saveSpec": null,
-    "fetchSpec": "^1.1.2"
+    "fetchSpec": "^1.2.2"
   },
   "_requiredBy": [
     "/chokidar"
   ],
   "_resolved": "https://registry.npmjs.org/fsevents/-/fsevents-1.2.4.tgz",
   "_shasum": "f41dcb1af2582af3692da36fc55cbd8e1041c426",
-  "_spec": "fsevents@^1.1.2",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/chokidar",
+  "_spec": "fsevents@^1.2.2",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/chokidar",
   "author": {
     "name": "Philipp Dunkel",
     "email": "pip@pipobscure.com"

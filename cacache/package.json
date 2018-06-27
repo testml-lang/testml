@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/cacache/-/cacache-10.0.4.tgz",
   "_shasum": "6452367999eff9d4188aefd9a14e9d7c6a263460",
   "_spec": "cacache@^10.0.4",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/uglifyjs-webpack-plugin",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/uglifyjs-webpack-plugin",
   "author": {
     "name": "Kat Marchán",
     "email": "kzm@sykosomatic.org"

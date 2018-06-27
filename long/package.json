@@ -22,7 +22,7 @@
   "_resolved": "https://registry.npmjs.org/long/-/long-3.2.0.tgz",
   "_shasum": "d821b7138ca1cb581c172990ef14db200b5c474b",
   "_spec": "long@^3.2.0",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/@webassemblyjs/wast-parser",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/@webassemblyjs/wast-parser",
   "author": {
     "name": "Daniel Wirtz",
     "email": "dcode@dcode.io"

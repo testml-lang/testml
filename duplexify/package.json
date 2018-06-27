@@ -22,7 +22,7 @@
   "_resolved": "https://registry.npmjs.org/duplexify/-/duplexify-3.6.0.tgz",
   "_shasum": "592903f5d80b38d037220541264d69a198fb3410",
   "_spec": "duplexify@^3.4.2",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/mississippi",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/mississippi",
   "author": {
     "name": "Mathias Buus"
   },

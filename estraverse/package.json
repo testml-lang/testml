@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/estraverse/-/estraverse-1.5.1.tgz",
   "_shasum": "867a3e8e58a9f84618afb6c2ddbcd916b7cbaf71",
   "_spec": "estraverse@~1.5.0",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/escodegen",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/escodegen",
   "bugs": {
     "url": "https://github.com/Constellation/estraverse/issues"
   },

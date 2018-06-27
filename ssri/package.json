@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/ssri/-/ssri-5.3.0.tgz",
   "_shasum": "ba3872c9c6d33a0704a7d71ff045e5ec48999d06",
   "_spec": "ssri@^5.2.4",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/cacache",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/cacache",
   "author": {
     "name": "Kat Marchán",
     "email": "kzm@sykosomatic.org"

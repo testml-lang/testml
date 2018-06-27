@@ -22,7 +22,7 @@
   "_resolved": "https://registry.npmjs.org/neo-async/-/neo-async-2.5.1.tgz",
   "_shasum": "acb909e327b1e87ec9ef15f41b8a269512ad41ee",
   "_spec": "neo-async@^2.5.0",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/webpack",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/webpack",
   "browser": "async.min.js",
   "bugs": {
     "url": "https://github.com/suguru03/neo-async/issues"

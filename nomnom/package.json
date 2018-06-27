@@ -23,7 +23,7 @@
   "_resolved": "https://registry.npmjs.org/nomnom/-/nomnom-1.5.2.tgz",
   "_shasum": "f4345448a853cfbd5c0d26320f2477ab0526fe2f",
   "_spec": "nomnom@1.5.2",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/jison",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/jison",
   "author": {
     "name": "Heather Arthur",
     "email": "fayearthur@gmail.com"

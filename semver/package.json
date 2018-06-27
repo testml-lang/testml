@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/semver/-/semver-5.5.0.tgz",
   "_shasum": "dc4bbc7a6ca9d916dee5d43516f0092b58f7b8ab",
   "_spec": "semver@^5.3.0",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/babel-preset-env",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/babel-preset-env",
   "bin": {
     "semver": "./bin/semver"
   },

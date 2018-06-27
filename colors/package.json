@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/colors/-/colors-0.5.1.tgz",
   "_shasum": "7d0023eaeb154e8ee9fce75dcb923d0ed1667774",
   "_spec": "colors@0.5.x",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/nomnom",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/nomnom",
   "author": {
     "name": "Marak Squires"
   },

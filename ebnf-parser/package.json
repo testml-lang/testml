@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/ebnf-parser/-/ebnf-parser-0.1.10.tgz",
   "_shasum": "cd1f6ba477c5638c40c97ed9b572db5bab5d8331",
   "_spec": "ebnf-parser@0.1.10",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/jison",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/jison",
   "author": {
     "name": "Zach Carter"
   },

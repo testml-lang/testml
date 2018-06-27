@@ -23,7 +23,7 @@
   "_resolved": "https://registry.npmjs.org/mamacro/-/mamacro-0.0.3.tgz",
   "_shasum": "ad2c9576197c9f1abf308d0787865bd975a3f3e4",
   "_spec": "mamacro@^0.0.3",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/@webassemblyjs/ast",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/@webassemblyjs/ast",
   "author": {
     "name": "Sven Sauleau"
   },

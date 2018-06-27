@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/babel-plugin-transform-merge-sibling-variables/-/babel-plugin-transform-merge-sibling-variables-6.9.4.tgz",
   "_shasum": "85b422fc3377b449c9d1cde44087203532401dae",
   "_spec": "babel-plugin-transform-merge-sibling-variables@^6.9.4",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/babel-preset-minify",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/babel-preset-minify",
   "author": {
     "name": "amasad"
   },

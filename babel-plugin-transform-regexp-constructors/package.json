@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/babel-plugin-transform-regexp-constructors/-/babel-plugin-transform-regexp-constructors-0.4.3.tgz",
   "_shasum": "58b7775b63afcf33328fae9a5f88fbd4fb0b4965",
   "_spec": "babel-plugin-transform-regexp-constructors@^0.4.3",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/babel-preset-minify",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/babel-preset-minify",
   "author": {
     "name": "shinew"
   },

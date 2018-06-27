@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/linkify-it/-/linkify-it-2.0.3.tgz",
   "_shasum": "d94a4648f9b1c179d64fa97291268bdb6ce9434f",
   "_spec": "linkify-it@^2.0.0",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/markdown-it",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/markdown-it",
   "bugs": {
     "url": "https://github.com/markdown-it/linkify-it/issues"
   },

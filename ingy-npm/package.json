@@ -1,0 +1,61 @@
+{
+  "_from": "file:ingy-npm-0.0.1.tgz",
+  "_id": "ingy-npm@0.0.1",
+  "_inBundle": false,
+  "_integrity": "sha512-eanZCS4i27gyoQsCXAlc+kytE4ZMH/jyLTO98frym8lrc0t5si3u3dlAzUDMFTRFzxsOjq2GQVJKsgDWHQKXVw==",
+  "_location": "/ingy-npm",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "file",
+    "where": "/Users/ingy/src/TestML/testml/run/node/node_modules",
+    "raw": "ingy-npm-0.0.1.tgz",
+    "rawSpec": "ingy-npm-0.0.1.tgz",
+    "saveSpec": "file:ingy-npm-0.0.1.tgz",
+    "fetchSpec": "/Users/ingy/src/TestML/testml/run/node/node_modules/ingy-npm-0.0.1.tgz"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "/Users/ingy/src/TestML/testml/run/node/node_modules/ingy-npm-0.0.1.tgz",
+  "_spec": "ingy-npm-0.0.1.tgz",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules",
+  "author": {
+    "name": "Ingy döt Net",
+    "email": "ingy@ingy.net",
+    "url": "http://ingy.net"
+  },
+  "bin": {
+    "ingy-npm-check-release": "./bin/ingy-npm-check-release",
+    "ingy-npm-make-npm": "./bin/ingy-npm-make-npm",
+    "ingy-npm-make-package-json": "./bin/ingy-npm-make-package-json"
+  },
+  "bugs": {
+    "url": "https://github.com/ingydotnet/ingy-npm/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {},
+  "deprecated": false,
+  "description": "Ingy döt Net's NPM packaging tools",
+  "devDependencies": {},
+  "directories": {
+    "lib": "./share"
+  },
+  "engines": {
+    "node": ">=0.4.0"
+  },
+  "homepage": "https://www.npmjs.com/~ingy",
+  "keywords": [
+    "ingy",
+    "npm"
+  ],
+  "license": {
+    "type": "MIT"
+  },
+  "name": "ingy-npm",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ingydotnet/ingy-npm.git"
+  },
+  "scripts": {},
+  "version": "0.0.1"
+}

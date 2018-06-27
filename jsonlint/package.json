@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/jsonlint/-/jsonlint-1.6.0.tgz",
   "_shasum": "88aa46bc289a7ac93bb46cae2d58a187a9bb494a",
   "_spec": "jsonlint@1.6.0",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/cjson",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/cjson",
   "author": {
     "name": "Zach Carter",
     "email": "zach@carter.name",

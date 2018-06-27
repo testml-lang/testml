@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/babel-plugin-transform-undefined-to-void/-/babel-plugin-transform-undefined-to-void-6.9.4.tgz",
   "_shasum": "be241ca81404030678b748717322b89d0c8fe280",
   "_spec": "babel-plugin-transform-undefined-to-void@^6.9.4",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/babel-preset-minify",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/babel-preset-minify",
   "author": {
     "name": "amasad"
   },

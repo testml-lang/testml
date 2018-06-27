@@ -22,7 +22,7 @@
   "_resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-8.4.1.tgz",
   "_shasum": "206fe59b0e4e1b78a7c73250af9b34a4ad0aaf44",
   "_spec": "markdown-it",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules",
   "bin": {
     "markdown-it": "bin/markdown-it.js"
   },

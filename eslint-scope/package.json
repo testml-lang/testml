@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/eslint-scope/-/eslint-scope-3.7.1.tgz",
   "_shasum": "3d63c3edfda02e06e01a452ad88caacc7cdcb6e8",
   "_spec": "eslint-scope@^3.7.1",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/webpack",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/webpack",
   "bugs": {
     "url": "https://github.com/eslint/eslint-scope/issues"
   },

@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/marked/-/marked-0.4.0.tgz",
   "_shasum": "9ad2c2a7a1791f10a852e0112f77b571dce10c66",
   "_spec": "marked@>= 0.2.7",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/docco",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/docco",
   "author": {
     "name": "Christopher Jeffrey"
   },

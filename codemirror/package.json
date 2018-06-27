@@ -1,8 +1,8 @@
 {
   "_from": "codemirror",
-  "_id": "codemirror@5.38.0",
+  "_id": "codemirror@5.39.0",
   "_inBundle": false,
-  "_integrity": "sha512-PEPnDg8U3DTGFB/Dn2T/INiRNC9CB5k2vLAQJidYCsHvAgtXbklqnuidEwx7yGrMrdGhl0L0P3iNKW9I07J6tQ==",
+  "_integrity": "sha512-vpJRray/0ZCt9FiS7UcVr1JAm6OBdUt6TA/94Q7MScr8TnutVdQWh/WPr0migzaBPQmYvY7I9UZNvbsaLESIuQ==",
   "_location": "/codemirror",
   "_phantomChildren": {},
   "_requested": {
@@ -19,10 +19,10 @@
     "#USER",
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/codemirror/-/codemirror-5.38.0.tgz",
-  "_shasum": "26a9551446e51dbdde36aabe60f72469724fd332",
+  "_resolved": "https://registry.npmjs.org/codemirror/-/codemirror-5.39.0.tgz",
+  "_shasum": "4654f7d2f7e525e04a62e72d9482348ccb37dce5",
   "_spec": "codemirror",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules",
   "bugs": {
     "url": "http://github.com/codemirror/CodeMirror/issues"
   },
@@ -87,6 +87,9 @@
     },
     {
       "name": "Alasdair Smith"
+    },
+    {
+      "name": "AlbertHilb"
     },
     {
       "name": "Alberto González Palomo"
@@ -333,6 +336,9 @@
     },
     {
       "name": "binny"
+    },
+    {
+      "name": "Bjorn Hansen"
     },
     {
       "name": "B Krishna Chaitanya"
@@ -1215,6 +1221,9 @@
       "name": "Lanny"
     },
     {
+      "name": "laobubu"
+    },
+    {
       "name": "Laszlo Vidacs"
     },
     {
@@ -1811,6 +1820,9 @@
       "name": "Renaud Durlin"
     },
     {
+      "name": "Reynold Xin"
+    },
+    {
       "name": "Richard Denton"
     },
     {
@@ -2319,5 +2331,5 @@
     "watch": "rollup -w -c"
   },
   "style": "lib/codemirror.css",
-  "version": "5.38.0"
+  "version": "5.39.0"
 }

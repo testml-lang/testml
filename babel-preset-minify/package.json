@@ -22,7 +22,7 @@
   "_resolved": "https://registry.npmjs.org/babel-preset-minify/-/babel-preset-minify-0.4.3.tgz",
   "_shasum": "b29c3dd6918905384598f092b955152e26a1fe0f",
   "_spec": "babel-preset-minify",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules",
   "author": {
     "name": "amasad"
   },

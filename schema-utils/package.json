@@ -22,7 +22,7 @@
   "_resolved": "https://registry.npmjs.org/schema-utils/-/schema-utils-0.4.5.tgz",
   "_shasum": "21836f0608aac17b78f9e3e24daff14a5ca13a3e",
   "_spec": "schema-utils@^0.4.4",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/webpack",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/webpack",
   "author": {
     "name": "Webpack Contrib",
     "url": "https://github.com/webpack-contrib"

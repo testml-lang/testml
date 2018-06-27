@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/enhanced-resolve/-/enhanced-resolve-4.0.0.tgz",
   "_shasum": "e34a6eaa790f62fccd71d93959f56b2b432db10a",
   "_spec": "enhanced-resolve@^4.0.0",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/webpack",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/webpack",
   "author": {
     "name": "Tobias Koppers @sokra"
   },

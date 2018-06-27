@@ -1,8 +1,8 @@
 {
   "_from": "tslib@^1.9.0",
-  "_id": "tslib@1.9.2",
+  "_id": "tslib@1.9.3",
   "_inBundle": false,
-  "_integrity": "sha512-AVP5Xol3WivEr7hnssHDsaM+lVrVXWUvd1cfXTRkTj80b//6g2wIFEH6hZG0muGZRnHGrfttpdzRk3YlBkWjKw==",
+  "_integrity": "sha512-4krF8scpejhaOgqzBEcGM7yDIEfi0/8+8zDRZhNZZ2kjmHJ4hv3zCbQWxoJGz1iw5U0Jl0nma13xzHXcncMavQ==",
   "_location": "/tslib",
   "_phantomChildren": {},
   "_requested": {
@@ -18,10 +18,10 @@
   "_requiredBy": [
     "/chrome-trace-event"
   ],
-  "_resolved": "https://registry.npmjs.org/tslib/-/tslib-1.9.2.tgz",
-  "_shasum": "8be0cc9a1f6dc7727c38deb16c2ebd1a2892988e",
+  "_resolved": "https://registry.npmjs.org/tslib/-/tslib-1.9.3.tgz",
+  "_shasum": "d7e4dd79245d85428c4d7e4822a79917954ca286",
   "_spec": "tslib@^1.9.0",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/chrome-trace-event",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/chrome-trace-event",
   "author": {
     "name": "Microsoft Corp."
   },
@@ -51,5 +51,5 @@
     "url": "git+https://github.com/Microsoft/tslib.git"
   },
   "typings": "tslib.d.ts",
-  "version": "1.9.2"
+  "version": "1.9.3"
 }

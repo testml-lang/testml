@@ -1,8 +1,8 @@
 {
   "_from": "uglifyjs-webpack-plugin@^1.2.4",
-  "_id": "uglifyjs-webpack-plugin@1.2.5",
+  "_id": "uglifyjs-webpack-plugin@1.2.7",
   "_inBundle": false,
-  "_integrity": "sha512-hIQJ1yxAPhEA2yW/i7Fr+SXZVMp+VEI3d42RTHBgQd2yhp/1UdBcR3QEWPV5ahBxlqQDMEMTuTEvDHSFINfwSw==",
+  "_integrity": "sha512-1VicfKhCYHLS8m1DCApqBhoulnASsEoJ/BvpUpP4zoNAPpKzdH+ghk0olGJMmwX2/jprK2j3hAHdUbczBSy2FA==",
   "_location": "/uglifyjs-webpack-plugin",
   "_phantomChildren": {},
   "_requested": {
@@ -18,10 +18,10 @@
   "_requiredBy": [
     "/webpack"
   ],
-  "_resolved": "https://registry.npmjs.org/uglifyjs-webpack-plugin/-/uglifyjs-webpack-plugin-1.2.5.tgz",
-  "_shasum": "2ef8387c8f1a903ec5e44fa36f9f3cbdcea67641",
+  "_resolved": "https://registry.npmjs.org/uglifyjs-webpack-plugin/-/uglifyjs-webpack-plugin-1.2.7.tgz",
+  "_shasum": "57638dd99c853a1ebfe9d97b42160a8a507f9d00",
   "_spec": "uglifyjs-webpack-plugin@^1.2.4",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/webpack",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/webpack",
   "author": {
     "name": "webpack Contrib Team"
   },
@@ -114,5 +114,5 @@
     "test:watch": "jest --watch",
     "webpack-defaults": "webpack-defaults"
   },
-  "version": "1.2.5"
+  "version": "1.2.7"
 }

@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+set -e
+
+rm -fr npm
+mkdir npm
+
+(
+  set -x
+
+  find lib | grep -E '\.coffee$' | while read -r file; do
+    js="npm/${file/\.coffee/.js}"
+    mkdir -p "$(dirname "$js")"
+    coffee --print --compile "$file" > "$js"
+  done
+
+  find lib | grep -E '\.js$' | while read -r file; do
+    js="npm/$file"
+    mkdir -p "$(dirname "$js")"
+    cp "$file" "$js"
+  done
+
+  find lib | grep -E '\.coffee$' | while read -r file; do
+    js="npm/${file/\.coffee/.js}"
+    perl -pi -e 's/^# include (.*)/`cat $1` or die/e' "$js"
+  done
+
+  if [[ -d bin ]]; then
+    find bin -type f | while read -r file; do
+      js="npm/$file"
+      mkdir -p "$(dirname "$js")"
+
+      if head -n1 "$file" | grep -q coffee; then
+        echo "#!/usr/bin/env node" > "$js"
+        coffee --print --compile "$file" >> "$js"
+      else
+        cp "$file" "$js"
+      fi
+
+      chmod +x "$js"
+    done
+  fi
+
+  for path in Changes .rc eg test; do
+    [[ -e "$path" ]] && cp -r "$path" npm/
+  done
+
+  ingy-npm-make-package-json > npm/package.json
+)
+
+if [[ -d doc ]]; then
+  find doc -type f -name '*.swim' | while read -r swim; do
+    md="${swim/.swim/.md}"
+    md="npm/$md"
+    mkdir -p "$(dirname "$md")"
+    if grep '^====' "$swim" &> /dev/null; then
+      (
+        set -x
+        swim --to=md --complete --wrap "$swim" > "$md"
+        swim --to=md --complete --wrap "$swim" > npm/ReadMe.md
+      )
+    else
+      (
+        set -x
+        swim --to=md --complete --wrap "$swim" > "$md"
+      )
+    fi
+  done
+fi
+
+# vim: set sw=2 lisp:

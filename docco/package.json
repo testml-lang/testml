@@ -22,7 +22,7 @@
   "_resolved": "https://registry.npmjs.org/docco/-/docco-0.8.0.tgz",
   "_shasum": "ec71470fe52808f4dbba4fab71380dcdfe9f5396",
   "_spec": "docco",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules",
   "author": {
     "name": "Jeremy Ashkenas"
   },

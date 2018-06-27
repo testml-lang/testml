@@ -22,7 +22,7 @@
   "_resolved": "https://registry.npmjs.org/jison/-/jison-0.4.18.tgz",
   "_shasum": "c68a6a54bfe7028fa40bcfc6cc8bbd9ed291f502",
   "_spec": "jison",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules",
   "author": {
     "name": "Zach Carter",
     "email": "zach@carter.name",

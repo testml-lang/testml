@@ -22,7 +22,7 @@
   "_resolved": "https://registry.npmjs.org/acorn/-/acorn-5.7.1.tgz",
   "_shasum": "f095829297706a7c9776958c0afc8930a9b9d9d8",
   "_spec": "acorn@^5.6.2",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/webpack",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/webpack",
   "bin": {
     "acorn": "./bin/acorn"
   },

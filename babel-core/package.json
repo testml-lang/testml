@@ -23,7 +23,7 @@
   "_resolved": "https://registry.npmjs.org/babel-core/-/babel-core-6.26.3.tgz",
   "_shasum": "b2e2f09e342d0f0c88e2f02e067794125e75c207",
   "_spec": "babel-core",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules",
   "author": {
     "name": "Sebastian McKenzie",
     "email": "sebmck@gmail.com"

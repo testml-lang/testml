@@ -22,7 +22,7 @@
   "_resolved": "https://registry.npmjs.org/uc.micro/-/uc.micro-1.0.5.tgz",
   "_shasum": "0c65f15f815aa08b560a61ce8b4db7ffc3f45376",
   "_spec": "uc.micro@^1.0.5",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/markdown-it",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/markdown-it",
   "bugs": {
     "url": "https://github.com/markdown-it/uc.micro/issues"
   },

@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/serialize-javascript/-/serialize-javascript-1.5.0.tgz",
   "_shasum": "1aa336162c88a890ddad5384baebc93a655161fe",
   "_spec": "serialize-javascript@^1.4.0",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/uglifyjs-webpack-plugin",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/uglifyjs-webpack-plugin",
   "author": {
     "name": "Eric Ferraiuolo",
     "email": "edf@ericf.me"

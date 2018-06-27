@@ -21,7 +21,7 @@
   "_resolved": "https://registry.npmjs.org/find-cache-dir/-/find-cache-dir-1.0.0.tgz",
   "_shasum": "9288e3e9e3cc3748717d39eade17cf71fc30ee6f",
   "_spec": "find-cache-dir@^1.0.0",
-  "_where": "/Users/ingy/src/TestML/testml/node_modules/uglifyjs-webpack-plugin",
+  "_where": "/Users/ingy/src/TestML/testml/run/node/node_modules/uglifyjs-webpack-plugin",
   "author": {
     "name": "James Talmage",
     "email": "james@talmage.io",
