@@ -1,5 +1,6 @@
 WORK := \
     gh-pages \
+    node_modules \
     playground \
 
 STATUS := $(WORK)
@@ -15,7 +16,7 @@ site: gh-pages playground build
 	rm -f $</v2/*.html
 	make -C playground site
 
-build: coffeescript ../node_modules
+build: coffeescript node_modules
 	cake doc:site
 
 .PHONY: test
@@ -29,9 +30,6 @@ coffeescript:
 $(WORK):
 	git branch --track $@ origin/$@ 2>/dev/null || true
 	git worktree add -f $@ $@
-
-../node_modules:
-	make -C .. node_modules
 
 clean:
 	rm -f package-lock.json
