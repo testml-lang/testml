@@ -9,6 +9,9 @@ An Acmeist Data-Driven Software Testing Language
 
 Try [Interactive TestML](http://testml.org/playground/)
 
+Run: `make test` to see all the TestML test suites run in all the supported
+languages.
+
 An example TestML file, `math.tml`:
 ```
 #!/usr/bin/env testml
@@ -119,11 +122,6 @@ quickly adding support for all popular programming languges.
 One example of a fairly big TestML suite is
 https://github.com/yaml/yaml-test-suite
 
-To see a lot of TestML CLI invocations being run, try this command:
-```
-test/test-cli.sh
-```
-
 ## The TestML Compiler
 
 To use TestML you will need to install the TestML Compiler, which is currently
@@ -139,8 +137,12 @@ To implement TestML, 2 things need to happen:
 * Implement all the TestML language features into the TestML Compiler
 * Implement the Runtime in each programming language / test framework
 
-To date, the basic data language and the minimal assertion syntax can compile.
-Runtime support is as follows:
+Currently the compiler is fully implemented in JavaScript and passing all the
+compiler tests. The JS compiler is too slow on the server and is being ported
+to something faster.
+
+The following language runtimes are all fully implemented and passing all the
+runtime tests:
 
 * CoffeeScript - Complete. Runs all features presented by the compiler.
 * JavaScript - Complete.
