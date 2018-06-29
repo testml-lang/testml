@@ -58,7 +58,7 @@ usage:   testml <options...> [<testml-file>...]
 TestML v0.3.0
 
 ===
---- command: testml -c -p test/testml/010-math.tml
+--- command: testml -c -p test/run-tml/010-math.tml
 --- output
 { "testml": "0.3.0",
   "code": [
@@ -103,7 +103,7 @@ TestML v0.3.0
         "c": 999}}]}
 
 ===
---- command: testml-perl5-tap test/testml/010-math.tml
+--- command: testml-perl5-tap test/run-tml/010-math.tml
 --- output
 ok 1 - Test 1
 ok 2 - Test 2
@@ -116,21 +116,21 @@ ok 8 - Test 2
 1..8
 
 ===
---- command: TESTML_RUN=perl5-tap testml test/testml/010-math.tml
+--- command: TESTML_RUN=perl5-tap testml test/run-tml/010-math.tml
 --- ^output
 
 ===
---- command: testml --run=perl5-tap test/testml/010-math.tml
+--- command: testml --run=perl5-tap test/run-tml/010-math.tml
 --- ^output
 
 ===
---- command: testml -R perl5-tap test/testml/010-math.tml
+--- command: testml -R perl5-tap test/run-tml/010-math.tml
 --- ^output
 
 ===
---- command: TESTML_RUN=perl5-tap prove -v test/testml/010-math.tml
+--- command: TESTML_RUN=perl5-tap prove -v test/run-tml/010-math.tml
 --- output
-test/testml/010-math.tml ..
+test/run-tml/010-math.tml ..
 ok 1 - Test 1
 ok 2 - Test 2
 ok 3 - Test 1
