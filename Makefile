@@ -18,19 +18,23 @@ STATUS := \
 
 include ../../.makefile/status.mk
 
-#------------------------------------------------------------------------------
-NODE_MODULES_DIR := node_modules
-INGY_NPM := ../../../ingy-npm
 
-ifneq ($(wildcard $(INGY_NPM)),)
-    include $(INGY_NPM)/share/ingy-npm.mk
-else
-    $(warning Error: $(INGY_NPM) does not exist)
-    $(warning Try: git clone git@github.com:ingydotnet/ingy-npm $(INGY_NPM))
-    $(error Fix your errors)
-endif
+### XXX Make this work without ingy-npm
+# #------------------------------------------------------------------------------
+# NODE_MODULES_DIR := node_modules
+# INGY_NPM := ../../../ingy-npm
+# 
+# ifneq ($(wildcard $(INGY_NPM)),)
+#     include $(INGY_NPM)/share/ingy-npm.mk
+# else
+#     $(warning Error: $(INGY_NPM) does not exist)
+#     $(warning Try: git clone git@github.com:ingydotnet/ingy-npm $(INGY_NPM))
+#     $(error Fix your errors)
+# endif
+# 
+# #------------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+
 test: node_modules test/testml
 	NODE_PATH=lib PERL5LIB=test prove -v -j$(j) $(test)
 
