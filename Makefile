@@ -9,7 +9,7 @@ export TESTML_COMPILER_BOOTSTRAP := $(boot)
 export TESTML_COMPILER_DEBUG := $(debug)
 
 j = 1
-test = test/testml/[0-9]*.tml
+test = test/*.tml
 
 STATUS := \
     compiler-tml \
@@ -50,6 +50,7 @@ realclean: clean
 	rm -fr node_modules pegex
 	git worktree prune
 
+.PHONY: test
 
 
 ### XXX Make this work without ingy-npm
