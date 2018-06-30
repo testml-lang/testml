@@ -104,6 +104,43 @@ git clone git@github.com:testml-lang/testml
 source testml/.rc
 ```
 
+## Developemnt Installation
+
+If you want to be a TestML developer, you'll need to install all the languages
+and bin tools needed to run `make test`. You can run this on a Debian/Ubuntu
+installation:
+```
+.bin/install-debian-prereqs
+```
+
+NOTE: This has only been tested on Ubuntu 16.04 so far. Be careful.
+
+Otherwise you'll need to do the basic steps in that file.
+
+See "Hacking on TestML" below.
+
+# Hacking on TestML
+
+TestML needs language experts (like you) to port the code to all modern
+programming langauges. It's only a few hundred lines of (say, Python) code to
+port, so it should be easy, right?
+
+To get started, you might want to drop by #testml on irc.freenode.net. We'll be
+waiting for you.
+
+## Repository Layout
+
+The testml repository has about 15 related repositories in one. Each component
+has its own branch. To checkout all of them at once (into git worktree subdirs)
+run `make work` (from master). To see the current status of them all, run
+`make`. To remove all the worktree subdirs, run `make realclean`.
+
+All these branches are related and depend on each other during development.
+When you run `make test` (for instance) from a clean master, it will add the
+worktrees as necessary to get the parts needed.
+
+...more instructions coming soon...
+
 # TestML Background
 
 TestML ideas started back in 2004. The Perl module Test::Base, used the same
@@ -129,6 +166,10 @@ written in NodeJS. You can install it like this:
 ```
 npm install -g testml-compiler
 ```
+
+NOTE: To hack on TestML, you won't need to install the compiler because it's
+builtin to the repository. In fact, it's probably better not to, so you know
+that you are using the latest code.
 
 ## Current Implementation Level
 
