@@ -41,7 +41,7 @@ test-travis: test
 test-output: run/perl5 compiler/coffee
 	test=$(test) prove -v -j$(j) $${test:-test/output/*.tml}
 
-work: $(WORK)
+work: $(WORK) test/compiler-tml test/run-tml
 
 $(WORK) orphan:
 	git branch --track $@ origin/$@ 2>/dev/null || true
