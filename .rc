@@ -8,4 +8,16 @@ export TESTML_ROOT
 export PATH="$TESTML_ROOT/bin:$PATH"
 export MANPATH="$TESTML_ROOT/man:$MANPATH"
 
+(
+  cd "$TESTML_ROOT" || exit
+
+  for lang in coffee node perl5 perl6 python; do
+    run="run/$lang"
+    if [[ ! -e $run ]]; then
+      git branch --track "$run" "origin/$run" 2>/dev/null || true
+      git worktree add -f "$run" "$run" >/dev/null
+    fi
+  done
+)
+
 # vim: set ft=sh:
