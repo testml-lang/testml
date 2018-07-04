@@ -7,7 +7,7 @@ Try these make commands:
     make test           - Run all tests
     make test-perl5     - Run language specific tests
     make test-compiler  - Compiler tests
-    make test-output    - Run CLI output tests
+    make test-cli       - Run CLI output tests
     make clean          - Remove generated files
     make realclean      - Even remove worktree subdirs
     make help           - Print this help
@@ -44,13 +44,14 @@ WORK := \
     run/cpp \
     site \
     talk \
+    test/compiler-tml \
+    test/cli-tml \
+    test/run-tml \
 
 # All the branches for `make status`:
 STATUS := \
     orphan \
     $(WORK) \
-    test/compiler-tml \
-    test/run-tml \
 
 # Import `make status` support:
 include .makefile/status.mk
@@ -65,7 +66,7 @@ help:
 j = 1
 
 # Run all tests for TestML:
-test: test-run test-compiler test-output
+test: test-run test-compiler test-cli
 
 # Run all the language specific runtime tests:
 test-run: $(TEST_ALL)
@@ -79,11 +80,17 @@ test-compiler: compiler/coffee
 	cd $<; make test j=$(j)
 
 # Test the output of various testml CLI invocations:
-test-output: run/perl5 compiler/coffee
-	test=$(test) prove -v -j$(j) $${test:-test/output/*.tml}
+test-cli: test/cli-tml run/perl5 compiler
+	test=$(test) prove -v -j$(j) $${test:-$</*.tml}
 
 # A special rule to run tests on travis-ci:
 test-travis: test
+
+compiler::
+ifeq ($(shell which testml-compiler),)
+	make compiler/coffee
+	cd compiler/coffee && make node_modules
+endif
 
 #------------------------------------------------------------------------------
 # TestML repository managment rules:
@@ -95,16 +102,7 @@ work: $(WORK) test/compiler-tml test/run-tml
 # worktree add a branch into a subdir:
 $(WORK) orphan:
 	git branch --track $@ origin/$@ 2>/dev/null || true
-	git worktree add -f $(subst -,/,$@) $@
-
-# worktree add rules for test branches (slightly different than above rule):
-test/compiler-tml:
-	git branch --track compiler-tml origin/compiler-tml 2>/dev/null || true
-	git worktree add -f $@ compiler-tml
-
-test/run-tml:
-	git branch --track run-tml origin/run-tml 2>/dev/null || true
-	git worktree add -f $@ run-tml
+	git worktree add -f $@ $@
 
 # Rules to clean up the repo:
 clean:

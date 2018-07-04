@@ -92,7 +92,7 @@ The main component branches are:
   written in CoffeeScript/NodeJS/JavaScript and it runs on the server and in
   the browser. Try http://testml.org/playground/?view=compiler
 
-* `compiler-tml`
+* `test/compiler-tml`
 
   The TestML compiler test suite (in TestML!).
 
@@ -104,7 +104,7 @@ The main component branches are:
   (which would be on the `run/coffee` branch), `node`, `perl5`, `perl6`,
   `python`.
 
-* `run-tml`
+* `test/run-tml`
 
   The runtime test (in TestML). Every language runtime passes this same test
   suite. It's a perfect example of a TestML suite working in every language.
@@ -200,7 +200,7 @@ lib/testml/bridge.gum       - Base class for Gumby TestML Bridge Classes
    /testml/run.gum          - The Lingy evalutation runtime code
    /testml/stdlib.gum       - The TestML standard library
    /testml/run/tap.gum      - The TAP subclass of `testml/run.gum`
-test/testml-bridge.gum      - TestML bridge class for the `run-tml` suite
+test/testml-bridge.gum      - TestML bridge class for the `test/run-tml` suite
     /0##-<test-name>.tml    - Symlink files to `../../test/run-tml/<name>.tml`
 ```
 
