@@ -4,7 +4,7 @@ BASIC
 Beta
 C
 C#
-C++
+C++             - Started
 Cecil
 Clojure
 Common Lisp
@@ -19,14 +19,14 @@ Eiffel
 Elixir
 Erlang
 F#
-Gambas
+Gambas          - Started
 Go
 Groovy
 Haskell
 Icon
 Io
 Java
-JavaScript
+JavaScript      - Working (NodeJS and browser)
 Julia
 Kotlin
 LiveScript
@@ -37,15 +37,18 @@ ML
 Modula-3
 MzScheme
 Nim
+NodeJS          - Working
 Objective-C
 OCaml
 Octave
+Perl 5          - Working
+Perl 6          - Working
 PHP
 Pike
 Pliant
 Processing
 Prolog
-Python 2
+Python 2        - Working
 Python 3
 R
 Racket
