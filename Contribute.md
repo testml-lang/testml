@@ -241,3 +241,39 @@ class to Gumby. The rest is just symlinks to the common test suite files.
 
 Once the basic Makefile and bin script is in place, you can just keep running
 `make test` and adding more Gumby code until it's all done!
+
+# What Needs to be Done for TestML?
+
+There are many categories of many things that need help for the TestML project.
+This section covers the currently most obvious. Look it over and see if any
+appeal to you.
+
+To start, you should run `make note` and then look in the `./note/` directory.
+Start with `note/Languages` and then read through `note/ToDo`.
+
+A short list of categories:
+
+* New language runtime
+
+  Pick a language that TestML hasn't been ported to and port to it
+
+* New test framework for an existing runtime
+
+  TestML needs a runtime subclass for each popular test framework in a
+  language. Hopefully it won't be much code to hook into a framework.
+
+* Port testml-compiler to a new language
+
+  TestML really only needs one compiler (a program in your PATH called
+  `testml-compiler` that passes the `test/compiler-tml` suite). Optimally this
+  can be compiled and/or condensed to a (single file) platform specific binary
+  for all major platforms (at least Linux, Windows, MacOSX). Then a user
+  install just needs to download the compiler.
+
+  THe current compiler is written in JavaScript and uses NodeJS on the server.
+  It turns out to have a prohibitively slow startup time. A Perl port is
+  planned as a quick fix, but ultimately something like Haskell would be best.
+
+* Add tests to the test suites
+* Work on the http://testml.org website (`site` branch)
+* User documentation and tutorials
