@@ -25,14 +25,22 @@ LANG_ALL := \
     perl6 \
     python \
 
+# New language runtimes in progress:
+LANG_NEW := \
+    cpp \
+    gambas \
+
 # All the language test rules (like `test-perl5`):
 TEST_ALL := $(LANG_ALL:%=test-run-%)
 
 # All the language specific runtime code branhes (like `run/perl5`):
 RUN_ALL := $(LANG_ALL:%=run/%)
 
+# New language specific runtime branches in progress:
+RUN_NEW := $(LANG_NEW:%=run/%)
+
 # All the language module packaging branches (like `pkg/perl5` for CPAN):
-PKG_ALL := pkg-node
+PKG_ALL := pkg/node
 
 # All the branches for `make work` which checks them out as worktree subdirs:
 WORK := \
@@ -41,17 +49,17 @@ WORK := \
     note \
     $(PKG_ALL) \
     $(RUN_ALL) \
-    run/cpp \
+    $(RUN_NEW) \
     site \
     talk \
     test/compiler-tml \
     test/cli-tml \
     test/run-tml \
 
+ALL_WORK := orphan $(WORK)
+
 # All the branches for `make status`:
-STATUS := \
-    orphan \
-    $(WORK) \
+STATUS := $(ALL_WORK)
 
 # Import `make status` support:
 include .makefile/status.mk
@@ -97,10 +105,10 @@ endif
 #------------------------------------------------------------------------------
 
 # The `make work` command:
-work: $(WORK) test/compiler-tml test/run-tml
+work: $(WORK)
 
 # worktree add a branch into a subdir:
-$(WORK) orphan:
+$(ALL_WORK):
 	git branch --track $@ origin/$@ 2>/dev/null || true
 	git worktree add -f $@ $@
 
@@ -114,8 +122,8 @@ clean:
 	rm -f package*
 
 realclean: clean
-	rm -fr $(WORK) orphan test/compiler-tml test/run-tml
+	rm -fr $(ALL_WORK)
 	git worktree prune
-	rm -fr compiler eg pkg run
+	rm -fr compiler eg pkg run test
 
 .PHONY: test
