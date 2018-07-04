@@ -44,7 +44,9 @@ WORK := \
     talk \
 
 # All the branches for `make status`:
-STATUS := $(WORK) \
+STATUS := \
+    orphan \
+    $(WORK) \
     test/compiler-tml \
     test/run-tml \
 
@@ -111,7 +113,7 @@ clean:
 	rm -f package*
 
 realclean: clean
-	rm -fr $(WORK) test/compiler-tml test/run-tml
+	rm -fr $(WORK) orphan test/compiler-tml test/run-tml
 	git worktree prune
 	rm -fr compiler eg pkg run
 

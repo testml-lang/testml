@@ -33,12 +33,12 @@ clean debian install. Here's a short list, most important first:
 * git 2.7 or higher
   * Used for many things beyond cloning the repo
 * Recent NodeJS
-  * TestML reference compiler is currently written in NodeJS
+  * The TestML reference compiler is currently written in NodeJS
 * Perl(5) 5.14 or higher
-  * Some tests use perl as the testml runtime
+  * Some of the tests use perl as the TestML runtime
 * Perl CPAN modules: `boolean` and `Capture::Tiny`
 * Python(2), Perl(6)
-  * Other current TestML runtimes
+  * Other current TestML runtime languages
 
 You don't need all these things to _use_ TestML, but they are useful for
 development.
@@ -56,7 +56,7 @@ make work
 make status
 ```
 
-The `make work` command will populate your testml with lots of subdirectories
+The `make work` command will populate your `testml` with lots of subdirectories
 containing the various parts of the TestML project. There are over 15 component
 branches currently!
 
@@ -66,3 +66,178 @@ all your work at once.
 Running `make realclean` will remove all the extra subdirs. Make sure you've
 committed everything you want to keep first. Always check first with `make
 status`.
+
+## The TestML Repository
+
+The Git repository for the TestML project is a bit different than most. TestML
+has many independent components that each could be their own repository.
+Instead, we currently have everything in one repository, with each component as a
+separate (unrelated to one another) branch.
+
+The `git worktree` command lets us checkout these branches into subdirectories.
+You can almost think of them as submodules. The various components are set up
+to be worked on as subdirectories of the master repository.
+
+The main component branches are:
+
+* `master`
+
+  The main, top level branch, for installing TestML to use and for coordinating
+  the development process. For TestML developers, the Makefile is the main
+  interesting thing here.
+
+* `compiler/coffee`
+
+  This is the current TestML reference compiler (aka `testml-compiler`). It is
+  written in CoffeeScript/NodeJS/JavaScript and it runs on the server and in
+  the browser. Try http://testml.org/playground/?view=compiler
+
+* `compiler-tml`
+
+  The TestML compiler test suite (in TestML!).
+
+* `run/<language>`
+
+  There are one of these branches for every supported programming language.
+  These are the language runtime branches and the place where all the code for
+  a specific language goes. Currently there are 5 working languages: `coffee`
+  (which would be on the `run/coffee` branch), `node`, `perl5`, `perl6`,
+  `python`.
+
+* `run-tml`
+
+  The runtime test (in TestML). Every language runtime passes this same test
+  suite. It's a perfect example of a TestML suite working in every language.
+
+* `pkg/<language>`
+
+  There is a packaging branch for each for publishing the TestML code as a
+  module/package to language specific sites like CPAN, PyPI and NPM.
+
+* `site` (and `playground` and `gh-pages`)
+
+  This branch builds the http://testml.org website and publishes it using
+  GitHub Pages.
+
+* `note`
+
+  A branch of various notes files and to-do lists.
+
+* `talk/*`
+
+  There is a branch for each conference talk slides given about TestML.
+
+* `eg/*`
+
+  Example programs implemented in many langauges at once to show how TestML is
+  used.
+
+# How TestML Works
+
+At a very abstract level, almost all software tests are made up of:
+
+* Input
+
+  The "before". A starting situation and/or data.
+
+* Output
+
+  The "after". A (expected) result situation and/or data.
+
+* Process
+
+  The software code being tested (using the Input).
+
+* Assertion
+
+  A statement of how the Process result relates to the Output.
+
+These are the 4 things that the TestML language is concerned with. TestML makes
+it easy to write a simple assertion involving a process and then apply 1000s of
+data variations to it.
+
+Here's an example abstract TestML program (in the file test1.tml) of the above:
+
+    #!/usr/bin/env testml
+    *input.process == *output
+    === Test1
+    --- input
+    --- output
+
+You could run this TestML program in Python like this:
+```
+testml -R python test1.tml
+```
+
+This would require a Python class called `testml-bridge.py` that defined a
+method called `process`. That method would have one input argument for the
+input. It would invoke some part of the Python software you were writing this
+test for, and return some output.
+
+When the test was run, `testml` would notice that it hadn't yet been compiled.
+It would call `testml-compiler` to compile the program into the file:
+`.testml/test1.tml.json`. The compiler output is a simple Lisp-like language
+called Lingy, that is encoded in JSON.
+
+Then `testml` would "run" the compiled TestML test file, by evaluating the
+Lingy code in Python. It would know how to pass each input to the Bridge Class
+method `process` and compare that to the expected output. Finally it would know
+how to report the test results to the user in the style of the test framework
+that the user had chosen. For Python, it would probably be `unittest.py`.
+
+# How To Add Support for a New Language
+
+Let's say that you wanted to implement TestML support for the (fictitious)
+programming language Gumby.
+
+First make a new Git orphan branch called `run/gumby` (`git checkout --orphan
+run/gumby`). Now set up the directory layout to look like this:
+```
+Makefile                    - Makefile to run your tests (`make test`)
+bin/testml-gumby            - A symlink to testml-gumby-tap
+   /testml-gumby-tap        - TestML runner for Gumby using TAP
+lib/testml/bridge.gum       - Base class for Gumby TestML Bridge Classes
+   /testml/run.gum          - The Lingy evalutation runtime code
+   /testml/stdlib.gum       - The TestML standard library
+   /testml/run/tap.gum      - The TAP subclass of `testml/run.gum`
+test/testml-bridge.gum      - TestML bridge class for the `run-tml` suite
+    /0##-<test-name>.tml    - Symlink files to `../../test/run-tml/<name>.tml`
+```
+
+That's pretty much it. You should look at another existing language's `run/*`
+branch to see what the file contents should be. I think `run/coffee` is the
+simplest to understand. It reads like pseudocode to a degree. Pick a language
+that you are most comfortable with.
+
+The `Makefile` and the `bin` files can be copied and slightly modified. The
+`bin` program is written in Bash and it has one function called
+`testml-run-file`. In a dynamic language like Perl, it simply invokes perl
+telling it to call the `TestML::Run::TAP` class's `run` method, passing it the
+name of the compiled file. This is the same for Python and JavaScript etc.
+
+For a compiled language like C++ or Go, this bash function would first compile
+a testml runner (including the project specific Bridge class being used) and
+then call that (new, compiled) program with the name of the compiled TestML
+test file.
+
+All the actual Gumby code is in `lib`, and most of it is in `testml/run.gum`.
+It is highly encouraged that you write the gumby code to use the exact same
+logic and style as all the other implementations. ie If you were porting from
+CoffeeScript to Gumby you should try to do a method-for-method, line-for-line,
+idiom-for-idiom translation. Even if this ends up not being the best possible
+Gumby code, it will help evolve all the implementations in parallel.
+
+Every language needs to write at least one test framework specific subclass. In
+this case we chose TAP. So far, we have written a TAP subclass for every
+language runtime. That's because TAP itself is programming language agnostic.
+But we also have other framework subclasses like `unittest` for Python and
+Mocha for NodeJS. The framework subclass is usually not much code.
+
+The TestML Standard Library has all kinds of common data manipulations that can
+be expected to be available when using TestML in any programming language.
+
+Finally there is the `test/` directory. You'll need to port the simple bridge
+class to Gumby. The rest is just symlinks to the common test suite files.
+
+Once the basic Makefile and bin script is in place, you can just keep running
+`make test` and adding more Gumby code until it's all done!
