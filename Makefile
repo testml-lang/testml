@@ -4,6 +4,8 @@ export TESTML_RUN_ROOT := $(TOP)/run/perl5
 export TESTML_COMPILER_ROOT := $(TOP)/compiler/coffee
 export PATH := $(TESTML_RUN_ROOT)/bin:$(TESTML_COMPILER_ROOT)/bin:$(PATH)
 
+export TESTML_DEVEL := $(devel)
+export TESTML_COMPILER_DEBUG := $(debug)
 j = 1
 test = test/*.tml
 
