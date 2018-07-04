@@ -15,9 +15,10 @@ Try these make commands:
 endef
 export HELP
 
+export PATH := $(PWD)/bin:$(PWD)/compiler/coffee/bin:$(PATH)
+
 # All the current support languages:
 LANG_ALL := \
-    cpp \
     coffee \
     node \
     perl5 \
@@ -25,7 +26,7 @@ LANG_ALL := \
     python \
 
 # All the language test rules (like `test-perl5`):
-TEST_ALL := $(LANG_ALL:%=test-%)
+TEST_ALL := $(LANG_ALL:%=test-run-%)
 
 # All the language specific runtime code branhes (like `run/perl5`):
 RUN_ALL := $(LANG_ALL:%=run/%)
@@ -40,6 +41,7 @@ WORK := \
     note \
     $(PKG_ALL) \
     $(RUN_ALL) \
+    run/cpp \
     site \
     talk \
 
@@ -69,12 +71,12 @@ test: test-run test-compiler test-output
 test-run: $(TEST_ALL)
 
 # Run a specific language runtime test:
-test-%: run/%
-	make -C $< test j-$(j)
+test-run-%: run/%
+	make -C $< test j=$(j)
 
-# Run all the compiler tests:
+# Run all the compiler tests:    note:(`make -C` doesn't work here)
 test-compiler: compiler/coffee
-	make -C $< test j-$(j)
+	cd $<; make test j=$(j)
 
 # Test the output of various testml CLI invocations:
 test-output: run/perl5 compiler/coffee
@@ -108,6 +110,7 @@ test/run-tml:
 clean:
 	find . -type d | grep '\.testml$$' | xargs rm -fr
 	find . -type d | grep '\.precomp$$' | xargs rm -fr
+	find . -name '*.pyc' | xargs rm -f
 	find . -name '*.swp' | xargs rm -f
 	find . -name '*.swo' | xargs rm -f
 	rm -f package*
