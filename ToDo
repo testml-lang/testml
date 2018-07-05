@@ -1,55 +1,19 @@
-== Post YAPC
-- Post to git-subrepo
-- TestML compiler in Perl5
-- Redo yaml test suite layout
-  - devel subrepo branch
-- Test2 in TestML
-- TestML CPAN releases
-- Rosetta update
-- TestML config support
-- Restructure and renumber tests for developemnt
-
-== NEXT!!!
-- Add $TESTML_DIR/.testml.rc config file
-  - Also look in $TESTML_UPDIR/.testml.rc
-- Fix https://gist.github.com/perlpunk/d5b4eea65f61446875dcc8b174e7f8b6
-- Remove leading \ escape from language
-- Refactor $'' opcode to ''
-- Refactor types => type-table
-- Move TestML/testml-node-modules and TestML/testml-site-node-modules into a testml/node_modules worktree branch
-
-- Use <sha1>.tml.json cache name for stdin
-- Write own TAP logic for perl5 insstead of Test::Builder
-- Finish tests for all stdlib methods
-- Add ONLY warning to all langs
-- Sync all TAP classes
-- Turn on IRC notifications
-
 == Project
-- <If ...> ... <Else> ...
-  <*AAAA, !*BBBB> == <If *AAAA, !*BBBB>
-  <Else ...> is like <ElseIf ...>
-- ImportData, ImportDataPush stdlib
+- Turn on IRC notifications
 - Use testml in yaml-test-suite for make test
+  - Fix https://gist.github.com/perlpunk/d5b4eea65f61446875dcc8b174e7f8b6
   - Rearrange
 - Test output of all tap tests in all langs in a testml test
-- Support "{File}"
-- Support TAP SubTests
-- Foo = ... assignment for TestML vars can
-  - Only support TestML approved vars
-  - Type check them
-- Prompt an offer to download and cache testml-compiler if not in PATH
-  - Need to build tesml-compiler into a standalone
+
+== Packaging
+- #!/usr/bin/env testml-exe-node tap
+  - written in nodejs (not bash)
 
 == Repo Refactor
-- run/node/   (run-node)
-  - pkg/      (pkg-node)
-  - exe/      (exe-node)
-    - #!/usr/bin/env testml-exe-node tap
-      - written in nodejs
-
-- Rename all node-0.x.x tags to pkg-node-0.x.x
-- Add branch node_modules from ~/src/TestML/testml-node-modules
+- Get compiler to build npm/ and release again
+- Get testml-js (node) to build npm/ and release again
+- Make 'devel' subrepo branch
+- Restructure and renumber tests for developemnt
 
 == Releases
 - CPAN Release
@@ -62,8 +26,18 @@
 - Method 'assert_num_eq_str' does not exist at...
 
 == Language (compiler and runtime)
+- <If ...> ... <Else> ...
+  <*AAAA, !*BBBB> == <If *AAAA, !*BBBB>
+  <Else ...> is like <ElseIf ...>
+- ImportData, ImportDataPush stdlib
+- Support "{File}"
+- Support TAP SubTests
+- Foo = ... assignment for TestML vars can
+  - Only support TestML approved vars
+  - Type check them
 
 == Compiler
+- TestML compiler in Perl5
 - Support source mapping
   - Use in labels
 - Support === with no (empty) label
@@ -78,12 +52,15 @@
   - Make work with subtests
 
 == Runtime
+- Add ONLY warning to all langs
 - Support FailMsg variable
 - Check for TestML version number before run
 - All runners should handle stdin ('-') for testml
 - Shuffle blocks with:  Shuffle = True
 
 == Perl5
+- Test2 in TestML
+  - Or write own TAP logic for perl5 instead of Test::Builder
 - Make TestML cpan release
 - Wide chars in Test::Builder (ask exodist)
 - Add TestML::Base for perl5; new & has
@@ -94,11 +71,18 @@
 - Add travis support
 
 == Standard Library
+- Finish tests for all stdlib methods
 
 == CLI
+- Support .testml/config .testml.rc testml.rc
+  - Add $TESTML_DIR/.testml.rc config file
+  - Also look in $TESTML_UPDIR/.testml.rc
 - Support and test all env-vars / options
 - Add TESTML_DIFF
-- Support .testml/config .testml.rc testml.rc
+- Use <sha1>.tml.json cache name for stdin
+- Prompt an offer to download and cache testml-compiler if not in PATH
+  - Need to build tesml-compiler into a standalone
+
 == Playground
 - Move playground to testml.org Try
 - Add codemirror support
@@ -113,11 +97,12 @@
   - https://codepen.io/DriftwoodJP/pen/LRQjpw
   - https://codepen.io/ingydotnet/pen/gzvBON
 
-== Desired Runtimes
+== Next Runtimes
 - Haskell
 - Go
 - C++
 - Java
+- Ruby
 
 == Not Doing
 - Named compile-time filters
