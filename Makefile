@@ -6,7 +6,7 @@ export TOP := $(TOP)
 
 build: index.js
 
-update: compiler-tml testml-tml yaml-test-suite
+update: compiler-tml run-tml yaml-test-suite $(TOP)/run/coffee
 	bin/make-yaml
 	bin/make-test
 	bin/make-ctest
@@ -30,9 +30,9 @@ site: $(SITE) build update
 $(SITE):
 	(cd .. && make gh-pages)
 
-compiler-tml testml-tml:
-	git branch --track $@ origin/$@ 2>/dev/null || true
-	git worktree add -f $@ $@
+compiler-tml run-tml:
+	git branch --track test/$@ origin/test/$@ 2>/dev/null || true
+	git worktree add -f $@ test/$@
 
 testml-js: $(TOP)/run/node/npm
 
@@ -48,7 +48,7 @@ $(TOP)/run/node/npm: $(TOP)/run/node
 $(TOP)/compiler/coffee/npm: $(TOP)/compiler/coffee
 	(cd $< && make npm)
 
-$(TOP)/run/node $(TOP)/compiler/coffee:
+$(TOP)/run/node $(TOP)/run/coffee $(TOP)/compiler/coffee:
 	(cd $(TOP) && make $(@:$(TOP)/%=%))
 
 yaml-test-suite:
@@ -56,7 +56,7 @@ yaml-test-suite:
 
 clean:
 	rm -fr yaml-test-suite
-	rm -fr testml-tml compiler-tml
+	rm -fr run-tml compiler-tml
 
 clean-test:
 	rm -fr $(TOP)/run/node/npm
