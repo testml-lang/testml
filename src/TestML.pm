@@ -1,3 +1,3 @@
 package TestML;
 
-our $VERSION = '0.54_02';
+our $VERSION = '0.54_03';

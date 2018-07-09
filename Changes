@@ -1,4 +1,9 @@
 ---
+version: 0.54_03
+date:    Mon Jul  9 15:44:46 PDT 2018
+changes:
+- Fix user side testing be using correct perl
+---
 version: 0.54_02
 date:    Mon Jul  9 14:35:31 PDT 2018
 changes:
