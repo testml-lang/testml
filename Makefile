@@ -1,19 +1,9 @@
-include ../../.makefile/test-tap.mk
+TOP := ../..
+LANG := perl5
 
-default: help
+default: status
 
 test: test-tap
 
-
-#------------------------------------------------------------------------------
-# TODO Packaging stuff:
-#------------------------------------------------------------------------------
-# publish: dist
-# 
-# dist: distdir
-# 
-# distdir: pkg
-# 
-# pkg:
-# 	git branch --track $<-perl5 origin/$<-perl5 2>/dev/null || true
-# 	git worktree add -f $@ $<-perl5
+include $(TOP)/.makefile/run.mk
+include $(TOP)/.makefile/test-tap.mk
