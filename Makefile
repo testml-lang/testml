@@ -73,7 +73,7 @@ $(TOP)/test/run-tml:
 #------------------------------------------------------------------------------
 publish: check dist
 	cpan-upload $(DIST)
-	git push || true
+	git push
 	git tag $(TAG_PREFIX)-$(VERSION)
 	git push --tag
 
