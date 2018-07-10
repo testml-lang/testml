@@ -1,7 +1,6 @@
 use strict; use warnings;
 package TestML::StdLib;
-
-# use XXX;
+use TestML::Boolean();
 
 sub new {
   my ($class, $run) = @_;
@@ -31,10 +30,9 @@ sub blocks {
 
 sub bool {
   my ($self, $value) = @_;
-  require boolean;
-  (defined($value) and not boolean::isFalse($value))
-  ? boolean::true
-  : boolean::false;
+  (defined($value) and not TestML::Boolean::isFalse($value))
+  ? TestML::Boolean::true
+  : TestML::Boolean::false;
 }
 
 sub cat {
@@ -60,8 +58,7 @@ sub error {
 }
 
 sub false {
-  require boolean;
-  boolean::false();
+  TestML::Boolean::false();
 }
 
 sub fromjson {
@@ -131,8 +128,7 @@ sub type {
 }
 
 sub true {
-  require boolean;
-  boolean::true();
+  TestML::Boolean::true();
 }
 
 #------------------------------------------------------------------------------

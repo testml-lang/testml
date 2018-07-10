@@ -11,7 +11,7 @@ package TestML::Run;
 use JSON::PP;
 
 use utf8;
-use boolean;
+use TestML::Boolean;
 use Scalar::Util;
 
 # use XXX;
@@ -199,7 +199,7 @@ sub call_bridge {
   my ($self, $name, @args) = @_;
 
   if (not $self->{bridge}) {
-    my $bridge_module = $ENV{TESTML_BRIDGE};
+    my $bridge_module = $ENV{TESTML_BRIDGE} || 'TestMLBridge';
     eval "require $bridge_module; 1" or die $@;
     $self->{bridge} = $bridge_module->new;
   }
@@ -527,7 +527,7 @@ sub type {
     return 'num' if Scalar::Util::looks_like_number($value);
     return 'str';
   }
-  return 'bool' if ref($value) eq 'boolean';
+  return 'bool' if isBoolean($value);
   if (ref($value) eq 'ARRAY') {
     return 'none' if @$value == 0;
     return $_ if $_ = $types->{$value->[0]};
@@ -549,7 +549,7 @@ sub cook {
 
   return $value if not ref $value;
   return [$value] if ref($value) =~ /^(?:HASH|ARRAY)$/;
-  return $value if ref($value) eq 'boolean';
+  return $value if isBoolean($value);
   return ['/', $value] if ref($value) eq 'Regexp';
   return ['!', $value] if ref($value) eq 'TestMLError';
   return $value->{func} if ref($value) eq 'TestMLFunction';
