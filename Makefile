@@ -1,8 +1,7 @@
-export TESTML_ROOT := $(shell cd $(PWD)/../.. && pwd)
-export TESTML_COMPILER_ROOT := $(PWD)
-export TESTML_COMPILER_TEST := $(TESTML_ROOT)/test/compiler-tml
+export ROOT := ../..
+export TESTML_COMPILER_TEST := $(ROOT)/test/compiler-tml
 
-export PATH := $(TESTML_ROOT)/bin:$(TESTML_COMPILER_TEST)/bin:$(TESTML_COMPILER_ROOT)/bin:$(PATH)
+export PATH := $(ROOT)/.bin:$(ROOT)/bin:$(TESTML_COMPILER_TEST)/bin:$(PWD)/bin:$(PATH)
 export TAG_PREFIX := compiler
 
 export TESTML_COMPILER_BOOTSTRAP := $(boot)
@@ -16,9 +15,10 @@ STATUS := \
     pegex \
     test/testml \
 
-include ../../.makefile/status.mk
-
 #------------------------------------------------------------------------------
+default:
+
+.PHONY: test
 test: node_modules $(TESTML_COMPILER_TEST)
 	NODE_PATH=lib PERL5LIB=test prove -v -j$(j) $(test)
 
@@ -38,32 +38,15 @@ node_modules pegex:
 	git branch --track $@ origin/$@ 2>/dev/null || true
 	git worktree add -f $@ $@
 
-$(TESTML_COMPILER_TEST):
-	make -C $(TESTML_ROOT) test/compiler-tml
-
-clean:
+clean::
 	rm -fr remove testml-compiler-*
 	rm -f tmp-grammar
 	rm -fr npm test/testml/.testml
 
-realclean: clean
+realclean:: clean
 	rm -fr node_modules pegex
 	git worktree prune
 
-.PHONY: test
-
-
-### XXX Make this work without ingy-npm
-# #------------------------------------------------------------------------------
-# NODE_MODULES_DIR := node_modules
-# INGY_NPM := ../../../ingy-npm
-# 
-# ifneq ($(wildcard $(INGY_NPM)),)
-#     include $(INGY_NPM)/share/ingy-npm.mk
-# else
-#     $(warning Error: $(INGY_NPM) does not exist)
-#     $(warning Try: git clone git@github.com:ingydotnet/ingy-npm $(INGY_NPM))
-#     $(error Fix your errors)
-# endif
-# 
-# #------------------------------------------------------------------------------
+include ../../.makefile/status.mk
+NPM_BUILD_DEPS := node_modules $(TESTML_COMPILER_TEST)
+include pkg/package.mk

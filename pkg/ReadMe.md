@@ -3,9 +3,7 @@ testml-compiler
 
 The TestML Compiler
 
-# <badge travis testml-lang/testml-compiler>
-
-= Synopsis
+# Synopsis
 
 ```
 testml-compiler foo.tml > foo.tml.json

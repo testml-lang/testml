@@ -15,10 +15,10 @@ window.exports = {}
 # include node_modules/pegex/lib/pegex/input.js
 # include node_modules/pegex/lib/pegex/optimizer.js
 # include node_modules/pegex/lib/pegex/parser.js
-# include npm/lib/testml-compiler/index.js
-# include npm/lib/testml-compiler/grammar.js
-# include npm/lib/testml-compiler/ast.js
-# include npm/lib/testml-compiler/compiler.js
+# include build/lib/testml-compiler/index.js
+# include build/lib/testml-compiler/grammar.js
+# include build/lib/testml-compiler/ast.js
+# include build/lib/testml-compiler/compiler.js
 ```
 
 TestMLCompiler.browser = true
