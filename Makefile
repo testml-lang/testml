@@ -1,5 +1,5 @@
 define HELP
-Try these make commands:
+  Try these make commands:
 
     make work           - Check out all branches into worktree layout
     make status         - Show status of all worktree subdirs
@@ -33,21 +33,17 @@ LANG_NEW := \
 # All the language test rules (like `test-perl5`):
 TEST_ALL := $(LANG_ALL:%=test-run-%)
 
-# All the language specific runtime code branhes (like `run/perl5`):
+# All the language specific runtime code branches (like `run/perl5`):
 RUN_ALL := $(LANG_ALL:%=run/%)
 
 # New language specific runtime branches in progress:
 RUN_NEW := $(LANG_NEW:%=run/%)
-
-# All the language module packaging branches (like `pkg/perl5` for CPAN):
-PKG_ALL := pkg/node
 
 # All the branches for `make work` which checks them out as worktree subdirs:
 WORK := \
     compiler/coffee \
     eg/rotn \
     note \
-    $(PKG_ALL) \
     $(RUN_ALL) \
     $(RUN_NEW) \
     site \
@@ -119,11 +115,10 @@ clean:
 	find . -name '*.pyc' | xargs rm -f
 	find . -name '*.swp' | xargs rm -f
 	find . -name '*.swo' | xargs rm -f
-	rm -f package*
 
 realclean: clean
 	rm -fr $(ALL_WORK)
 	git worktree prune
-	rm -fr compiler eg pkg run test
+	rm -fr compiler eg run test
 
 .PHONY: test
