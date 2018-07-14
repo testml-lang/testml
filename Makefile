@@ -1,11 +1,18 @@
-include ../../.makefile/test-tap.mk
+LANG := python
+ROOT := ../..
 
-default: help
+#------------------------------------------------------------------------------
+default:
 
 test: test-tap test-unit
 
-test-unit: $(TOP)/test/run-tml compiler
+test-unit: $(ROOT)/test/run-tml compiler
 	testml-python-unit $(test)
 
 clean::
 	find . -name '*.pyc' | xargs rm -f
+
+#------------------------------------------------------------------------------
+include $(ROOT)/.makefile/run.mk
+include $(ROOT)/.makefile/test-tap.mk
+include pkg/package.mk
