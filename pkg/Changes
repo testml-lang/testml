@@ -1,0 +1,21 @@
+---
+version: 0.54_04
+date:    Tue Jul 10 09:02:27 PDT 2018
+changes:
+- Remove boolean dependency
+---
+version: 0.54_03
+date:    Mon Jul  9 15:44:46 PDT 2018
+changes:
+- Fix user side testing be using correct perl
+---
+version: 0.54_02
+date:    Mon Jul  9 14:35:31 PDT 2018
+changes:
+- Fix repository in META.json
+- Add requires boolean and Capture::Tiny -- @eserte++
+---
+version: 0.54_01
+date:    Mon Jul  9 13:42:55 PDT 2018
+changes:
+- Initial release of 2018's all new TestML.pm

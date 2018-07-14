@@ -1,9 +1,12 @@
-TOP := ../..
 LANG := perl5
+ROOT := ../..
 
-default: status
+#------------------------------------------------------------------------------
+default:
 
 test: test-tap
 
-include $(TOP)/.makefile/run.mk
-include $(TOP)/.makefile/test-tap.mk
+#------------------------------------------------------------------------------
+include $(ROOT)/.makefile/run.mk
+include $(ROOT)/.makefile/test-tap.mk
+include pkg/package.mk
