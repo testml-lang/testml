@@ -1,43 +1,38 @@
-test-tap:: node_modules
+LANG := node
+ROOT := ../..
 
-include ../../.makefile/test-tap.mk
+ALL_JS := \
+    lib/testml/index.js \
+    lib/testml/bridge.js \
+    lib/testml/run.js \
+    lib/testml/stdlib.js \
+    lib/testml/run/mocha.js \
+    lib/testml/run/tap.js \
 
-default: help
+#------------------------------------------------------------------------------
+default:
 
 test: test-tap
 
+realclean::
+	rm -fr lib
 
+#------------------------------------------------------------------------------
+js-files: ../coffee lib/testml/run $(ALL_JS)
 
+lib/testml/run:
+	mkdir -p $@
 
+lib/testml/%.js: ../coffee/lib/testml/%.coffee
+	coffee -cp $< > $@
 
-# export TESTML_ROOT := $(PWD)/..
-# export PATH := $(TESTML_COMPILER_ROOT)/bin:$(PATH)
-# export TAG_PREFIX := node
-# 
-# #------------------------------------------------------------------------------
-# NODE_MODULES_DIR := node_modules
-# INGY_NPM := ../../../ingy-npm
-# 
-# ifneq ($(wildcard $(INGY_NPM)),)
-#     include $(INGY_NPM)/share/ingy-npm.mk
-# else
-#     $(warning Error: $(INGY_NPM) does not exist)
-#     $(warning Try: git clone git@github.com:ingydotnet/ingy-npm $(INGY_NPM))
-#     $(error Fix your errors)
-# endif
-# 
-# #------------------------------------------------------------------------------
-# test = test/*.tml
-# 
-# test: $(NODE_MODULES_DIR)
-# 	NODE_PATH=lib prove -v $(test)
-# 
-# $(NODE_MODULES_DIR):
-# 	git branch --track $@ origin/$@ 2>/dev/null || true
-# 	git worktree add -f $@ $@
-# 
-# clean:
-# 	rm -fr npm testml-*.tgz
-# 
-# realclean: clean
-# 	rm -fr node_modules
+lib/testml/index.js: pkg/src/testml/index.coffee
+
+../coffee:
+	cd $(ROOT) && make run/coffee
+
+#------------------------------------------------------------------------------
+include $(ROOT)/.makefile/run.mk
+TEST_TAP_DEPS := js-files node_modules
+include $(ROOT)/.makefile/test-tap.mk
+include pkg/package.mk
