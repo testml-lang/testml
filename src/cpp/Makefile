@@ -1,5 +1,8 @@
-include ../../.makefile/test-tap.mk
+LANG := cpp
+ROOT := ../..
 
 default: help
 
 test: test-tap
+
+include ../../.makefile/runtime.mk

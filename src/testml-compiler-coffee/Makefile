@@ -10,21 +10,16 @@ export TESTML_COMPILER_DEBUG := $(debug)
 j = 1
 test = test/*.tml
 
-STATUS := \
-    compiler-tml \
-    pegex \
-    test/testml \
-
 #------------------------------------------------------------------------------
 default:
 
 .PHONY: test
-test: node_modules $(TESTML_COMPILER_TEST)
+test: ../node_modules
 	NODE_PATH=lib PERL5LIB=test prove -v -j$(j) $(test)
 
 update: update-grammar
 
-update-grammar: node_modules pegex
+update-grammar: ../node_modules
 	( \
 	set -o pipefail; \
 	grep -B99 make_tree lib/testml-compiler/grammar.coffee; \
@@ -34,19 +29,16 @@ update-grammar: node_modules pegex
 	) > tmp-grammar
 	mv tmp-grammar lib/testml-compiler/grammar.coffee
 
-node_modules pegex:
-	git branch --track $@ origin/$@ 2>/dev/null || true
-	git worktree add -f $@ $@
-
 clean::
 	rm -fr remove testml-compiler-*
 	rm -f tmp-grammar
 	rm -fr npm test/testml/.testml
 
 realclean:: clean
-	rm -fr node_modules pegex
-	git worktree prune
+	rm -fr ../node_modules
 
-include ../../.makefile/status.mk
-NPM_BUILD_DEPS := node_modules $(TESTML_COMPILER_TEST)
+#------------------------------------------------------------------------------
+../node_modules:
+	git worktree add -f $@ node_modules
+
 include pkg/package.mk

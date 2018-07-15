@@ -9,6 +9,8 @@ ALL_JS := \
     lib/testml/run/mocha.js \
     lib/testml/run/tap.js \
 
+TEST_TAP_DEPS := js-files
+
 #------------------------------------------------------------------------------
 default:
 
@@ -32,7 +34,5 @@ lib/testml/index.js: pkg/src/testml/index.coffee
 	cd $(ROOT) && make run/coffee
 
 #------------------------------------------------------------------------------
-include $(ROOT)/.makefile/run.mk
-TEST_TAP_DEPS := js-files node_modules
-include $(ROOT)/.makefile/test-tap.mk
+include $(ROOT)/.makefile/runtime.mk
 include pkg/package.mk

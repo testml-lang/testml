@@ -7,14 +7,11 @@
 
 /compiler/
 /eg/
-/exe/
-/node/
 /note/
 /orphan/
 /site/
 /talk/
-/test/
-/pkg/
 /run/
+/src/node_modules/
 
 /test/fail/

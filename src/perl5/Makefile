@@ -7,6 +7,5 @@ default:
 test: test-tap
 
 #------------------------------------------------------------------------------
-include $(ROOT)/.makefile/run.mk
-include $(ROOT)/.makefile/test-tap.mk
+include $(ROOT)/.makefile/runtime.mk
 include pkg/package.mk

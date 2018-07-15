@@ -1,21 +1,21 @@
 define HELP
   Try these make commands:
 
-    make work           - Check out all branches into worktree layout
-    make status         - Show status of all worktree subdirs
-    make                - Same as `make status`
-    make test           - Run all tests
-    make test-perl5     - Run language specific tests
-    make test-compiler  - Compiler tests
-    make test-cli       - Run CLI output tests
-    make clean          - Remove generated files
-    make realclean      - Even remove worktree subdirs
-    make help           - Print this help
+    make work               - Check out all branches into worktree layout
+    make status             - Show status of all worktree subdirs
+    make                    - Same as `make status`
+    make test               - Run all tests
+    make test-runtime-perl5 - Run language specific tests
+    make test-compiler      - Compiler tests
+    make test-cli           - Run CLI output tests
+    make clean              - Remove generated files
+    make realclean          - Even remove worktree subdirs
+    make help               - Print this help
 
 endef
 export HELP
 
-export PATH := $(PWD)/bin:$(PWD)/compiler/coffee/bin:$(PATH)
+export PATH := $(PWD)/bin:$(PWD)/src/testml-compiler-coffee/bin:$(PATH)
 
 # All the current support languages:
 LANG_ALL := \
@@ -30,14 +30,14 @@ LANG_NEW := \
     cpp \
     gambas \
 
-# All the language test rules (like `test-perl5`):
-TEST_ALL := $(LANG_ALL:%=test-run-%)
+# All the language test rules (like `test-runtime-perl5`):
+TEST_ALL := $(LANG_ALL:%=test-runtime-%)
 
 # All the language specific runtime code branches (like `run/perl5`):
-RUN_ALL := $(LANG_ALL:%=run/%)
+RUNTIME_ALL := $(LANG_ALL:%=runtime/%)
 
 # New language specific runtime branches in progress:
-RUN_NEW := $(LANG_NEW:%=run/%)
+RUNTIME_NEW := $(LANG_NEW:%=runtime/%)
 
 # All the branches for `make work` which checks them out as worktree subdirs:
 WORK := \
@@ -47,10 +47,11 @@ WORK := \
     $(RUN_ALL) \
     $(RUN_NEW) \
     site \
-    talk \
-    test/compiler-tml \
-    test/cli-tml \
-    test/run-tml \
+    talk/2018-openwest \
+    talk/2018-tpc \
+    testml/compiler-tml \
+    testml/cli-tml \
+    testml/runtime-tml \
 
 ALL_WORK := orphan $(WORK)
 
@@ -70,30 +71,29 @@ help:
 j = 1
 
 # Run all tests for TestML:
-test: test-run test-compiler test-cli
+test: test-runtime test-compiler test-cli
 
 # Run all the language specific runtime tests:
-test-run: $(TEST_ALL)
+test-runtime: $(TEST_ALL)
 
 # Run a specific language runtime test:
-test-run-%: run/%
+test-runtime-%: src/%
 	make -C $< test j=$(j)
 
 # Run all the compiler tests:    note:(`make -C` doesn't work here)
-test-compiler: compiler/coffee
+test-compiler: src/testml-compiler-coffee
 	cd $<; make test j=$(j)
 
 # Test the output of various testml CLI invocations:
-test-cli: test/cli-tml run/perl5 compiler
-	test=$(test) prove -v -j$(j) $${test:-$</*.tml}
+test-cli:
+	test=$(test) prove -v -j$(j) $${test:-test/cli-tml/*.tml}
 
 # A special rule to run tests on travis-ci:
 test-travis: test
 
 compiler::
 ifeq ($(shell which testml-compiler),)
-	make compiler/coffee
-	cd compiler/coffee && make node_modules
+	cd src/testml-compiler-coffee && make node_modules
 endif
 
 #------------------------------------------------------------------------------
@@ -119,6 +119,7 @@ clean:
 realclean: clean
 	rm -fr $(ALL_WORK)
 	git worktree prune
-	rm -fr compiler eg run test
+	rm -fr compiler eg runtime src/node_modules talk testml
+	make -C src/node $@
 
 .PHONY: test

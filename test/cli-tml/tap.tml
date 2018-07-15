@@ -6,9 +6,9 @@
   prove(*testml) == *output
 
 ===
---- testml: test/run-tml/010-math.tml
+--- testml: test/runtime-tml/010-math.tml
 --- output
-test/run-tml/010-math.tml ..
+test/runtime-tml/010-math.tml ..
 ok 1 - Test 1
 ok 2 - Test 2
 ok 3 - Test 1
@@ -23,9 +23,9 @@ All tests successful.
 Result: PASS
 
 ===
---- testml: test/run-tml/020-pick-exclude.tml
+--- testml: test/runtime-tml/020-pick-exclude.tml
 --- output
-test/run-tml/020-pick-exclude.tml ..
+test/runtime-tml/020-pick-exclude.tml ..
 ok 1 - Test 2
 1..1
 ok
@@ -33,9 +33,9 @@ All tests successful.
 Result: PASS
 
 ===
---- testml: test/run-tml/030-assertion-label.tml
+--- testml: test/runtime-tml/030-assertion-label.tml
 --- output
-test/run-tml/030-assertion-label.tml ..
+test/runtime-tml/030-assertion-label.tml ..
 ok 1 - Test 1 -- 1 + 2 == 3
 ok 2 - Test 2 -- 4 + 5 == 9
 ok 3 - Test 1 -- 1 + 2 == 3
@@ -52,9 +52,9 @@ All tests successful.
 Result: PASS
 
 ===
---- testml: test/run-tml/040-multiline-point.tml
+--- testml: test/runtime-tml/040-multiline-point.tml
 --- output
-test/run-tml/040-multiline-point.tml ..
+test/runtime-tml/040-multiline-point.tml ..
 ok 1 - Test 1
 1..1
 ok
@@ -62,9 +62,9 @@ All tests successful.
 Result: PASS
 
 ===
---- testml: test/run-tml/040-multiline-point.tml
+--- testml: test/runtime-tml/040-multiline-point.tml
 --- output
-test/run-tml/040-multiline-point.tml ..
+test/runtime-tml/040-multiline-point.tml ..
 ok 1 - Test 1
 1..1
 ok

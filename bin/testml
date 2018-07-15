@@ -106,7 +106,7 @@ set-testml-lib-vars() {
   fi
   export TESTML_LIB
 
-  export TESTML_ROOT_LIB="$TESTML_ROOT/run/$TESTML_LANG/lib"
+  export TESTML_ROOT_LIB="$TESTML_ROOT/src/$TESTML_LANG/lib"
 }
 
 compile-testml() {

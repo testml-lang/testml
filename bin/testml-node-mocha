@@ -1,1 +1,1 @@
-../run/node/bin/testml-node-mocha
+../src/node/bin/testml-node-mocha
