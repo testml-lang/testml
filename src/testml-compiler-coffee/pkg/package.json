@@ -1,0 +1,39 @@
+{
+  "name": "testml-compiler",
+  "description": "TestML Reference Compiler",
+  "version": "0.1.8",
+  "keywords": [
+    "testml",
+    "compiler",
+    "testing",
+    "language",
+    "acmeism"
+  ],
+  "homepage": "http://testml.org",
+  "bugs": {
+    "url": "https://github.com/testml-lang/testml/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/testml-lang/testml"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Ingy döt Net",
+    "email": "ingy@ingy.net",
+    "url": "http://ingy.net"
+  },
+  "dependencies": {
+    "coffeescript": ">=2.3.1",
+    "ingy-prelude": ">=0.0.1",
+    "lodash": ">=2.2.2",
+    "pegex": ">=0.1.7"
+  },
+  "main": "./lib/testml-compiler/index.js",
+  "bin": {
+    "testml-compiler": "./bin/testml-compiler"
+  },
+  "scripts": {
+    "test": "(source .rc; prove -v test)"
+  }
+}

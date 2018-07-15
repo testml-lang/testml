@@ -1,0 +1,117 @@
+#!/usr/bin/env testml-switch
+
+Diff = 1
+*input.compile == *output
+
+=== Hash index
+--- input
+path = Env:PATH
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","path",
+      [":",
+        ["Env"],
+        "PATH"]]],
+  "data": []}
+
+=== Array index
+--- input
+path = ArgV:2
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","path",
+      ["[]",
+        ["ArgV"],
+        2]]],
+  "data": []}
+
+=== Double-quote string index
+--- input
+path = hash:"foo bar"
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","path",
+      [":",
+        ["hash"],
+        ["\"","foo bar"]]]],
+  "data": []}
+
+=== Single-quote string index
+--- input
+path = hash:'foo bar'
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","path",
+      [":",
+        ["hash"],
+        "foo bar"]]],
+  "data": []}
+
+=== Variable hash index
+--- input
+path = hash:(foo)
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","path",
+      [":",
+        ["hash"],
+        ["foo"]]]],
+  "data": []}
+
+=== Variable array index
+--- input
+path = array:[foo]
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","path",
+      ["[]",
+        ["array"],
+        ["foo"]]]],
+  "data": []}
+
+=== Point hash index
+--- input
+*foo:key == 'bar'
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["%<>",["*foo"],
+      ["==",
+        [":",
+          ["*","foo"],
+          "key"],
+        "bar"]]],
+  "data": []}
+
+=== Multiple indices
+--- input
+x1 = a:'b':3:(d):[e]
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","x1",
+      ["[]",
+        [":",
+          ["[]",
+            [":",
+              ["a"],
+              "b"],
+            3],
+          ["d"]],
+        ["e"]]]],
+  "data": []}
+
+# vim: ft=:

@@ -1,0 +1,131 @@
+#!/usr/bin/env testml-switch
+
+Diff = 1
+*input.undent.compile == *output
+
+=== Function loop
+--- input
+    # Loop over all blocks
+    =>
+      *foo.t1 == *bar
+
+      *foo.t2 == *baz
+
+    # Don't loop
+    =>
+      123 == 123
+
+    === Test 1
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["%<>",[],
+      ["=>",[],
+        [["<>",
+            ["*foo","*bar"],
+            ["==",
+              [".",
+                ["*","foo"],
+                ["t1"]],
+              ["*","bar"]]],
+          ["<>",
+            ["*foo","*baz"],
+            ["==",
+              [".",
+                ["*","foo"],
+                ["t2"]],
+              ["*","baz"]]]]]],
+    ["=>",[],
+      [["==",123,123]]]],
+  "data": [
+    { "label": "Test 1",
+      "point": {}}]}
+
+=== Assign function to variable
+--- input
+    f1 = =>
+      *foo.t1 == *bar
+
+    % f1()
+
+    === Test 1
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","f1",
+      ["=>",[],
+        [["<>",
+            ["*foo","*bar"],
+            ["==",
+              [".",
+                ["*","foo"],
+                ["t1"]],
+              ["*","bar"]]]]]],
+    ["%<>",[],
+      ["&",
+        ["f1"]]]],
+  "data": [
+    { "label": "Test 1",
+      "point": {}}]}
+
+=== Function with arguments
+--- input
+    f1 = (a, b, c)=>
+      add(a, b) == c
+
+    f1(2, 3, 5)
+
+    === Test 1
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","f1",
+      ["=>",["a","b","c"],
+        [["==",
+            ["add",
+              ["a"],
+              ["b"]],
+            ["c"]]]]],
+    ["f1",2,3,5]],
+  "data": [
+    { "label": "Test 1",
+      "point": {}}]}
+
+=== Anonymous function as method
+--- input
+    *foo.bar.(x, y, z)=>
+      a.Cat(y) == z
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    [".",
+      ["*","foo"],
+      ["bar"],
+      ["=>",["x","y","z"],
+        [["==",
+            [".",
+              ["a"],
+              ["Cat",
+                ["y"]]],
+            ["z"]]]]]],
+  "data": []}
+
+=== Pick/Loop function
+--- input
+    % (*foo, *bar) =>
+      foo = bar
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["%<>",["*foo","*bar"],
+      ["=>",["*foo","*bar"],
+        [["=","foo",
+            ["bar"]]]]]],
+  "data": []}
+
+# vim: ft=:

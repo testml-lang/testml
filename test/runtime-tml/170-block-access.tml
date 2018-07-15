@@ -1,0 +1,25 @@
+#!/usr/bin/env testml
+
+Label = "Access block labels"
+Blocks:0:label == 'Test 1'
+Blocks:1:label == 'Test 2'
+
+"Test user defined area":
+  Block('Test 2'):user == "My own\nprivate area\n"
+
+Blocks % =>
+  _:label =~ /^Test [0-9]+$/
+
+"Access a block point value":
+  Blocks:0:point:foo == 123
+
+=== Test 1
+--- foo: 123
+--- bar: 456
+
+=== Test 2
+My own
+private area
+--- foo
+line 1
+line 2

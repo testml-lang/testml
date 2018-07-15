@@ -1,0 +1,199 @@
+#!/usr/bin/env testml-switch
+
+Diff = 1
+*input.undent.compile == *output
+
+=== Single line and multi line points
+--- input
+    === Test 1
+    --- single: this that
+    --- multi
+    this
+    that
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "single": "this that",
+        "multi": "this\nthat\n"}}]}
+
+=== Numeric points
+--- input
+    === Test 1
+    --- a: 12345
+    --- b: 3.14
+    --- c: -12345
+    --- d: -3.14
+    --- e: '12345'
+    --- f: "12345"
+    --- g
+    12345
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "a": 12345,
+        "b": 3.14,
+        "c": -12345,
+        "d": -3.14,
+        "e": "12345",
+        "f": "12345",
+        "g": "12345\n"}}]}
+
+=== Empty point
+--- input
+    === Test 1
+    --- foo
+
+    --- bar:
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "",
+        "bar": ""}}]}
+
+=== Point inheritance
+--- input
+    === Test 1
+    --- foo: xxx
+
+    === Test 2
+    --- ^foo
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx"}},
+    { "label": "Test 2",
+      "point": {
+        "foo": "xxx"}}]}
+
+=== Point inheritance from different name
+--- input
+    === Test 1
+    --- foo: xxx
+
+    === Test 2
+    --- ^bar=foo
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx"}},
+    { "label": "Test 2",
+      "point": {
+        "bar": "xxx"}}]}
+
+=== User defined data section in block
+--- input
+    === Test 1
+    some
+      stuff
+    --- foo: xxx
+
+    === Test 2
+    --- ^bar=foo
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx"},
+      "user": "some\n  stuff\n"},
+    { "label": "Test 2",
+      "point": {
+        "bar": "xxx"}}]}
+
+=== User section must contain some content
+--- input
+    === Test 1
+
+
+
+    --- foo: xxx
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "foo": "xxx"}}]}
+
+=== Quoted points
+--- input
+    === Test 1
+    --- a: 'foo'
+    --- b: "foo"
+    --- c: 'foo\nbar'
+    --- d: "foo\nbar\tbar\s"
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "a": "foo",
+        "b": "foo",
+        "c": "foo\\nbar",
+        "d": "foo\nbar\tbar "}}]}
+
+=== Empty single line point
+--- input
+    === Test 1
+    --- a:
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "a": ""}}]}
+
+=== Repeated inheritance uses same transform
+--- input
+    === Test 1
+    --- a(@")
+    foo\tbar
+    baz
+
+    === Test 2
+    --- ^a
+
+    === Test 3
+    --- ^a
+
+--- output
+{ "testml": "0.3.0",
+  "code": [],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "a": [["foo\tbar","baz"]]}},
+    { "label": "Test 2",
+      "point": {
+        "a": [["foo\tbar","baz"]]}},
+    { "label": "Test 3",
+      "point": {
+        "a": [["foo\tbar","baz"]]}}]}
+
+# vim: ft= sw=2:

@@ -1,0 +1,97 @@
+#!/usr/bin/env testml-switch
+
+Diff = 1
+*input.undent.compile == *output
+
+=== Assertion operators ==, =~ and ~~
+--- input
+*a.b == *c
+*a.b =~ *c
+*a.b ~~ *c
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["%<>",["*a","*c"],
+      ["==",
+        [".",
+          ["*","a"],
+          ["b"]],
+        ["*","c"]]],
+    ["%<>",["*a","*c"],
+      ["=~",
+        [".",
+          ["*","a"],
+          ["b"]],
+        ["*","c"]]],
+    ["%<>",["*a","*c"],
+      ["~~",
+        [".",
+          ["*","a"],
+          ["b"]],
+        ["*","c"]]]],
+  "data": []}
+
+=== Assignment operators =, ||=
+--- input
+foo = 123
+bar ||= 'abc'
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["=","foo",123],
+    ["||=","bar","abc"]],
+  "data": []}
+
+=== Each operator %
+--- input
+ARGV % (this)=>
+  this.Type == 'str'
+['Hello', 'world'] % _.Out
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["%",
+      ["ARGV"],
+      ["=>",["this"],
+        [["==",
+            [".",
+              ["this"],
+              ["Type"]],
+            "str"]]]],
+    ["%",
+      [["Hello","world"]],
+      [".",
+        ["_"],
+        ["Out"]]]],
+  "data": []}
+
+
+=== Each operator % loop on list point
+--- input
+    *list % (this)=>
+      this.Bool == True
+
+    === Test 1
+    --- list(@): foo bar
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["%<>",["*list"],
+      ["%",
+        ["*","list"],
+        ["=>",["this"],
+          [["==",
+              [".",
+                ["this"],
+                ["Bool"]],
+              ["True"]]]]]]],
+  "data": [
+    { "label": "Test 1",
+      "point": {
+        "list": [["foo","bar"]]}}]}
+
+# vim: ft=:

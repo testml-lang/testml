@@ -1,0 +1,36 @@
+{
+  "name": "testml",
+  "description": "TestML JavaScript Framework",
+  "version": "0.0.28",
+  "keywords": [
+    "testml",
+    "testing",
+    "language",
+    "acmeism"
+  ],
+  "homepage": "http://testml.org",
+  "bugs": {
+    "url": "https://github.com/testml-lang/testml/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/testml-lang/testml"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Ingy döt Net",
+    "email": "ingy@ingy.net",
+    "url": "http://ingy.net"
+  },
+  "dependencies": {
+    "lodash": ">=2.2.2",
+    "diff": ">=3.5.0"
+  },
+  "main": "./lib/testml/index.js",
+  "bin": {
+    "testml": "./bin/testml"
+  },
+  "scripts": {
+    "test": "(source .rc; prove -v test)"
+  }
+}

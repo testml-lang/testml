@@ -1,0 +1,307 @@
+#------------------------------------------------------------------------------
+# Pegex grammar for TestML 0.3.0
+#------------------------------------------------------------------------------
+testml-document:
+  head-section
+  code-section
+  data-section
+
+head-section:
+  comment-lines*
+  testml-directive?
+  head-statement*
+
+head-statement:
+  | head-directive
+  | comment-lines
+
+head-directive: xxx
+
+testml-directive:
+  / '%TestML' + version-number ending /
+
+import-directive:
+  '%Import' + (module-name (+ module-name)*) ending
+
+#------------------------------------------------------------------------------
+code-section:
+  code-statement*
+
+code-statement:
+  | import-directive
+  | comment-lines
+  | assignment-statement
+  | loop-statement
+  | pick-statement
+  | function-statement
+  | expression-statement
+
+assignment-statement:
+  / ( variable-name ) +
+    ( assignment-operator ) +/
+  code-expression
+  ending
+
+loop-statement:
+  /'%' +/
+  ( pick-statement
+  | function-statement
+  | expression-statement
+  )
+
+pick-statement:
+  pick-expression
+  ( function-statement
+  | expression-statement
+  )
+
+function-statement:
+  function-object
+
+expression-statement:
+  expression-label?
+  code-expression
+  assertion-expression?
+  suffix-label?
+  ending
+
+expression-label:
+  / double-string COLON WS* /
+
+suffix-label:
+  / WS* COLON double-string /
+
+pick-expression:
+  LANGLE
+  (
+    pick-argument (/ COMMA -/ pick-argument)*
+  )
+  RANGLE +
+
+pick-argument:
+  /( BANG? STAR LOWER [\-\_a-z0-9]* )/
+
+code-expression:
+  code-object
+  function-call*
+  each-call?
+
+code-object:
+  | point-object
+  | string-object
+  | number-object
+  | regex-object
+  | list-object
+  | function-object
+  | call-object
+
+point-object:
+  / STAR ( LOWER [\-\_a-z0-9]* ) /
+  lookup-indices
+
+string-object:
+  | double-string
+  | single-string
+
+double-string:
+  / DOUBLE
+    ( (: [^ BREAK BACK DOUBLE] | BACK [ BACK DOUBLE '0nt'])*? )
+    DOUBLE /
+
+single-string:
+  / SINGLE
+    ( (: [^ BREAK BACK SINGLE] | BACK [ BACK SINGLE ])*? )
+    SINGLE /
+
+number-object: /( DASH? DIGIT+ (: DOT DIGIT+)? )/
+
+regex-object:
+  / SLASH
+    ( (: [^ BREAK BACK SLASH] | BACK [ BACK SLASH 'ntwds{}[]?*+'])*? )
+    SLASH /
+
+list-object:
+  '[' ( code-object ( /- ',' -/ code-object )* )? ']'
+
+function-object:
+  function-signature?
+  /- '=>' ending/
+  .indent
+  (.ondent code-statement)+
+  .undent
+  /(?= ALL | EOS)/
+
+callable-function-object:
+  function-signature
+  /- '=>' ending/
+  .indent
+  (.ondent code-statement)+
+  .undent
+  /(?= ALL | EOS)/
+
+function-signature:
+  / LPAREN -/
+  function-variables
+  /-  RPAREN/
+
+function-variables:
+  (function-variable ( / COMMA -/ function-variable )* )?
+
+call-object:
+  call-name
+  call-arguments?
+  lookup-indices
+
+call-name: /( identifier-name | '_' )/
+
+call-arguments:
+  LPAREN
+  (
+    code-expression (/ COMMA -/ code-expression)*
+  )?
+  RPAREN
+
+lookup-indices:
+  lookup-index*
+
+lookup-index: /
+  COLON
+  ( identifier-name
+  | integer-literal
+  | single-string
+  | double-string
+  | '(' identifier-name ')'
+  | '[' identifier-name ']'
+  )
+/
+
+function-call:
+  .call-operator
+  (
+  | call-object
+  | callable-function-object
+  )
+
+each-call:
+  .each-operator
+  code-expression
+
+assertion-expression:
+  | assertion-eq
+  | assertion-has
+  | assertion-like
+
+assertion-eq:
+  /+ ('==') +/
+  code-expression
+
+assertion-has:
+  /+ ('~~') +/
+  code-expression
+
+assertion-like:
+  /+ ('=~') +/
+  code-expression
+
+#------------------------------------------------------------------------------
+data-section:
+  block-definition*
+
+block-definition:
+  block-heading
+  user-defined
+  point-definition*
+
+block-heading:
+  / block-marker (: + ( ANY*? ) -)?  EOL /
+
+user-defined:
+  /( point-lines )/
+
+point-lines:
+  /(: ANY* EOL)*? point-boundary/
+
+point-definition:
+  | point-single
+  | point-multi
+
+point-single: /
+  point-marker +
+  ( CARET? )
+  ( point-name )
+  (: '=' ( point-name ) )?
+  (: ('(') ( ['#+-~/@%']* ) ')' )?
+  COLON ( (= EOL) | + (: ANY*? -))
+  EOL
+  point-lines
+/
+
+point-multi: /
+  point-marker +
+  ( CARET? )
+  ( point-name )
+  (: '=' ( point-name ) )?
+  (: ('(') ( ['<#+-~"/@%']* ) ')' )?
+  EOL
+  ( point-lines )
+/
+
+#------------------------------------------------------------------------------
+
+ending: /(: SEMI (: SPACE (= NS))? | EOL?)/
+
+assignment-operator:
+  /(: '=' | '||=' )/
+
+blank-line:
+  /( WS* EOL | WS+ EOS )/
+
+call-operator: DOT
+
+each-operator: /+ '%' +/
+
+comment-line:
+  /(: HASH ANY* EOL)/
+
+comment-lines:
+  /(: comment-line | blank-line )+/
+
+block-marker: '==='
+
+point-marker: '---'
+
+point-boundary:
+  /(= point-marker | block-marker | eos )/
+
+eos: EOS
+
+integer-literal:
+  /(: '0' | DASH? [1-9] DIGIT* )/
+
+function-variable:
+  /( STAR? identifier-user | '_' )/
+
+identifier-name:
+  / ALPHA ALNUM* (: DASH ALPHA ALNUM*)* /
+
+identifier-user:
+  / LOWER ALNUM* (: DASH ALPHA ALNUM*)* /
+
+module-name: /( NS+ )/
+
+point-name:
+  /(: identifier-user | pseudo-point-name)/
+
+pseudo-point-name:
+  /(:HEAD|LAST|ONLY|SKIP|TODO|DIFF)/
+
+variable-name: identifier-name
+
+version-number:
+  /( DIGIT+ DOT DIGIT+ DOT DIGIT+ )/
+
+ws: BLANK
+
+xxx: 'XXX'
+
+# vim: sw=2 lisp:

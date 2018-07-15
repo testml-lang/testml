@@ -1,0 +1,21 @@
+#!/usr/bin/env testml
+
+f1 = (a, b, c)=>
+  a.add(b) == c
+
+Label = "Test user defined function call"
+
+f1(2, 3, 5)
+f1(11, 31, 42)
+10.f1(20, 30)
+
+Label = "Call an ononymous user defined function"
+[11, 12, 23].(a, b, c)=>
+  a.add(b) == c
+
+# TODO:
+# Label = "Call a user defined function in a variable"
+# "11 12 23".str-nums.f1
+
+Label = 'TODO'
+1 == 1

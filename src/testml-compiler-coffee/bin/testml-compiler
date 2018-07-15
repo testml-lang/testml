@@ -1,0 +1,32 @@
+#!/usr/bin/env coffee
+
+module.paths.unshift "#{require('path').dirname(__dirname)}/lib"
+
+require 'ingy-prelude'
+require 'testml-compiler/compiler'
+
+argv = process.argv[2..]
+
+if argv.length != 1
+  die "testml-compiler <testml-file-name> | - | --version"
+
+if argv[0] == '--version'
+  say "TestML version '#{TestMLCompiler.VERSION}'"
+  exit 0
+else if argv[0].match /^-./
+  die "Unknown argument '#{argv[0]}'"
+
+input_file = argv[0]
+
+throw "usage: testml-compiler <input-file>" \
+  unless input_file?
+throw "Input file does not exist: '#{input_file}'" \
+  unless input_file == '-' or file_exists input_file
+
+input_text = file_read input_file
+
+compiler = new TestMLCompiler.Compiler
+
+out compiler.compile input_text, input_file
+
+# vim: sw=2 lisp:
