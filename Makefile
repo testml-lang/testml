@@ -1,8 +1,6 @@
 define HELP
   Try these make commands:
 
-    make work               - Check out all branches into worktree layout
-    make status             - Show status of all worktree subdirs
     make                    - Same as `make status`
     make test               - Run all tests
     make test-runtime-perl5 - Run language specific tests
@@ -10,6 +8,8 @@ define HELP
     make test-cli           - Run CLI output tests
     make clean              - Remove generated files
     make realclean          - Even remove worktree subdirs
+    make work               - Check out all branches into worktree layout
+    make status             - Show status of all worktree subdirs
     make help               - Print this help
 
 endef

@@ -35,30 +35,39 @@ clean debian install. Here's a short list, most important first:
 * Recent NodeJS
   * The TestML reference compiler is currently written in NodeJS
 * Perl(5) 5.14 or higher
-  * Some of the tests use perl as the TestML runtime
-* Perl CPAN modules: `boolean` and `Capture::Tiny`
+  * Some of the framework tests use perl as the TestML runtime
 * Python(2), Perl(6)
   * Other current TestML runtime languages
 
 You don't need all these things to _use_ TestML, but they are useful for
 development.
 
-## Use the `Makefile`
+## Use the `Makefile`s
 
 Makefiles are the key to working efficiently in the TestML repo. Try:
 ```
 make help
 ```
 
-This will give you a summary of all the top level `make` commands. Next try:
+This will give you a summary of all the top level `make` commands.
+
+These are the testing commands:
+```
+make test                   - Run all tests
+make test-runtime-<lang>    - Runtime tests for specific language
+make test-compiler          - COmpiler tests
+make test-cli               - CLI tests
+```
+
+Next try:
 ```
 make work
 make status
 ```
 
 The `make work` command will populate your `testml` with lots of subdirectories
-containing the various parts of the TestML project. There are over 15 component
-branches currently!
+containing the various extra parts of the TestML project. Things like examples,
+talks, etc.
 
 Running `make status` (or simply `make`) is a simple way to see the state of
 all your work at once.
@@ -69,16 +78,20 @@ status`.
 
 ## The TestML Repository
 
-The Git repository for the TestML project is a bit different than most. TestML
-has many independent components that each could be their own repository.
-Instead, we currently have everything in one repository, with each component as a
-separate (unrelated to one another) branch.
+The Git repository for the TestML project is a bit different than most
+repositories. It has many independent components that each could be their own
+repository. Instead, we currently have everything in one repository, with each
+component as a separate (unrelated to one another) branch.
 
-The `git worktree` command lets us checkout these branches into subdirectories.
-You can almost think of them as submodules. The various components are set up
-to be worked on as subdirectories of the master repository.
+The main component branches are: `compiler/*`, `runtime/*` and `testml/*` for
+the compilers, language dependent runtime source code, and language agnostic
+TestML test suite respectively. This branches are simultaneously part of the
+master branch, so that all development can be done on master (or a fork). We
+use the `git-subrepo` to make these branches be both part of master and
+logically separate at the same time.
 
-The main component branches are:
+The `compiler/*` and `runtime/*` branches are part of `master` under the `src/`
+sub-directory. The `testml/*` branches are under the `test` sub-directory.
 
 * `master`
 
@@ -92,11 +105,21 @@ The main component branches are:
   written in CoffeeScript/NodeJS/JavaScript and it runs on the server and in
   the browser. Try http://testml.org/playground/?view=compiler
 
-* `test/compiler-tml`
+* `compiler/perl5`
+
+  The TestML reference compiler is ported to Perl5 because the NodeJS startup
+  time is prohibitively slow.
+
+* `compiler/haskell`
+
+  The TestML reference compiler will eventually be ported to Haskell and
+  distributed as precompiled binaries.
+
+* `testml/compiler-tml`
 
   The TestML compiler test suite (in TestML!).
 
-* `run/<language>`
+* `runtime/<language>`
 
   There are one of these branches for every supported programming language.
   These are the language runtime branches and the place where all the code for
@@ -104,24 +127,24 @@ The main component branches are:
   (which would be on the `run/coffee` branch), `node`, `perl5`, `perl6`,
   `python`.
 
-* `test/run-tml`
+* `testml/runtime-tml`
 
-  The runtime test (in TestML). Every language runtime passes this same test
+  The runtime tests (in TestML). Every language runtime passes this same test
   suite. It's a perfect example of a TestML suite working in every language.
 
-* `pkg/<language>`
+* `testml/compiler-tml`
 
-  There is a packaging branch for each for publishing the TestML code as a
-  module/package to language specific sites like CPAN, PyPI and NPM.
+  The compiler tests (in TestML). Every compiler implementation passes this same test
+  suite.
+
+* `testml/cli-tml`
+
+  A test suite to test the TestML CLI commands.
 
 * `site` (and `playground` and `gh-pages`)
 
-  This branch builds the http://testml.org website and publishes it using
+  These branches build the http://testml.org website and publishes it using
   GitHub Pages.
-
-* `note`
-
-  A branch of various notes files and to-do lists.
 
 * `talk/*`
 
@@ -131,6 +154,10 @@ The main component branches are:
 
   Example programs implemented in many langauges at once to show how TestML is
   used.
+
+* `note`
+
+  A branch of various notes files and to-do lists.
 
 # How TestML Works
 
@@ -160,7 +187,10 @@ Here's an example abstract TestML program (in the file test1.tml) of the above:
 
     #!/usr/bin/env testml
     *input.process == *output
-    === Test1
+    === Test 1
+    --- input
+    --- output
+    === Test 2
     --- input
     --- output
 
@@ -181,17 +211,18 @@ called Lingy, that is encoded in JSON.
 
 Then `testml` would "run" the compiled TestML test file, by evaluating the
 Lingy code in Python. It would know how to pass each input to the Bridge Class
-method `process` and compare that to the expected output. Finally it would know
-how to report the test results to the user in the style of the test framework
-that the user had chosen. For Python, it would probably be `unittest.py`.
+method `process` and compare the return value to the expected output. Finally
+it would know how to report the test results to the user in the style of the
+test framework that the user had chosen. For Python, it would probably be
+`unittest.py`.
 
 # How To Add Support for a New Language
 
 Let's say that you wanted to implement TestML support for the (fictitious)
 programming language Gumby.
 
-First make a new Git orphan branch called `run/gumby` (`git checkout --orphan
-run/gumby`). Now set up the directory layout to look like this:
+First make a new sub-directory called `src/gumby/`. Now set up the
+sub-directory layout to look like this:
 ```
 Makefile                    - Makefile to run your tests (`make test`)
 bin/testml-gumby            - A symlink to testml-gumby-tap
@@ -202,12 +233,15 @@ lib/testml/bridge.gum       - Base class for Gumby TestML Bridge Classes
    /testml/run/tap.gum      - The TAP subclass of `testml/run.gum`
 test/testml-bridge.gum      - TestML bridge class for the `test/run-tml` suite
     /0##-<test-name>.tml    - Symlink files to `../../test/run-tml/<name>.tml`
+pkg/Changes                 - A change log file for Gumby module distribtution
+pkg/package.mk              - Package distribution Makefile rules
+pkg/*                       - Other packaging files
 ```
 
-That's pretty much it. You should look at another existing language's `run/*`
-branch to see what the file contents should be. I think `run/coffee` is the
-simplest to understand. It reads like pseudocode to a degree. Pick a language
-that you are most comfortable with.
+That's pretty much it. You should look at another existing language's
+`src/<lang>/` branch to see what the file contents should be. I think
+`run/coffee` is the simplest to understand. It reads like pseudocode to a
+degree. Pick a language that you are most comfortable with.
 
 The `Makefile` and the `bin` files can be copied and slightly modified. The
 `bin` program is written in Bash and it has one function called

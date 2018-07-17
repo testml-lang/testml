@@ -1,17 +1,13 @@
-/Next
-
 .precomp/
 *.pyc
 .testml/
-/package*
 
 /compiler/
 /eg/
 /note/
 /orphan/
+/runtime/
 /site/
-/talk/
-/run/
 /src/node_modules/
-
-/test/fail/
+/talk/
+/testml/
