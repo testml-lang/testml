@@ -39,6 +39,7 @@ realclean:: clean
 
 #------------------------------------------------------------------------------
 ../node_modules:
+	git branch --track node_modules origin/node_modules 2>/dev/null || true
 	git worktree add -f $@ node_modules
 
 include pkg/package.mk
