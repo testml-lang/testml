@@ -1,12 +1,33 @@
-#include <iostream>
 #include <string>
-#include "tap.h"
+#include <iostream>
+#include "tap.hpp"
 
-void TestML_Run_TAP::run(std::string file) {
-  TestML_Run_TAP tap;
+namespace testml {
+namespace run {
 
-  tap.from_file(file);
+  void TAP::testml_eq(json want, json got, std::string const& label) {
+    if (want == got) {
+      tap_pass(label);
+    } else {
+      tap_fail(label);
+    }
+  }
 
-  std::cout << "1..1" << std::endl;
-  std::cout << "ok 1 - It worked" << std::endl;
+  void TAP::tap_pass(std::string const& label) {
+    std::cout << "ok " << ++count;
+    if (!label.empty()) {
+      std::cout << " - " << label;
+    }
+    std::cout << "\n";
+  }
+
+  void TAP::tap_fail(std::string const& label) {
+    std::cout << "not ok " << ++count;
+    if (!label.empty()) {
+      std::cout << " - " << label;
+    }
+    std::cout << "\n";
+  }
+
+}
 }

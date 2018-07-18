@@ -15,9 +15,10 @@ testml-run-file() {
   set -x
   /usr/bin/env c++ \
     -o $testml_runner \
+    -std=c++14 \
     $src_bin \
     $lib/run/tap.cpp \
-    $lib/run.cpp \
+    $lib/runtime.cpp \
     $lib/stdlib.cpp \
     $lib/bridge.cpp \
     $bridge_file || return
