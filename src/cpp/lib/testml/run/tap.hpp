@@ -9,10 +9,12 @@ namespace run {
 
   class TAP : public Runtime {
     using json = nlohmann::json;
+
     using Runtime::Runtime;
 
   protected:
     void testml_eq(json want, json got, std::string const& label) override;
+    void testml_done() override;
 
   private:
     void tap_pass(std::string const& label);

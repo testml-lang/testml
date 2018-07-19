@@ -15,7 +15,8 @@ testml-run-file() {
   set -x
   /usr/bin/env c++ \
     -o $testml_runner \
-    -std=c++14 \
+    -std=c++14 -Wall -Wextra \
+    -g \
     $src_bin \
     $lib/run/tap.cpp \
     $lib/runtime.cpp \
