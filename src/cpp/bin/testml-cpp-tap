@@ -22,6 +22,7 @@ testml-run-file() {
     $lib/runtime.cpp \
     $lib/stdlib.cpp \
     $lib/bridge.cpp \
+    $lib/wrapper.cpp \
     $bridge_file || return
 
   chmod +x $testml_runner
