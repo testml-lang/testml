@@ -1,0 +1,35 @@
+#!/usr/bin/env perl
+
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+
+use TestML::Compiler;
+
+die "testml-compiler <testml-file-name> | - | --version"
+  unless @ARGV == 1;
+
+if ($ARGV[0] eq '--version') {
+  print "TestML version '#{TestMLCompiler.VERSION}'\n";
+  exit 0;
+}
+elsif ($ARGV[0] =~ /^-./) {
+  die "Unknown argument '$ARGV[0]'";
+}
+
+my $input_file = $ARGV[0];
+
+die "usage: testml-compiler <input-file>"
+  unless defined $input_file;
+die "Input file does not exist: '#{input_file}'"
+  unless $input_file eq '-' or -e $input_file;
+
+open IN, $input_file
+  or die "Can't open '$input_file' for input";
+my $input_text = do {local $/; <IN>};
+close IN;
+
+my $compiler = TestML::Compiler->new;
+
+print $compiler->compile($input_text, $input_file);
+
+# vim: sw=2:

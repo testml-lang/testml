@@ -67,13 +67,13 @@ class TestMLCompiler.AST extends Pegex.Tree
     if _.isPlainObject got[0]
       label = got.shift()
 
-    pick = {}
-
     [left, right, suffix_label] = got
 
     if not suffix_label and _.isPlainObject right
       suffix_label = right
       right = null
+
+    pick = {}
 
     if right?
       right[1] = left
@@ -204,8 +204,8 @@ class TestMLCompiler.AST extends Pegex.Tree
       object = [opcode, object, index]
 
     object.pick = {}
-    for a in args
-      _.merge object.pick, a.pick || {}
+    for arg in args
+      _.merge object.pick, arg.pick || {}
 
     object.callable = callable
 
@@ -267,6 +267,8 @@ class TestMLCompiler.AST extends Pegex.Tree
     block.user = user if user.match /\S/
 
     @data.push block
+
+    return
 
   got_point_single: (got)->
     value = got[5].replace /^\ +/, ''
@@ -338,15 +340,17 @@ class TestMLCompiler.AST extends Pegex.Tree
         value = [value]
 
       else if transforms['%']
-        if TestMLCompiler.browser
-          CoffeeScript = window.CoffeeScript
-        else
-          CoffeeScript = require('coffeescript')
+        lines = value.split /\n/
+        value = {}
+        for line in lines
+          continue if line.match /^#/
+          continue unless m = line.match /^(.+): (.+)$/
+          [key, val] = m[1..2]
+          val = val.replace /'(.*)'/, '$1'
+          val = Number(val) if val.match /^-?\d+(\.\d+)?$/
+          value[key] = val
 
-        value = eval CoffeeScript.compile(value, bare: true)
-
-        if _.isPlainObject(value) or _.isArray value
-          value = [value]
+        value = [value]
 
       else if transforms['-']
         value = value.replace /\n$/, ''

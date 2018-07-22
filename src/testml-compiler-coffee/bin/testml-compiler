@@ -29,4 +29,4 @@ compiler = new TestMLCompiler.Compiler
 
 out compiler.compile input_text, input_file
 
-# vim: sw=2 lisp:
+# vim: sw=2:
