@@ -1,6 +1,12 @@
 export TESTML_ROOT := $(ROOT)
 
-export PATH := $(ROOT)/bin:$(ROOT)/src/$(LANG)/bin:$(ROOT)/src/testml-compiler-coffee/bin:$(PATH)
+TESTML_COMPILER_LANG ?= perl5
+
+ifeq ($(TESTML_COMPILER_LANG),coffee)
+TEST_TAP_DEPS += ../node_modules
+endif
+
+export PATH := $(ROOT)/bin:$(PWD)/bin:$(ROOT)/src/testml-compiler-$(TESTML_COMPILER_LANG)/bin:$(PATH)
 export TESTML_DEVEL := $(devel)
 export TESTML_COMPILER_DEBUG := $(debug)
 
@@ -8,7 +14,7 @@ j = 1
 test = test/*.tml
 
 #------------------------------------------------------------------------------
-test-tap:: $(TEST_TAP_DEPS) ../node_modules
+test-tap:: $(TEST_TAP_DEPS)
 	TESTML_RUN=$(LANG)-tap prove -v -j$(j) $(test)
 
 ../node_modules:

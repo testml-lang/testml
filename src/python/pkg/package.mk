@@ -1,9 +1,4 @@
-ifeq ($(ROOT),)
-    $(error ROOT not set in Makefile)
-endif
-
-#------------------------------------------------------------------------------
-export PATH := $(ROOT)/compiler/coffee/bin:$(PATH)
+export PATH := $(ROOT)/src/testml-compiler-perl5/bin:$(PATH)
 
 B := build
 P := pkg
@@ -28,8 +23,6 @@ BUILD_DIRS := \
 
 #------------------------------------------------------------------------------
 build:: \
-    $(ROOT)/compiler/coffee \
-    $(ROOT)/test/run-tml \
     $(BUILD_DIRS) \
     $(BUILD_FILES) \
     $(ALL_LIBS)

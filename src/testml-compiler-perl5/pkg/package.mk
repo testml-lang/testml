@@ -1,8 +1,3 @@
-ifeq ($(ROOT),)
-    $(error ROOT not set in Makefile)
-endif
-
-#------------------------------------------------------------------------------
 export PATH := $(PWD)/bin:$(PATH)
 
 B := build
@@ -65,8 +60,6 @@ clean::
 
 realclean:: clean
 
-include $(ROOT)/.makefile/package.mk
-
 #------------------------------------------------------------------------------
 $(BUILD_DIRS):
 	mkdir -p $@
@@ -112,3 +105,6 @@ $(DISTDIR): $B/$(DISTDIR)
 
 $B/$(DIST) $B/$(DISTDIR): build
 	cd $B && dzil build
+
+#------------------------------------------------------------------------------
+include $(ROOT)/.makefile/package.mk

@@ -15,7 +15,7 @@ define HELP
 endef
 export HELP
 
-export PATH := $(PWD)/bin:$(PWD)/src/testml-compiler-coffee/bin:$(PATH)
+export PATH := $(PWD)/bin:$(PWD)/src/testml-compiler-perl5/bin:$(PATH)
 
 # All the current support languages:
 LANG_ALL := \
@@ -58,8 +58,8 @@ ALL_WORK := orphan $(WORK)
 # All the branches for `make status`:
 STATUS := $(ALL_WORK)
 
-# Import `make status` support:
-include .makefile/status.mk
+#------------------------------------------------------------------------------
+default: help
 
 help:
 	@echo "$$HELP"
@@ -80,8 +80,13 @@ test-runtime: $(TEST_ALL)
 test-runtime-%: src/%
 	make -C $< test j=$(j)
 
+test-compiler: test-compiler-perl5 test-compiler-coffee
+
 # Run all the compiler tests:    note:(`make -C` doesn't work here)
-test-compiler: src/testml-compiler-coffee
+test-compiler-perl5: src/testml-compiler-perl5
+	cd $<; make test j=$(j)
+
+test-compiler-coffee: src/testml-compiler-coffee
 	cd $<; make test j=$(j)
 
 # Test the output of various testml CLI invocations:
@@ -121,5 +126,13 @@ realclean: clean
 	git worktree prune
 	rm -fr compiler eg runtime src/node_modules talk testml
 	make -C src/node $@
+	make -C src/perl5 $@
+	make -C src/python $@
+	make -C src/testml-compiler-coffee $@
+	make -C src/testml-compiler-perl5 $@
 
 .PHONY: test
+
+#------------------------------------------------------------------------------
+# Import `make status` support:
+include .makefile/status.mk

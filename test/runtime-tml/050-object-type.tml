@@ -24,7 +24,8 @@ a = []
 
 
 === Test 1
---- list(%)
+# Need to add better % parser here:
+--- xxx-list(%)
 [ 'foo', 123 ]
 
 --- hash(%)

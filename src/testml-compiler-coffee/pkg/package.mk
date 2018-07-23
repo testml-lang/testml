@@ -1,8 +1,3 @@
-ifeq ($(ROOT),)
-    $(error ROOT not set in Makefile)
-endif
-
-#------------------------------------------------------------------------------
 B := build
 P := pkg
 
@@ -36,8 +31,6 @@ BUILD_DIRS := \
 #------------------------------------------------------------------------------
 .PHONY: build
 build:: \
-    node_modules \
-    $(TESTML_COMPILER_TEST) \
     $(BUILD_DIRS) \
     $(BUILD_FILES) \
     $(ALL_BINS) \
@@ -81,9 +74,6 @@ $B/lib/testml-compiler/browser.js: lib/testml-compiler/browser.coffee force
 	coffee -cp $< | perl -pe 's/^# include (.*)/`cat $$1`/e' > $@
 
 force:
-
-$(TESTML_COMPILER_TEST):
-	make -C $(ROOT) test/compiler-tml
 
 $(DIST): $B/$(DIST)
 	mv $< $@
