@@ -88,6 +88,7 @@ namespace testml {
     std::unordered_map<std::string, std::unique_ptr<details::FnHolder>> _fns;
 
   public:
+    // PMF version, takes the object to call the function on
     template<typename BridgeT, typename Fn>
     auto bind(std::string const& name, BridgeT* obj, Fn fn)
     -> typename std::enable_if<std::is_member_function_pointer<Fn>::value, void>::type {
@@ -97,6 +98,7 @@ namespace testml {
       _fns[name] = std::make_unique<HolderType>(obj, std::move(fn));
     }
 
+    // any other candidate
     template<typename Fn>
     auto bind(std::string const& name, Fn fn)
     -> typename std::enable_if<!std::is_member_function_pointer<Fn>::value, void>::type {

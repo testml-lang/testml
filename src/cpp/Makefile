@@ -11,7 +11,7 @@ ext/nlohmann/json.hpp:
 	curl -s https://raw.githubusercontent.com/nlohmann/json/develop/single_include/nlohmann/json.hpp > $@
 
 clean::
-	rm -fr ext
+	rm -fr ext/nlohmann/json.hpp
 
 #------------------------------------------------------------------------------
 include ../../.makefile/runtime.mk
