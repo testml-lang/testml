@@ -14,7 +14,7 @@ namespace run {
 
   protected:
     void testml_eq(json want, json got, std::string const& label) override;
-    void testml_done() override;
+    void testml_end() override;
 
   private:
     void tap_pass(std::string const& label);

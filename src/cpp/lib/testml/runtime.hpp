@@ -15,7 +15,7 @@ namespace testml {
     Runtime(std::string const& filename, Bridge&);
     virtual ~Runtime() = 0;
 
-    void run();
+    void test();
 
   private:
     // toplevel methods
@@ -24,8 +24,8 @@ namespace testml {
 
   private:
     // other methods
-    json exec_expr(json fragment);
-    json exec_dot(json::array_t fragment);
+    json exec(json expr);
+    json exec_expr(json expr);
     json call_bridge(std::string const& name, json::array_t args);
     json get_point(std::string const& name);
 
@@ -33,12 +33,15 @@ namespace testml {
     void assert_eq(json::array_t got, json::array_t want, std::string const& label);
 
   private:
+    json exec_dot(json::array_t calls);
+
+  private:
     bool is_function(json value);
 
   protected:
     // those methods are to be overriden by the runtime class implementing
     virtual void testml_eq(json want, json got, std::string const& label) = 0;
-    virtual void testml_done() = 0;
+    virtual void testml_end() = 0;
 
   private:
     Bridge& _bridge;

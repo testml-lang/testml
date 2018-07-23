@@ -16,13 +16,14 @@ testml-run-file() {
   /usr/bin/env c++ \
     -o $testml_runner \
     -std=c++14 -Wall -Wextra \
-    -g \
+    -I ext \
     $src_bin \
     $lib/run/tap.cpp \
     $lib/runtime.cpp \
     $lib/stdlib.cpp \
     $lib/bridge.cpp \
     $lib/wrapper.cpp \
+    $lib/utils.cpp \
     $bridge_file || return
 
   chmod +x $testml_runner

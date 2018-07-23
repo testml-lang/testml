@@ -29,7 +29,7 @@ namespace run {
     std::cout << "\n";
   }
 
-  void TAP::testml_done() {
+  void TAP::testml_end() {
     std::cout << "1.." << count;
   }
 
