@@ -23,8 +23,7 @@ test-tap:: $(TEST_TAP_DEPS)
 
 clean::
 	rm -fr $(ROOT)/test/run-tml/.testml
-	find . -name '*.swp' | xargs rm -f
-	find . -name '*.swo' | xargs rm -f
+	find . -type f | grep -E '\.(swp|swo)$$' | xargs rm -f
 
 realclean:: clean
 	rm -fr $(ROOT)/src/node_modules

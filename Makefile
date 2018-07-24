@@ -113,13 +113,14 @@ $(ALL_WORK):
 	git branch --track $@ origin/$@ 2>/dev/null || true
 	git worktree add -f $@ $@
 
+src/node_modules:
+	git branch --track node_modules origin/node_modules 2>/dev/null || true
+	git worktree add -f src/node_modules node_modules
+
 # Rules to clean up the repo:
 clean:
-	find . -type d | grep '\.testml$$' | xargs rm -fr
-	find . -type d | grep '\.precomp$$' | xargs rm -fr
-	find . -name '*.pyc' | xargs rm -f
-	find . -name '*.swp' | xargs rm -f
-	find . -name '*.swo' | xargs rm -f
+	find . -type d | grep -E '\.(testml|precomp)$$' | xargs rm -fr
+	find . -type f | grep -E '\.(pyc|swp|swo)$$' | xargs rm -f
 
 realclean: clean
 	rm -fr $(ALL_WORK)
