@@ -9,7 +9,7 @@ ALL_JS := \
     lib/testml/run/mocha.js \
     lib/testml/run/tap.js \
 
-TEST_TAP_DEPS := js-files ../node_modules
+TEST_TAP_DEPS := js-files $(ROOT)/src/node_modules
 
 #------------------------------------------------------------------------------
 default:

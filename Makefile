@@ -39,10 +39,14 @@ RUNTIME_ALL := $(LANG_ALL:%=runtime/%)
 # New language specific runtime branches in progress:
 RUNTIME_NEW := $(LANG_NEW:%=runtime/%)
 
+# Directory to put the node_modules worktree:
+NODE_MODULES := src/node_modules
+
 # All the branches for `make work` which checks them out as worktree subdirs:
 WORK := \
     compiler/coffee \
     eg/rotn \
+    $(NODE_MODULES) \
     note \
     $(RUN_ALL) \
     $(RUN_NEW) \
@@ -96,11 +100,6 @@ test-cli:
 # A special rule to run tests on travis-ci:
 test-travis: test
 
-compiler::
-ifeq ($(shell which testml-compiler),)
-	cd src/testml-compiler-coffee && make node_modules
-endif
-
 #------------------------------------------------------------------------------
 # TestML repository managment rules:
 #------------------------------------------------------------------------------
@@ -113,9 +112,9 @@ $(ALL_WORK):
 	git branch --track $@ origin/$@ 2>/dev/null || true
 	git worktree add -f $@ $@
 
-src/node_modules:
+$(NODE_MODULES):
 	git branch --track node_modules origin/node_modules 2>/dev/null || true
-	git worktree add -f src/node_modules node_modules
+	git worktree add -f $@ node_modules
 
 # Rules to clean up the repo:
 clean:
@@ -125,7 +124,8 @@ clean:
 realclean: clean
 	rm -fr $(ALL_WORK)
 	git worktree prune
-	rm -fr compiler eg runtime src/node_modules talk testml
+	rm -fr compiler eg runtime talk testml
+	rm -fr $(NODE_MODULES)
 	make -C src/node $@
 	make -C src/perl5 $@
 	make -C src/python $@

@@ -10,14 +10,17 @@ testml-run-file() {
       -c "from $TESTML_MODULE import TestMLRunTAP; TestMLRunTAP.run('$1')"
 }
 
+[[ -n $TESTML_SOURCED ]] ||
+  source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
+
+source-testml-config
+
 : "${TESTML_BIN:=testml-python-tap}"
 : "${TESTML_LANG:=python}"
 : "${TESTML_MODULE:=testml.run.tap}"
 : "${TESTML_BRIDGE:=testml-bridge}"
-export TESTML_{BIN,LANG,MODULE,BRIDGE}
 
-[[ -n $TESTML_SOURCED ]] ||
-  source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
+export TESTML_{BIN,BRIDGE,LANG,LIB,MODULE,PATH,RUN}
 
 testml_runner_sourced=true
 

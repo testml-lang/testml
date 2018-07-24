@@ -9,15 +9,16 @@ testml-run-file() {
     "$TESTML_LANG" -e "require('$TESTML_MODULE').run('$1')"
 }
 
+[[ -n $TESTML_SOURCED ]] ||
+  source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
+
+source-testml-config
+
 : "${TESTML_BIN:=testml-node-tap}"
 : "${TESTML_LANG:=node}"
 : "${TESTML_MODULE:=testml/run/tap}"
 : "${TESTML_BRIDGE:=testml-bridge}"
-export TESTML_{BIN,LANG,MODULE,BRIDGE}
 
-[[ -n $TESTML_SOURCED ]] ||
-  source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
-
-testml_runner_sourced=true
+export TESTML_{BIN,BRIDGE,LANG,LIB,MODULE,PATH,RUN}
 
 [[ $0 != "${BASH_SOURCE[0]}" ]] || testml-run "$@"

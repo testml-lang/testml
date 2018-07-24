@@ -7,6 +7,8 @@ export TAG_PREFIX := compiler
 export TESTML_COMPILER_BOOTSTRAP := $(boot)
 export TESTML_COMPILER_DEBUG := $(debug)
 
+NODE_MODULES := $(ROOT)/src/node_modules
+
 j = 1
 test = test/*.tml
 
@@ -14,12 +16,12 @@ test = test/*.tml
 default:
 
 .PHONY: test
-test: ../node_modules
+test: $(NODE_MODULES)
 	NODE_PATH=lib PERL5LIB=test prove -v -j$(j) $(test)
 
 update: update-grammar
 
-update-grammar: ../node_modules
+update-grammar: $(NODE_MODULES)
 	( \
 	set -o pipefail; \
 	grep -B99 make_tree lib/testml-compiler/grammar.coffee; \
@@ -35,12 +37,11 @@ clean::
 	rm -fr npm test/testml/.testml
 
 realclean:: clean
-	rm -fr ../node_modules
+	rm -fr $(NODE_MODULES)
 
 #------------------------------------------------------------------------------
-../node_modules:
-	git branch --track node_modules origin/node_modules 2>/dev/null || true
-	git worktree add -f $@ node_modules
+$(NODE_MODULES):
+	make -C $(ROOT) src/node_modules
 
 #------------------------------------------------------------------------------
 include pkg/package.mk

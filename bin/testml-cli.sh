@@ -56,9 +56,9 @@ cmd-run() {
 
     add-eval-text
 
-    set-testml-bin
-
     set-testml-vars
+
+    set-testml-bin
 
     compile-testml
 
@@ -159,8 +159,12 @@ get-options() {
     [[ ${#arguments[@]} -gt 0 ]] || exit 1
   fi
 
+  if [[ -n $option_config ]]; then
+    export TESTML_CONFIG=$option_config
+  fi
+
   if [[ -n $option_bridge ]]; then
-    export TESTML_BRIDGE="$option_bridge"
+    export TESTML_BRIDGE=$option_bridge
   fi
   if [[ -n $option_lib ]]; then
     TESTML_LIB="$(cd "$option_lib" && pwd)"

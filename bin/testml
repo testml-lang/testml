@@ -16,6 +16,8 @@ main() {
   else
     check-input-file "$@"
 
+    set-testml-vars
+
     set-testml-bin
 
     exec "$TESTML_BIN" "$TESTML_INPUT"
@@ -23,6 +25,10 @@ main() {
 }
 
 testml-run() {
+  testml_runner_sourced=true
+
+  export-testml-vars
+
   if is-tty; then
     run-cli "$@"
 
@@ -85,14 +91,40 @@ set-testml-vars() {
   export TESTML_DIR
   TESTML_FILENAME=$(basename "$TESTML_INPUT")
   export TESTML_FILENAME
+
   if [[ $TESTML_INPUT == '-' ]]; then
     export TESTML_FILE='-'
   else
     export TESTML_FILE="$TESTML_DIR/$TESTML_FILENAME"
   fi
-  TESTML_CACHE="$(abs-dir-path "$TESTML_INPUT")/.testml"
+
+  source-testml-config
+
+  [[ -n $TESTML_CACHE ]] ||
+    TESTML_CACHE="$(abs-dir-path "$TESTML_INPUT")/.testml"
   export TESTML_CACHE
   export TESTML_EXEC="$TESTML_CACHE/$TESTML_FILENAME.json"
+}
+
+source-testml-config() {
+  if [[ -z $TESTML_CONFIG ]]; then
+    if [[ -e $TESTML_DIR/.testmlrc ]]; then
+      TESTML_CONFIG="$TESTML_DIR/.testmlrc"
+    fi
+  fi
+
+  [[ -n $TESTML_CONFIG ]] || return 0
+
+  [[ -f $TESTML_CONFIG ]] ||
+    die "TestML config file '$TESTML_CONFIG' does not exist"
+
+  source "$TESTML_CONFIG"
+
+  export-testml-vars
+}
+
+export-testml-vars() {
+  export TESTML_{BIN,BRIDGE,LANG,LIB,MODULE,PATH,RUN}
 }
 
 set-testml-lib-vars() {

@@ -10,6 +10,8 @@ export PATH := $(ROOT)/bin:$(PWD)/bin:$(ROOT)/src/testml-compiler-$(TESTML_COMPI
 export TESTML_DEVEL := $(devel)
 export TESTML_COMPILER_DEBUG := $(debug)
 
+NODE_MODULES := $(ROOT)/src/node_modules
+
 j = 1
 test = test/*.tml
 
@@ -17,9 +19,8 @@ test = test/*.tml
 test-tap:: $(TEST_TAP_DEPS)
 	TESTML_RUN=$(LANG)-tap prove -v -j$(j) $(test)
 
-../node_modules:
-	git branch --track node_modules origin/node_modules 2>/dev/null || true
-	git worktree add -f $@ node_modules
+$(NODE_MODULES):
+	make -C $(ROOT) src/node_modules
 
 clean::
 	rm -fr $(ROOT)/test/run-tml/.testml
