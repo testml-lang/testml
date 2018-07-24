@@ -171,7 +171,7 @@ class TestMLRun:
 
     i = 0
     for v in signature:
-      self.vars[v] = args[i]
+      self.vars[v] = self.exec_(args[i])
       i += 1
 
     for statement in statements:

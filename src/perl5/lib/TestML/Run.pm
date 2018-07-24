@@ -184,7 +184,7 @@ sub exec_func {
 
   my $i = 0;
   for my $v (@$signature) {
-    $self->{vars}{$v} = $args->[$i++];
+    $self->{vars}{$v} = $self->exec($args->[$i++]);
   }
 
   for my $statement (@$statements) {

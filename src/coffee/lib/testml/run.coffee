@@ -159,7 +159,7 @@ class TestML.Run
       throw "TestML function expected '#{signature.length}' arguments, but was called with '#{args.length}' arguments"
 
     for i, v of signature
-      @vars[v] = args[i]
+      @vars[v] = @exec args[i]
 
     for statement in statements
       @exec_expr statement

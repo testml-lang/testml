@@ -162,7 +162,7 @@ method exec-func($function, $args is copy = []) {
 
   my $i = 0;
   for @$signature -> $v {
-    $!vars{$v} = $args[$i++];
+    $!vars{$v} = self.exec($args[$i++]);
   }
 
   for @$statements -> $statement {
