@@ -1,11 +1,15 @@
+export ROOT := ../..
+
+export PATH := $(PWD)/node_modules/.bin:$(PATH)
+
 WORK := \
     gh-pages \
-    node_modules \
     playground \
 
 STATUS := $(WORK)
 
-include ../.makefile/status.mk
+#------------------------------------------------------------------------------
+default: status
 
 publish: site
 	make -C gh-pages publish
@@ -17,7 +21,7 @@ site: gh-pages playground build
 	make -C playground site
 
 build: coffeescript node_modules
-	cake doc:site
+	PATH=$$PATH cake doc:site
 
 .PHONY: test
 test: site
@@ -27,13 +31,16 @@ test: site
 coffeescript:
 	git clone --depth=1 http://github.com/jashkenas/$@
 
-$(WORK):
+$(WORK) node_modules:
 	git branch --track $@ origin/$@ 2>/dev/null || true
 	git worktree add -f $@ $@
 
-clean:
+clean::
 	rm -f package-lock.json
 	rm -f docs/v2/index.html
 
-realclean: clean
-	rm -fr $(WORK) coffeescript
+realclean:: clean
+	rm -fr $(WORK) coffeescript node_modules
+
+#------------------------------------------------------------------------------
+include ../.makefile/status.mk
