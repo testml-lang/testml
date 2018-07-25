@@ -1,4 +1,5 @@
 export PATH := $(ROOT)/src/testml-compiler-perl5/bin:$(PATH)
+export PERL5LIB := $(ROOT)/ext/perl5
 
 B := build
 P := pkg
@@ -34,6 +35,7 @@ BUILD_DIRS := \
 #------------------------------------------------------------------------------
 .PHONY: build
 build:: \
+    $(EXT) \
     $(BUILD_DIRS) \
     $(BUILD_FILES) \
     $(ALL_DOCS) \

@@ -26,6 +26,7 @@ BUILD_DIRS := \
 #------------------------------------------------------------------------------
 .PHONY: build
 build:: \
+    $(NODE_MODULES) \
     js-files \
     $(BUILD_DIRS) \
     $(BUILD_FILES) \

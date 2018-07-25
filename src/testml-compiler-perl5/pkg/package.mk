@@ -35,6 +35,7 @@ BUILD_DIRS := \
 #------------------------------------------------------------------------------
 .PHONY: build
 build:: \
+    $(EXT) \
     $(BUILD_DIRS) \
     $(BUILD_FILES) \
     $(ALL_DOCS) \

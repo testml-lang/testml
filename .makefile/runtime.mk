@@ -12,7 +12,12 @@ ifeq ($(TESTML_COMPILER_LANG),perl5)
 export PERL5LIB := $(ROOT)/ext/perl5
 endif
 
-export PATH := $(PWD)/bin:$(ROOT)/bin:$(ROOT)/src/node_modules/.bin:$(ROOT)/src/testml-compiler-$(TESTML_COMPILER_LANG)/bin:$(PATH)
+# For coffee:
+PATH := $(ROOT)/src/node_modules/.bin:$(PATH)
+# For testml-* bins:
+PATH := $(ROOT)/bin:$(PATH)
+export PATH
+
 export TESTML_DEVEL := $(devel)
 export TESTML_COMPILER_DEBUG := $(debug)
 

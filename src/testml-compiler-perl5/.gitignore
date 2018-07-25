@@ -2,3 +2,4 @@
 /testml-compiler-*.tgz
 /testml-compiler-*/
 .testml/
+/TestML-Compiler-*

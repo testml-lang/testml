@@ -31,6 +31,7 @@ BUILD_DIRS := \
 #------------------------------------------------------------------------------
 .PHONY: build
 build:: \
+    $(NODE_MODULES) \
     $(BUILD_DIRS) \
     $(BUILD_FILES) \
     $(ALL_BINS) \
