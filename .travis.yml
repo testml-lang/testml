@@ -13,13 +13,9 @@ addons:
     - sourceline: 'deb https://dl.bintray.com/nxadm/rakudo-pkg-debs $(lsb_release -cs) main'
       key_url: 'http://keyserver.ubuntu.com/pks/lookup?search=0x379CE192D401AB61&op=get'
     packages:
-    - cpanminus
     - rakudo-pkg
 
-install:
-- npm install -g coffeescript
-- sudo cpanm -n Capture::Tiny Pegex Text::Diff Tie::IxHash
-- zef install JSON::Tiny Test::Builder
+install: []
 
 script:
 - git fetch --unshallow

@@ -1,7 +1,10 @@
 export ROOT := ../..
 export TESTML_COMPILER_TEST := $(ROOT)/test/compiler-tml
 
+EXT := $(ROOT)/ext
+
 export PATH := $(ROOT)/bin:$(TESTML_COMPILER_TEST)/bin:$(PATH)
+export PERL5LIB := $(EXT)/perl5
 export TAG_PREFIX := compiler-perl5
 
 export TESTML_COMPILER_BOOTSTRAP := $(boot)
@@ -14,7 +17,7 @@ test = test/*.tml
 default:
 
 .PHONY: test
-test:
+test: $(EXT)
 	prove -v -j$(j) $(test)
 
 update: update-grammar
@@ -37,6 +40,10 @@ clean::
 	rm -fr test/testml/.testml
 
 realclean:: clean
+
+#------------------------------------------------------------------------------
+$(EXT):
+	make -C $(ROOT) ext
 
 #------------------------------------------------------------------------------
 include pkg/package.mk

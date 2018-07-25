@@ -42,10 +42,16 @@ RUNTIME_NEW := $(LANG_NEW:%=runtime/%)
 # Directory to put the node_modules worktree:
 NODE_MODULES := src/node_modules
 
+EXT_ALL := \
+    ext/cpp \
+    ext/perl5 \
+    ext/perl6 \
+
 # All the branches for `make work` which checks them out as worktree subdirs:
 WORK := \
     compiler/coffee \
     eg/rotn \
+    $(EXT_ALL) \
     $(NODE_MODULES) \
     note \
     $(RUN_ALL) \
@@ -58,6 +64,7 @@ WORK := \
     testml/runtime-tml \
 
 ALL_WORK := orphan $(WORK)
+ALL_WORK := $(filter-out $(NODE_MODULES),$(ALL_WORK))
 
 # All the branches for `make status`:
 STATUS := $(ALL_WORK)
@@ -94,8 +101,8 @@ test-compiler-coffee: src/testml-compiler-coffee
 	cd $<; make test j=$(j)
 
 # Test the output of various testml CLI invocations:
-test-cli:
-	test=$(test) prove -v -j$(j) $${test:-test/cli-tml/*.tml}
+test-cli: ext
+	PERL5LIB=ext/perl5 test=$(test) prove -v -j$(j) $${test:-test/cli-tml/*.tml}
 
 # A special rule to run tests on travis-ci:
 test-travis: test
@@ -106,6 +113,8 @@ test-travis: test
 
 # The `make work` command:
 work: $(WORK)
+
+ext: $(EXT_ALL)
 
 # worktree add a branch into a subdir:
 $(ALL_WORK):
@@ -124,7 +133,7 @@ clean:
 realclean: clean
 	rm -fr $(ALL_WORK)
 	git worktree prune
-	rm -fr compiler eg runtime talk testml
+	rm -fr compiler eg ext runtime talk testml
 	rm -fr $(NODE_MODULES)
 	make -C src/node $@
 	make -C src/perl5 $@
