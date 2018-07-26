@@ -4,6 +4,6 @@ set -e
 
 rm -f test/*.tml
 
-cp run-tml/*.tml $TOP/run/coffee/test/testml-bridge.coffee test/
+cp $ROOT/test/runtime-tml/*.tml $ROOT/src/coffee/test/testml-bridge.coffee test/
 
 perl -e 'print "$_\n" for map {s!^test/(.*)\.tml$!$1!;$_} @ARGV' test/*.tml > test/list

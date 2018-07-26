@@ -13,6 +13,12 @@ Label = "Call an ononymous user defined function"
 [11, 12, 23].(a, b, c)=>
   a.add(b) == c
 
+s1 = "xxx"
+s2 = "xxx"
+f2 = (a, b)=>
+  a == b :"Call a function with variables"
+f2(s1, s2)
+
 # TODO:
 # Label = "Call a user defined function in a variable"
 # "11 12 23".str-nums.f1
