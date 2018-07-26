@@ -28,8 +28,6 @@ lib/testml/run:
 lib/testml/%.js: ../coffee/lib/testml/%.coffee
 	coffee -cp $< > $@
 
-lib/testml/index.js: pkg/src/testml/index.coffee
-
 #------------------------------------------------------------------------------
 include $(ROOT)/.makefile/runtime.mk
 include pkg/package.mk

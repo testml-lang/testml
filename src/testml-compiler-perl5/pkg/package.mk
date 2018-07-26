@@ -8,7 +8,7 @@ NAME := $(shell grep '^name ' $P/dist.ini | awk '{print $$3}')
 VERSION := $(shell grep '^version ' $P/dist.ini | awk '{print $$3}')
 DISTDIR := $(NAME)-$(VERSION)
 DIST := $(NAME)-$(VERSION).tar.gz
-TAG_PREFIX := pkg-perl5
+TAG_PREFIX := compiler-perl5
 
 DOCS := $(shell cd $P && find doc -type f)
 LIBS := $(shell find lib -type f)

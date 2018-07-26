@@ -1,5 +1,6 @@
 export PATH := $(ROOT)/src/testml-compiler-perl5/bin:$(PATH)
 
+C := ../coffee
 B := build
 P := pkg
 
@@ -47,8 +48,6 @@ clean::
 
 realclean:: clean
 
-include $(ROOT)/.makefile/package.mk
-
 #------------------------------------------------------------------------------
 $(BUILD_DIRS):
 	mkdir -p $@
@@ -59,7 +58,7 @@ $B/%: $P/%
 $B/lib/testml/%.js: lib/testml/%.js
 	cp $< $@
 
-$B/lib/testml/browser.js: $P/src/testml/browser.coffee force
+$B/lib/testml/browser.js: $C/lib/testml/browser.coffee force
 	coffee -cp $< | perl -pe 's/^# include (.*)/`cat $$1`/e' > $@
 
 force:
@@ -74,3 +73,6 @@ $(DISTDIR): $(DIST)
 
 $B/$(DIST) $B/$(DISTDIR): build
 	cd $B && npm pack
+
+#------------------------------------------------------------------------------
+include $(ROOT)/.makefile/package.mk

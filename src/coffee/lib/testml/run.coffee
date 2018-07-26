@@ -1,4 +1,7 @@
 require '../testml'
+TestML.browser = false
+TestML.env = global?.process?.env || {}
+
 require 'ingy-prelude' if TestML.env['TESTML_DEVEL']
 lodash = require 'lodash'
 

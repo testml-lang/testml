@@ -5,7 +5,7 @@ NAME ?= $(shell grep '^  "name":' $P/package.json | cut -d'"' -f4)
 VERSION ?= $(shell grep '^  "version":' $P/package.json | cut -d'"' -f4)
 DISTDIR := $(NAME)-$(VERSION)
 DIST := $(DISTDIR).tgz
-TAG_PREFIX := compiler
+TAG_PREFIX := compiler-node
 
 LIBS := \
 	lib/testml-compiler/index.coffee \
