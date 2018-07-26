@@ -28,12 +28,7 @@ test: site
 	(sleep 0.5; open http://localhost:1234/) &
 	(cd gh-pages && static -p 1234)
 
-coffeescript:
-	git clone --depth=1 http://github.com/jashkenas/$@
-
-$(WORK) node_modules:
-	git branch --track $@ origin/$@ 2>/dev/null || true
-	git worktree add -f $@ $@
+work: $(WORK)
 
 clean::
 	rm -f package-lock.json
@@ -41,6 +36,14 @@ clean::
 
 realclean:: clean
 	rm -fr $(WORK) coffeescript node_modules
+
+#------------------------------------------------------------------------------
+coffeescript:
+	git clone --depth=1 http://github.com/jashkenas/$@
+
+$(WORK) node_modules:
+	git branch --track $@ origin/$@ 2>/dev/null || true
+	git worktree add -f $@ $@
 
 #------------------------------------------------------------------------------
 include ../.makefile/status.mk
