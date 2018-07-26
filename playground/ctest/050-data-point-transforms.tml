@@ -332,6 +332,7 @@ Diff = 1
       "point": {}}]}
 
 === CoffeeScript object syntax transform
+--- SKIP: Need to parse this with pegex, not coffeescript
 --- input
     === Test1
     --- foo(%): {foo: 'bar', bar: 42}
