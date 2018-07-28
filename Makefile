@@ -70,7 +70,7 @@ ALL_WORK := $(filter-out $(NODE_MODULES),$(ALL_WORK))
 STATUS := $(ALL_WORK)
 
 #------------------------------------------------------------------------------
-default: help
+default: status
 
 help:
 	@echo "$$HELP"
