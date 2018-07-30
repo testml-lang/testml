@@ -1,4 +1,9 @@
 ---
+version: 0.54_05
+date:    Mon Jul 30 08:57:05 PDT 2018
+changes:
+- Just ship bin shim in dist for now
+---
 version: 0.54_04
 date:    Tue Jul 10 09:02:27 PDT 2018
 changes:
