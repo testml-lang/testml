@@ -10,40 +10,33 @@ DISTDIR := $(NAME)-$(VERSION)
 DIST := $(NAME)-$(VERSION).tar.gz
 TAG_PREFIX := pkg-perl5
 
+BINS := bin/testml
 DOCS := $(shell cd $P && find doc -type f)
-LIBS := $(shell find lib -type f)
-TESTS := $(shell cd test; echo *.tml)
-TESTS := $(TESTS:%.tml=%)
+LIBS := $(shell cd $P && find lib -type f)
+TESTS := $(shell cd $P && find t -type f)
+ALL_BINS := $(BINS:bin/%=$B/bin/%)
 ALL_DOCS := $(DOCS:doc/%=$B/lib/%)
-ALL_LIBS := $(LIBS:%=$B/%) $B/lib/TestML.pm
-ALL_TESTS := $(TESTS:%=$B/t/%.t) $B/t/TestMLBridge.pm
-INC_BIN := $B/inc/bin/testml-cpan
-INC_LIBS := $(LIBS:%=$B/inc/%)
-INC_TESTS := $(TESTS:%=$B/inc/t/%.tml.json)
+ALL_LIBS := $(LIBS:lib/%=$B/lib/%)
+ALL_TESTS := $(TESTS:t/%=$B/t/%)
 
 BUILD_FILES := \
     $B/Changes \
     $B/dist.ini \
 
 BUILD_DIRS := \
-    $B/lib/TestML/Run \
-    $B/t \
-    $B/inc/lib/TestML/Run \
-    $B/inc/bin \
-    $B/inc/t \
+    $B/bin \
+    $B/lib \
+    $B/t
 
 #------------------------------------------------------------------------------
 .PHONY: build
 build:: \
-    $(EXT) \
     $(BUILD_DIRS) \
     $(BUILD_FILES) \
+    $(ALL_BINS) \
     $(ALL_DOCS) \
     $(ALL_LIBS) \
-    $(ALL_TESTS) \
-    $(INC_BIN) \
-    $(INC_LIBS) \
-    $(INC_TESTS)
+    $(ALL_TESTS)
 
 publish:: check dist
 	cpan-upload $(DIST)
@@ -69,33 +62,17 @@ $(BUILD_DIRS):
 $B/%: $P/%
 	cp $< $@
 
-$B/lib/TestML.pm: $P/src/TestML.pm
+$B/bin/%: bin/%
 	cp $< $@
 
-$B/lib/%: lib/%
+$B/lib/%.pm: $P/lib/%.pm
 	cp $< $@
 
 $B/lib/%.pod: $P/doc/%.pod
 	cp $< $@
 
-$B/t/%.t: test/%.tml
+$B/t/%.t: $P/t/%.tml
 	cp $< $@
-	perl -pi -e 's{#!/usr/bin/env testml}{#!inc/bin/testml-cpan}' $@
-
-$B/t/TestMLBridge.pm: test/TestMLBridge.pm
-	cp $< $@
-
-$B/inc/bin/testml-cpan: $P/bin/testml-cpan
-	cp $< $@
-
-$B/inc/lib/TestML.pm: $P/src/TestML.pm
-	cp $< $@
-
-$B/inc/lib/%: lib/%
-	cp $< $@
-
-$B/inc/t/%.tml.json: $B/t/%.t
-	testml-compiler $< > $@
 
 $(DIST): $B/$(DIST)
 	mv $< $@

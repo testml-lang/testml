@@ -1,0 +1,16 @@
+#!/usr/bin/perl
+
+die <<"..." unless $ENV{TESTML_ROOT};
+--------------------------------------------------------------------------------
+The Perl 5 CPAN version of testml '$0' calls the TESTML_ROOT/bin/testml
+which comes from installing TestML from source. It seems that you don't have
+this installed.
+
+TO install TestML, do this:
+
+    git clone git\@github.com:testml-lang/testml
+    source testml/.rc
+--------------------------------------------------------------------------------
+...
+
+exec "$ENV{TESTML_ROOT}/bin/testml", @ARGV;

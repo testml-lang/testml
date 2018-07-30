@@ -1,4 +1,4 @@
-export TESTML_ROOT := $(ROOT)
+export TESTML_ROOT := $(shell cd $(ROOT) && pwd)
 
 EXT := $(ROOT)/ext
 NODE_MODULES := $(ROOT)/src/node_modules

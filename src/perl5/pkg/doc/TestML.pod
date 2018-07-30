@@ -12,7 +12,10 @@ TestML - A Software Testing Meta Language
 
 =head1 DESCRIPTION
 
-See L<https://github.com/testml-lang/testml#testml>
+This is the new TestML. If you were using the old TestML that has been moved to
+L<TestML1>.
+
+See L<https://github.com/testml-lang/testml#testml> for more information.
 
 =head1 AUTHOR
 
