@@ -1,19 +1,25 @@
-export PATH := ../bin:$(PATH)
-export TESTML_ROOT := $(PWD)/..
+ROOT := ../..
+
+export PATH := $(ROOT)/bin:$(PATH)
+export TESTML_ROOT := $(shell cd $(ROOT); pwd)
+
+NODE_MODULES := $(TESTML_ROOT)/src/node_modules
+EXT := $(TESTML_ROOT)/ext
+JS := $(TESTML_ROOT)/src/node/lib
 
 export NODE_PATH := lib:test
 export PYTHONPATH := lib:test
-export PERL5LIB := lib:test
-export PERL6LIB := lib,test
+export PERL5LIB := $(TESTML_ROOT)/ext/perl5:lib:test
+export PERL6LIB := $(TESTML_ROOT)/ext/perl6,lib,test
 
-LANG := coffee node perl perl6 python
+LANG := coffee node perl5 perl6 python
 TESTS := $(LANG:%=test-%-tap)
 
 test: $(TESTS)
 
 tests: $(TESTS)
 
-$(TESTS): lib/rotn.js test/testml-bridge.js
+$(TESTS): lib/rotn.js test/testml-bridge.js $(EXT) $(NODE_MODULES) $(JS)
 ifdef test
 	TESTML_RUN=$(@:test-%=%) prove -v $(test)
 else
@@ -32,6 +38,15 @@ pie-test: lib/rotn.js
 
 %.js: %.coffee
 	coffee -cbp $< | tail -n+2 > $@
+
+$(EXT):
+	make -C $(TESTML_ROOT) ext >/dev/null
+
+$(NODE_MODULES):
+	make -C $(TESTML_ROOT) src/node_modules >/dev/null
+
+$(JS):
+	make -C $(TESTML_ROOT)/src/node js-files
 
 clean:
 	rm -fr node_modules/
