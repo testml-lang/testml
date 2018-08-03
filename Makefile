@@ -57,6 +57,7 @@ WORK := \
     $(RUN_ALL) \
     $(RUN_NEW) \
     site \
+    talk/2018-lapm \
     talk/2018-openwest \
     talk/2018-tpc \
     testml/compiler-tml \
