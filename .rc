@@ -4,6 +4,13 @@
 
 TESTML_ROOT="$(cd "$(dirname "$TESTML_ROOT")" && pwd)"
 
+if [[ ! -e "$TESTML_ROOT/ext" ]]; then
+  (
+    cd $TESTML_ROOT
+    make ext &>/dev/null
+  )
+fi
+
 export TESTML_ROOT
 export PATH="$TESTML_ROOT/bin:$PATH"
 export MANPATH="$TESTML_ROOT/man:$MANPATH"
