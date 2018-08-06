@@ -1,5 +1,9 @@
+== TestML conversions
+- https://github.com/aferreira/cpan-Carp-Always
+- https://github.com/shadow-dot-cat/Babble/
+- pegex-pm
+
 == Project
-- Turn on IRC notifications
 - Use testml in yaml-test-suite for make test
   - Fix https://gist.github.com/perlpunk/d5b4eea65f61446875dcc8b174e7f8b6
   - Rearrange
@@ -10,13 +14,12 @@
   - written in nodejs (not bash)
 
 == Repo Refactor
-- Get compiler to build npm/ and release again
-- Get testml-js (node) to build npm/ and release again
-- Make 'devel' subrepo branch
 - Restructure and renumber tests for developemnt
 
 == Releases
 - CPAN Release
+  - Need to package entire runtime framework and compiler
+  - Probably shouldn't ship bin/testml
 - Perl6 Release
 - PyPI placeholder release
 - Work on testml.org website
@@ -24,6 +27,7 @@
 
 == Error Messages (make these more user friendly:)
 - Method 'assert_num_eq_str' does not exist at...
+- Add tests for error messages
 
 == Language (compiler and runtime)
 - <If ...> ... <Else> ...
@@ -37,7 +41,9 @@
   - Type check them
 
 == Compiler
-- TestML compiler in Perl5
+- Fix Pegex bugs
+- Support `_` in var names and bridge method names
+  - Or make _ throw appropriate compile error
 - Support source mapping
   - Use in labels
 - Support === with no (empty) label
@@ -47,6 +53,7 @@
   - Multinode name should be 'foo/bar'
     - Look under $TESTML_PATH and then $TESTML_DIR
 - Fix foo.bar:baz precedence bug
+  - *foo.bar.Catch:msg
 - Honor and enforce %TestML statement
 - Nested functions
   - Make work with subtests
@@ -57,11 +64,12 @@
 - Check for TestML version number before run
 - All runners should handle stdin ('-') for testml
 - Shuffle blocks with:  Shuffle = True
+- Warn if block is never used at runtime
+  - Support %NoWarn or somesuch to disable warnings
 
 == Perl5
-- Test2 in TestML
-  - Or write own TAP logic for perl5 instead of Test::Builder
-- Make TestML cpan release
+- Support TestML::Run::Test2
+  - https://metacpan.org/pod/Test2::Manual::Anatomy::Event#THE-FACET-API
 - Wide chars in Test::Builder (ask exodist)
 - Add TestML::Base for perl5; new & has
 
@@ -74,9 +82,9 @@
 - Finish tests for all stdlib methods
 
 == CLI
-- Support .testml/config .testml.rc testml.rc
-  - Add $TESTML_DIR/.testml.rc config file
-  - Also look in $TESTML_UPDIR/.testml.rc
+- Support .testml/config .testmlrc testmlrc
+  - Add $TESTML_DIR/.testmlrc config file
+  - Also look in $TESTML_UPDIR/.testmlrc
 - Support and test all env-vars / options
 - Add TESTML_DIFF
 - Use <sha1>.tml.json cache name for stdin
