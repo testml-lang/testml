@@ -1,4 +1,4 @@
-LANG := perl6
+LANGUAGE := perl6
 ROOT := ../..
 
 export PERL6LIB := $(ROOT)/ext/perl6

@@ -1,4 +1,4 @@
-LANG := coffee
+LANGUAGE := coffee
 ROOT := ../..
 TEST_TAP_DEPS := $(ROOT)/src/node_modules
 

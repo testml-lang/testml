@@ -1,4 +1,4 @@
-LANG := node
+LANGUAGE := node
 ROOT := ../..
 
 ALL_JS := \

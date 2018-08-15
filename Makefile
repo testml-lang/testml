@@ -60,6 +60,7 @@ WORK := \
     talk/2018-lapm \
     talk/2018-openwest \
     talk/2018-tpc \
+    talk/2018-tpceu \
     testml/compiler-tml \
     testml/cli-tml \
     testml/runtime-tml \
