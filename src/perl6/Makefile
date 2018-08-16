@@ -1,4 +1,4 @@
-LANGUAGE := perl6
+RUNTIME_LANG := perl6
 ROOT := ../..
 
 export PERL6LIB := $(ROOT)/ext/perl6

@@ -1,4 +1,4 @@
-LANGUAGE := node
+RUNTIME_LANG := node
 ROOT := ../..
 
 ALL_JS := \

@@ -26,7 +26,7 @@ test = test/*.tml
 
 #------------------------------------------------------------------------------
 test-tap:: $(EXT) $(TEST_TAP_DEPS)
-	TESTML_RUN=$(LANGUAGE)-tap prove -v -j$(j) $(test)
+	TESTML_RUN=$(RUNTIME_LANG)-tap prove -v -j$(j) $(test)
 
 $(EXT):
 	make -C $(ROOT) ext
