@@ -6,7 +6,7 @@ set -e
 
 testml-run-file() {
   PYTHONPATH="$TESTML_ROOT_LIB:$TESTML_LIB${PYTHONPATH:+:$PYTHONPATH}" \
-    "$TESTML_LANG" -u \
+    python3 -u \
       -c "from $TESTML_MODULE import TestMLRunTAP; TestMLRunTAP.run('$1')"
 }
 
