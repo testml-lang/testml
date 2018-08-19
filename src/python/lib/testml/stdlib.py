@@ -36,7 +36,7 @@ class StdLib():
     return len(list_)
 
   def env(self):
-    return os.environ.__dict__['data']
+    return dict(os.environ)
 
   def error(self, msg=''):
     return TestMLError(msg)
