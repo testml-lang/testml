@@ -7,19 +7,19 @@ def is_list(o):
 
 def die(msg):
   raise Exception("Died: %s" % msg)
-  print "Died: %s" % msg
+  print("Died: %s" % msg)
   sys.exit(1)
 
 def xxx(o):
   import yaml
-  print yaml.dump(o),
-  print '...'
+  print(yaml.dump(o))
+  print('...')
   sys.exit(1)
 
 def yyy(o):
   import yaml
-  print yaml.dump(o),
-  print '...'
+  print(yaml.dump(o))
+  print('...')
   return o
 
 # A constant for when None is the actual intended value:

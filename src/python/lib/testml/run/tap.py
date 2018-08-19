@@ -68,17 +68,17 @@ class TestMLRunTAP(TestMLRun):
       self.tap_plan(plan)
 
   def tap_plan(self, plan):
-    print "1..%d" % plan
+    print("1..%d" % plan)
 
   def tap_pass(self, label):
     self.count += 1
     if label: label = ' - ' + label
-    print "ok %d%s" % (self.count, label.encode('utf-8'))
+    print("ok %d%s" % (self.count, label.encode('utf-8')))
 
   def tap_fail(self, label):
     self.count += 1
     if label: label = ' - ' + label
-    print "not ok %d%s" % (self.count, label.encode('utf-8'))
+    print("not ok %d%s" % (self.count, label.encode('utf-8')))
 
   def tap_ok(self, ok, label):
     if ok:
@@ -134,6 +134,6 @@ class TestMLRunTAP(TestMLRun):
     print >> sys.stderr, re.sub(r'^', '# ', msg, flags=re.M)
 
   def tap_done(self):
-    print "1..%s" % self.count
+    print("1..%s" % self.count)
 
 # vim: sw=2:
