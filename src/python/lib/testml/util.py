@@ -1,9 +1,10 @@
 import sys
 import collections
+from six import string_types
 
 def is_list(o):
   return isinstance(o, collections.Sequence) and \
-    not isinstance(o, basestring)
+    not isinstance(o, string_types)
 
 def die(msg):
   raise Exception("Died: %s" % msg)
