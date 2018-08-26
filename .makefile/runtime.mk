@@ -21,12 +21,17 @@ export PATH
 export TESTML_DEVEL := $(devel)
 export TESTML_COMPILER_DEBUG := $(debug)
 
-j = 1
 test = test/*.tml
+j = 1
+
+prove_opts = -v
+ifneq ($j,1)
+prove_opts += -j$j
+endif
 
 #------------------------------------------------------------------------------
 test-tap:: $(EXT) $(TEST_TAP_DEPS)
-	TESTML_RUN=$(RUNTIME_LANG)-tap prove -v -j$(j) $(test)
+	TESTML_RUN=$(RUNTIME_LANG)-tap prove $(prove_opts) $(test)
 
 $(EXT):
 	make -C $(ROOT) ext
