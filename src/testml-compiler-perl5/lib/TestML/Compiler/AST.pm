@@ -1,3 +1,5 @@
+use v5.10;
+
 package TestML::Compiler::AST;
 
 # use JSON::PP; sub JJJ {die encode_json [@_]}

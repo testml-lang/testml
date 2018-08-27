@@ -68,7 +68,7 @@ sub fromjson {
 
 sub join {
   my ($self, $list, $separator) = @_;
-  $separator //= ' ';
+  $separator = ' ' unless defined $separator;
   CORE::join $separator, @$list;
 }
 
