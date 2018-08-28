@@ -116,8 +116,8 @@ func (r *Run) exec(expr []string) {
   r.exec_expr(expr[0], nil)
 }
 
-func indirect_func(runner interface{}, func_name string, params ...interface{}) (out []reflect.Value, err error) {
-	class_val := reflect.ValueOf(runner)
+func (r *Run) indirect(func_name string, params ...interface{}) (out []reflect.Value, err error) {
+	class_val := reflect.ValueOf(r)
 	meth := class_val.MethodByName(func_name)
 	if !meth.IsValid() {
 			return make([]reflect.Value, 0), fmt.Errorf("Method not found \"%s\"", func_name)
@@ -143,7 +143,7 @@ func (r *Run) exec_expr(expr interface{}, ctx []interface{}) {
     switch reflect.TypeOf(call).Kind() {
       case reflect.Slice, reflect.Array: call = call.([]interface{})[0]
     }
-		res, err := indirect_func(r, call.(string), expr_copy)
+		res, err := r.indirect(call.(string), expr_copy)
     if res != nil {
     } else if err != nil {
 
