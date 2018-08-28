@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# shellcheck disable=1090,2034
+
+set -e
+
+testml-run-file() {
+  NODE_PATH="$TESTML_ROOT_LIB:$TESTML_LIB${NODE_PATH:+:$NODE_PATH}" \
+    "$TESTML_LANG" -e "require('$TESTML_MODULE').run('$1')"
+}
+
+[[ -n $TESTML_SOURCED ]] ||
+  source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
+
+source-testml-config
+
+: "${TESTML_BIN:=testml-node-mocha}"
+: "${TESTML_LANG:=node}"
+: "${TESTML_MODULE:=testml/run/mocha}"
+: "${TESTML_BRIDGE:=testml-bridge}"
+
+[[ $0 != "${BASH_SOURCE[0]}" ]] || testml-run "$@"
