@@ -44,17 +44,17 @@ func NewVtable() map[string]interface{} {
   eqt["assert-%2-like-%2"].(map[string]string)["list,regex"] = ""
   eqt["assert-%2-like-%2"].(map[string]string)["list,list"] = ""
 
-  x["."] = "exec_dot"
-  x["%"] = "each_exec"
-  x["%<>"] = "each_pick"
-  x["<>"] = "pick_exec"
-  x["&"] = "call_func"
-  x["\""] = "get_str"
-  x[":"] = "get_hash"
-  x["[]"] = "get_list"
-  x["*"] = "get_point"
-  x["="] = "set_var"
-  x["||="] = "or_set_var"
+  x["."] = "Exec_dot"
+  x["%"] = "Each_exec"
+  x["%<>"] = "Each_pick"
+  x["<>"] = "Pick_exec"
+  x["&"] = "Call_func"
+  x["\""] = "Get_str"
+  x[":"] = "Get_hash"
+  x["[]"] = "Get_list"
+  x["*"] = "Get_point"
+  x["="] = "Set_var"
+  x["||="] = "Or_set_var"
 
   return x
 }
@@ -119,7 +119,6 @@ func (r *Run) exec(expr []string) {
 func indirect_func(runner interface{}, func_name string, params ...interface{}) (out []reflect.Value, err error) {
 	class_val := reflect.ValueOf(runner)
 	meth := class_val.MethodByName(func_name)
-  fmt.Println(meth)
 	if !meth.IsValid() {
 			return make([]reflect.Value, 0), fmt.Errorf("Method not found \"%s\"", func_name)
 	}
@@ -144,15 +143,19 @@ func (r *Run) exec_expr(expr interface{}, ctx []interface{}) {
     switch reflect.TypeOf(call).Kind() {
       case reflect.Slice, reflect.Array: call = call.([]interface{})[0]
     }
-		_, err := indirect_func(r, call.(string), expr_copy)
-		fmt.Println(err)
+		res, err := indirect_func(r, call.(string), expr_copy)
+    if res != nil {
+    } else if err != nil {
+
+    }
   }
 
   fmt.Println(expr, name, expr_type, opcode, call)
 }
 
-func (r *Run) each_pick (args []interface{}) {
-	fmt.Println(args)
+func (r *Run) Each_pick (args []interface{}) {
+	fmt.Println(len(args))
+  fmt.Println(args)
 }
 
 func (r *Run) cmp_type (expr interface{}) string {
