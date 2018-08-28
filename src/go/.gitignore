@@ -1,0 +1,6 @@
+/build/
+/lib/
+/node_modules/
+/npm/
+/package*
+/testml-*
