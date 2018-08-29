@@ -5,6 +5,7 @@ import "os"
 import "encoding/json"
 import "reflect"
 import "io/ioutil"
+import "regexp"
 
 type Run struct {
   browser bool
@@ -14,6 +15,7 @@ type Run struct {
   version string
   code    interface{}
   data    string
+  vars    map[string]interface{}
   vtable  map[string]interface{} //*Vtable
 }
 
@@ -116,11 +118,11 @@ func (r *Run) exec(expr []string) {
   r.exec_expr(expr[0], nil)
 }
 
-func (r *Run) indirect(func_name string, params ...interface{}) (out []reflect.Value, err error) {
+func (r *Run) indirect(func_name string, params ...interface{}) (out []reflect.Value) {
 	class_val := reflect.ValueOf(r)
 	meth := class_val.MethodByName(func_name)
 	if !meth.IsValid() {
-			return make([]reflect.Value, 0), fmt.Errorf("Method not found \"%s\"", func_name)
+			return nil //fmt.Errorf("Method not found \"%s\"", func_name)
 	}
 	in := make([]reflect.Value, len(params))
 	for i, param := range params {
@@ -130,7 +132,7 @@ func (r *Run) indirect(func_name string, params ...interface{}) (out []reflect.V
 	return
 }
 
-func (r *Run) exec_expr(expr interface{}, ctx []interface{}) {
+func (r *Run) exec_expr(expr interface{}, ctx []interface{}) (interface{}) {
   expr_type := r.cmp_type(expr)
   if expr_type != "expr" {
     //return []interface{ expr }
@@ -139,18 +141,48 @@ func (r *Run) exec_expr(expr interface{}, ctx []interface{}) {
   name, expr_copy := expr_copy[0], expr_copy[1:]
   opcode := name
   call := r.vtable[opcode.(string)]
+  var ret interface{}
   if call != nil {
     switch reflect.TypeOf(call).Kind() {
       case reflect.Slice, reflect.Array: call = call.([]interface{})[0]
     }
-		res, err := r.indirect(call.(string), expr_copy)
+		res := r.indirect(call.(string), expr_copy)
     if res != nil {
-    } else if err != nil {
+    } else {
 
+    }
+  } else {
+    for i := len(expr_copy)/2-1; i >= 0; i-- {
+      opp := len(expr_copy)-1-i
+      expr_copy[i], expr_copy[opp] = expr_copy[opp], expr_copy[i]
+    }
+    expr_copy := append(expr_copy, ctx)
+    if val, ok := r.vars["name"]; ok {
+      if len(expr_copy) > 0 {
+        if r.cmp_type(val) == "func" {
+          ret = r.Exec_func(val, expr_copy)
+        } else {
+          return "" //die "variable name has args but is not a func"
+        }
+      } else {
+        ret = val
+      }
+    } else if regexp.MustCompile("^[a-z]").MatchString(name.(string)) {
+      ret = r.indirect("Call-bridge", expr_copy)
+    } else if regexp.MustCompile("^[A-Z]").MatchString(name.(string)) {
+      ret = r.indirect("Call-stdlib", expr_copy)
+    } else {
+      return "";
     }
   }
 
   fmt.Println(expr, name, expr_type, opcode, call)
+  return ret
+}
+
+func (r *Run) Exec_func (v interface{}, args []interface{}) (interface{}) {
+  fmt.Println("Exec_func")
+  return nil
 }
 
 func (r *Run) Each_pick (args []interface{}) {
