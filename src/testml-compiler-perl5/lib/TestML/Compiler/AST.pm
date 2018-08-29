@@ -1,5 +1,3 @@
-use v5.10;
-
 package TestML::Compiler::AST;
 
 # use JSON::PP; sub JJJ {die encode_json [@_]}
@@ -505,7 +503,7 @@ sub make_point {
     $self->point->{$name} = $value;
   }
 
-  my $transforms = { map {($_, 1)} split '', $transform_expr // '' };
+  my $transforms = { map {($_, 1)} split '', $transform_expr || '' };
 
   $self->transforms->{$name} = $transform_expr
     unless $inherit;
