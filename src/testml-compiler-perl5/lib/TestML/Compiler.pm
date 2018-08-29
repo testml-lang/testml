@@ -38,7 +38,7 @@ sub new {
 
 sub compile {
   my ($self, $testml_input, $testml_file) = @_;
-  $testml_file //= '-';
+  $testml_file = '-' unless defined $testml_file;
 
   if ($ENV{TESTML_COMPILER_GRAMMAR_PRINT}) {
     my $grammar = TestML::Compiler::DevGrammar->new;

@@ -128,14 +128,12 @@ export-testml-vars() {
 }
 
 set-testml-lib-vars() {
-  local dir=
-  if [[ $TESTML_FILE =~ (^.*)/testml/ ]]; then
-    dir=":${BASH_REMATCH[1]}"
-  fi
-  TESTML_LIB="${TESTML_LIB:+$TESTML_LIB:}$TESTML_DIR$dir"
+  TESTML_LIB="${TESTML_LIB:+$TESTML_LIB:}$TESTML_DIR"
+
   if [[ $TESTML_LANG == 'perl6' ]]; then
     TESTML_LIB=${TESTML_LIB//:/,}
   fi
+
   export TESTML_LIB
 
   export TESTML_ROOT_LIB="$TESTML_ROOT/src/$TESTML_LANG/lib"

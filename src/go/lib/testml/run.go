@@ -217,26 +217,7 @@ func flatten(arr []interface{}) (r []interface{}) {
   }
 
   return
-//  return interface{}
-//  switch reflect.TypeOf(arr) {
-//  case []int:
-//    acc = append(acc, v...)
-//  case int:
-//    acc = append(acc, v)
-//  case []interface{}:
-//    for i := range v {
-//      acc, err = doFlatten(acc, v[i])
-//      if err != nil {
-//        return nil, errors.New("not int or []int given")
-//      }
-//    }
-//  default:
-//    return nil, errors.New("not int given")
-//  }
-//
-//  return acc, nil
 }
-
 
 func (r *Run) cmp_type (expr interface{}) string {
   if expr == nil {

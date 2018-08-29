@@ -26,6 +26,7 @@ sub prove {
 sub run_command {
   my ($self, $command) = @_;
 
+  $ENV{LANG} = 'C';
   $ENV{TESTML_LIB} = 'src/perl5/test';
   _clean capture_merged {
     system "$command";

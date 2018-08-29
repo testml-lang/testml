@@ -18,12 +18,20 @@ export HELP
 export PATH := $(PWD)/bin:$(PWD)/src/testml-compiler-perl5/bin:$(PATH)
 
 # All the current support languages:
-LANG_ALL := \
-    coffee \
-    node \
-    perl5 \
-    perl6 \
-    python \
+ifeq ($(shell which perl),)
+    $(error perl(5) is a minimum requirement for TestML development)
+endif
+ifneq ($(shell which node),)
+    LANG_ALL += coffee
+    LANG_ALL += node
+endif
+LANG_ALL += perl5
+ifneq ($(shell which perl6),)
+    LANG_ALL += perl6
+endif
+ifneq ($(shell which python),)
+    LANG_ALL += python
+endif
 
 # New language runtimes in progress:
 LANG_NEW := \
@@ -60,6 +68,7 @@ WORK := \
     talk/2018-lapm \
     talk/2018-openwest \
     talk/2018-tpc \
+    talk/2018-tpceu \
     testml/compiler-tml \
     testml/cli-tml \
     testml/runtime-tml \
@@ -99,7 +108,9 @@ test-compiler-perl5: src/testml-compiler-perl5
 	cd $<; make test j=$(j)
 
 test-compiler-coffee: src/testml-compiler-coffee
+ifneq ($(shell which node),)
 	cd $<; make test j=$(j)
+endif
 
 # Test the output of various testml CLI invocations:
 test-cli: ext

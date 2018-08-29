@@ -130,7 +130,7 @@ sub exec {
 sub exec_expr {
   my ($self, $expr, $context) = @_;
 
-  $context //= [];
+  $context = [] unless defined $context;
 
   return [$expr] unless $self->type($expr) eq 'expr';
 
@@ -171,7 +171,7 @@ sub exec_expr {
 
 sub exec_func {
   my ($self, $function, $args) = @_;
-  $args //= [];
+  $args = [] unless defined $args;
 
   my ($op, $signature, $statements) = @$function;
 
@@ -600,7 +600,7 @@ sub get_method {
 
 sub get_label {
   my ($self, $label_expr) = @_;
-  $label_expr //= '';
+  $label_expr = '' unless defined $label_expr;
 
   my $label = $self->exec($label_expr);
 
@@ -655,14 +655,16 @@ sub transform {
 
 sub transform1 {
   my ($self, $name, $label) = @_;
-  my $value = $self->{vars}{$name} // return '';
+  my $value = $self->{vars}{$name};
+  return '' unless defined $value;
   $self->transform($value, $label);
 }
 
 sub transform2 {
   my ($self, $name, $label) = @_;
   return '' unless $self->{block};
-  my $value = $self->{block}{point}{$name} // return '';
+  my $value = $self->{block}{point}{$name};
+  return '' unless defined $value;
   $self->transform($value, $label);
 }
 

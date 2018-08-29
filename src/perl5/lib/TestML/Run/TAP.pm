@@ -3,10 +3,6 @@ package TestML::Run::TAP;
 
 use base 'TestML::Run';
 
-use Test::Builder;
-
-# use XXX;
-
 sub run {
   my ($class, $file) = @_;
   $class->new->from_file($file)->test;
@@ -16,8 +12,6 @@ sub run {
 sub new {
   my ($class, @params) = @_;
   my $self = $class->SUPER::new(@params);
-
-  $self->{tap} = Test::Builder->new;
 
   return $self;
 }
@@ -32,15 +26,13 @@ sub testml_begin {
 sub testml_end {
   my ($self) = @_;
 
-  $self->{tap}->done_testing
+  $self->tap_done
     unless $self->{planned};
 }
 
 sub testml_eq {
   my ($self, $got, $want, $label) = @_;
   $self->check_plan;
-  local($SIG{__WARN__}) = sub {$self->{tap}->diag(@_) unless $_[0] =~ /^Wide/};
-
 
   if ($got ne $want and
       $want =~ /\n/ and (
@@ -50,7 +42,7 @@ sub testml_eq {
   ) {
     require Text::Diff;
 
-    $self->{tap}->ok(0, $label ? ($label) : ());
+    $self->tap_ok(0, $label ? ($label) : ());
 
     my $diff = Text::Diff::diff(
       \$want,
@@ -61,50 +53,47 @@ sub testml_eq {
       }
     );
 
-    $self->{tap}->diag($diff);
+    $self->tap_diag($diff);
   }
 
   else {
-    $self->{tap}->is_eq($got, $want, $label ? ($label) : ());
+    $self->tap_is($got, $want, $label ? ($label) : ());
   }
 }
 
 sub testml_like {
   my ($self, $got, $want, $label) = @_;
   $self->check_plan;
-  local($SIG{__WARN__}) = sub {$self->{tap}->diag(@_) unless $_[0] =~ /^Wide/};
 
-  $self->{tap}->like($got, $want, $label);
+  $self->tap_like($got, $want, $label);
 }
 
 sub testml_has {
   my ($self, $got, $want, $label) = @_;
   $self->check_plan;
-  local($SIG{__WARN__}) = sub {$self->{tap}->diag(@_) unless $_[0] =~ /^Wide/};
 
   if (index($got, $want) != -1) {
-    $self->{tap}->ok(1, $label);
+    $self->tap_ok(1, $label);
   }
   else {
-    $self->{tap}->ok(0, $label);
-    $self->{tap}->diag("     this string: $got\n  doesn't contain: $want");
+    $self->tap_ok(0, $label);
+    $self->tap_diag("     this string: $got\n  doesn't contain: $want");
   }
 }
 
 sub testml_list_has {
   my ($self, $got, $want, $label) = @_;
   $self->check_plan;
-  local($SIG{__WARN__}) = sub {$self->{tap}->diag(@_) unless $_[0] =~ /^Wide/};
 
   for my $str (@$got) {
     next if ref $str;
     if ($str eq $want) {
-      $self->{tap}->ok(1, $label);
+      $self->tap_ok(1, $label);
       return;
     }
   }
-  $self->{tap}->ok(0, $label);
-  $self->{tap}->diag("     this list: @$got\n  doesn't contain: $want");
+  $self->tap_ok(0, $label);
+  $self->tap_diag("     this list: @$got\n  doesn't contain: $want");
 }
 
 sub check_plan {
@@ -115,8 +104,107 @@ sub check_plan {
 
   if (my $plan = $self->{vars}{Plan}) {
     $self->{planned} = 1;
-    $self->{tap}->plan(tests => $plan);
+    $self->tap_plan($plan);
   }
+}
+
+sub tap_plan {
+  my ($self, $plan) = @_;
+  $self->out("1..$plan");
+}
+
+sub tap_pass {
+  my ($self, $label) = @_;
+  $label = '' unless defined $label;
+  $label = " - $label" if $label;
+  $self->out("ok ${\ ++$self->{count}}$label");
+  return;
+}
+
+sub tap_fail {
+  my ($self, $label) = @_;
+  $label = '' unless defined $label;
+  $label = " - $label" if $label;
+  $self->out("not ok ${\ ++$self->{count}}$label");
+  return;
+}
+
+sub tap_ok {
+  my ($self, $ok, $label) = @_;
+  if ($ok) {
+    $self->tap_pass($label);
+  }
+  else {
+    $self->tap_fail($label);
+  }
+}
+
+sub tap_is {
+  my ($self, $got, $want, $label, $diff) = @_;
+  $diff = 0 unless defined $diff;
+  my $ok = $got eq $want;
+  if ($ok) {
+    $self->tap_pass($label);
+  }
+  else {
+    $self->tap_fail($label);
+    $self->show_error('         got:', $got, '    expected:', $want, $label);
+  }
+}
+
+sub tap_like {
+  my ($self, $got, $want, $label) = @_;
+  if ($got =~ $want) {
+    $self->tap_pass($label);
+  }
+  else {
+    $self->tap_fail($label);
+  }
+}
+
+sub tap_diag {
+  my ($self, $msg) = @_;
+  my $str = $msg;
+  $str =~ s/^/# /mg;
+  $self->err($str);
+}
+
+sub tap_done {
+  my ($self) = @_;
+  $self->out("1..${\ $self->{count}}");
+}
+
+sub show_error {
+  my ($self, $got_prefix, $got, $want_prefix, $want, $label) = @_;
+  if ($label) {
+    $self->err("#   Failed test '$label'");
+  }
+  else {
+    $self->err("#   Failed test");
+  }
+
+  if (not ref $got) {
+    $got = "'$got'"
+  }
+  $self->diag("$got_prefix $got");
+
+  if (not ref $want) {
+    $want = "'{$want}'"
+  }
+  $self->diag("$want_prefix $want");
+}
+
+sub out {
+  my ($self, $str) = @_;
+  local $| = 1;
+  binmode STDOUT, ':utf8';
+  print STDOUT "$str$/";
+}
+
+sub err {
+  my ($self, $str) = @_;
+  binmode STDERR, ':utf8';
+  print STDERR "$str$/";
 }
 
 1;

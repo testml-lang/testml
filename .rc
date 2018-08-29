@@ -2,11 +2,11 @@
   TESTML_ROOT="$0" ||
   TESTML_ROOT="${BASH_SOURCE[0]}"
 
-TESTML_ROOT="$(cd "$(dirname "$TESTML_ROOT")" && pwd)"
+TESTML_ROOT=$(cd "$(dirname "$TESTML_ROOT")" && pwd)
 
 if [[ ! -e "$TESTML_ROOT/ext" ]]; then
   (
-    cd $TESTML_ROOT
+    cd "$TESTML_ROOT" || exit $?
     make ext &>/dev/null
   )
 fi
