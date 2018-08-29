@@ -14,7 +14,7 @@ type Run struct {
   file    string
   version string
   code    interface{}
-  data    string
+  data    interface{}
   vars    map[string]interface{}
   vtable  map[string]interface{} //*Vtable
 }
@@ -185,10 +185,58 @@ func (r *Run) Exec_func (v interface{}, args []interface{}) (interface{}) {
   return nil
 }
 
-func (r *Run) Each_pick (args []interface{}) {
-	fmt.Println(len(args))
-  fmt.Println(args)
+func (r *Run) Each_pick (args ...[]interface{}) {
+	fmt.Println("args:", args)
+  flat_data := r.data
+  if flat_data != nil {
+    if reflect.TypeOf(flat_data).Kind() == reflect.Slice {
+      flat_data = flatten(flat_data.([]interface{}))
+    } else {
+      flat_data = []interface{}{flat_data}
+    }
+    for _, blk := range flat_data.([]interface{}) {
+      //r.Exec_expr([]interface{args, expr})
+      fmt.Println(blk)
+    }
+  }
+  //fmt.Println("flat:", flat_data)
 }
+
+func flatten(arr []interface{}) (r []interface{}) {
+  for _, val := range arr {
+    switch reflect.TypeOf(val).Kind() {
+      case reflect.Slice, reflect.Array:
+        fmt.Println("flattening: ", val)
+        for _, subval := range val.([]interface{}) {
+          fmt.Println("\t", subval)
+          r = append(r, subval)
+        }
+      default:
+        r = append(r, val)
+    }
+  }
+
+  return
+//  return interface{}
+//  switch reflect.TypeOf(arr) {
+//  case []int:
+//    acc = append(acc, v...)
+//  case int:
+//    acc = append(acc, v)
+//  case []interface{}:
+//    for i := range v {
+//      acc, err = doFlatten(acc, v[i])
+//      if err != nil {
+//        return nil, errors.New("not int or []int given")
+//      }
+//    }
+//  default:
+//    return nil, errors.New("not int given")
+//  }
+//
+//  return acc, nil
+}
+
 
 func (r *Run) cmp_type (expr interface{}) string {
   if expr == nil {
