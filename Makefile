@@ -13,10 +13,10 @@ update: clean
 	    grep '^\./[A-Z]' | \
 	    grep '\.pm' | \
 	    cpio -dump ../..
-	rm -fr lib
+	make clean
 
 clean:
-	rm -fr lib
+	rm -fr lib Module bin
 
 realclean: clean
 	rm -fr $(DIRS:%=%*)
