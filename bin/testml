@@ -124,7 +124,9 @@ source-testml-config() {
 }
 
 export-testml-vars() {
-  export TESTML_{BIN,BRIDGE,LANG,LIB,MODULE,PATH,RUN}
+  : "${TESTML_LANG_BIN:=$TESTML_LANG}"
+
+  export TESTML_{BIN,BRIDGE,LANG{,_BIN},LIB,MODULE,PATH,RUN}
 }
 
 set-testml-lib-vars() {

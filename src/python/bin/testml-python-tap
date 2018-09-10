@@ -6,7 +6,7 @@ set -e
 
 testml-run-file() {
   PYTHONPATH="$TESTML_ROOT_LIB:$TESTML_LIB${PYTHONPATH:+:$PYTHONPATH}" \
-    python3 -u \
+    "$TESTML_LANG_BIN" -u \
       -c "from $TESTML_MODULE import TestMLRunTAP; TestMLRunTAP.run('$1')"
 }
 
@@ -17,10 +17,11 @@ source-testml-config
 
 : "${TESTML_BIN:=testml-python-tap}"
 : "${TESTML_LANG:=python}"
+: "${TESTML_LANG_BIN:=python}"
 : "${TESTML_MODULE:=testml.run.tap}"
 : "${TESTML_BRIDGE:=testml-bridge}"
 
-export TESTML_{BIN,BRIDGE,LANG,LIB,MODULE,PATH,RUN}
+export TESTML_{BIN,BRIDGE,LANG{,_BIN},LIB,MODULE,PATH,RUN}
 
 testml_runner_sourced=true
 

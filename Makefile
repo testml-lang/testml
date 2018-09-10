@@ -29,9 +29,20 @@ LANG_ALL += perl5
 ifneq ($(shell which perl6),)
     LANG_ALL += perl6
 endif
-ifneq ($(shell which python),)
-    LANG_ALL += python
+ifneq ($(shell which python2),)
+    LANG_ALL += python2
+    found_python := ok
 endif
+ifneq ($(shell which python3),)
+    LANG_ALL += python3
+    found_python := ok
+endif
+ifeq ($(found_python),)
+    ifneq ($(shell which python),)
+	LANG_ALL += python
+    endif
+endif
+
 
 # New language runtimes in progress:
 LANG_NEW := \
@@ -96,6 +107,10 @@ test: test-runtime test-compiler test-cli
 
 # Run all the language specific runtime tests:
 test-runtime: $(TEST_ALL)
+
+# Run a specific language runtime test:
+test-runtime-python2 test-runtime-python3: src/python
+	TESTML_LANG_BIN=$(@:test-runtime-%=%) make -C $< test j=$(j)
 
 # Run a specific language runtime test:
 test-runtime-%: src/%
