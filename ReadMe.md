@@ -187,6 +187,7 @@ runtime tests:
 
 * CoffeeScript - Complete. Runs all features presented by the compiler.
 * JavaScript - Complete.
-* Perl(5) - Complete.
+* Perl 5 - Complete.
 * Perl 6 - Complete.
-* Python(2) - Complete.
+* Python 2 - Complete.
+* Python 3 - Complete.
