@@ -13,7 +13,11 @@ addons:
     - sourceline: 'deb https://dl.bintray.com/nxadm/rakudo-pkg-debs $(lsb_release -cs) main'
       key_url: 'http://keyserver.ubuntu.com/pks/lookup?search=0x379CE192D401AB61&op=get'
     packages:
-    - rakudo-pkg
+    - python
+    - python-six
+    - python3
+    - python3-six
+    - rakudo-pkg    # Perl 6
 
 install: []
 
