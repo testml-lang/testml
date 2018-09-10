@@ -75,12 +75,16 @@ class TestMLRunTAP(TestMLRun):
   def tap_pass(self, label):
     self.count += 1
     if label: label = ' - ' + label
-    print("ok %d%s" % (self.count, label.encode('utf-8')))
+    if sys.version_info < (3, 0):
+      label = label.encode('utf-8')
+    print("ok %d%s" % (self.count, label))
 
   def tap_fail(self, label):
     self.count += 1
     if label: label = ' - ' + label
-    print("not ok %d%s" % (self.count, label.encode('utf-8')))
+    if sys.version_info < (3, 0):
+      label = label.encode('utf-8')
+    print("not ok %d%s" % (self.count, label))
 
   def tap_ok(self, ok, label):
     if ok:
