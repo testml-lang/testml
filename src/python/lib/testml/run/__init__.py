@@ -3,7 +3,11 @@
 import json, os, re, sys
 
 from testml.util import *
-from six import string_types
+# basestring is python2, str is python3 only
+try:
+  basestring
+except NameError:
+  basestring = str
 
 class TestMLFunction():
   def __init__(self, func):
@@ -425,7 +429,7 @@ class TestMLRun:
     if type_ == 'list':
       if len(value) == 0:
         return 'none'
-      if isinstance(value[0], string_types):
+      if isinstance(value[0], basestring):
         return self.types.get(value[0]) or 'expr'
       else:
         type_ = self.types['groups'].get(type(value[0]).__name__)
@@ -454,7 +458,7 @@ class TestMLRun:
     if re.search(r'^(error|native)$', type_): return value[1]
     if type_ == 'func': return TestMLFunction(value)
     if type_ == 'regex':
-      if isinstance(value[1], string_types): return re.compile(value[1])
+      if isinstance(value[1], basestring): return re.compile(value[1])
       else: return value[1]
     if type_ == 'none': return self.Nil
     die("Can't uncook '%s'" % repr(value))

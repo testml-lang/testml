@@ -3,7 +3,11 @@
 import re, sys
 
 from testml.run import TestMLRun
-from six import string_types
+# basestring is python2, str is python3 only
+try:
+  basestring
+except NameError:
+  basestring = str
 
 
 class TestMLRunTAP(TestMLRun):
@@ -26,7 +30,7 @@ class TestMLRunTAP(TestMLRun):
   def testml_eq(self, got, want, label):
     self.check_plan()
 
-    if isinstance(want, string_types) and \
+    if isinstance(want, basestring) and \
       got != want and \
       re.search(r'\n', want) and (
         self.getv('Diff') or
@@ -106,14 +110,14 @@ class TestMLRunTAP(TestMLRun):
       else:
         print >> sys.stderr, "#   Failed test"
 
-      if isinstance(got, string_types):
+      if isinstance(got, basestring):
         got = re.sub(r'^', '# ', got)
         got = re.sub(r'^\#\ ', '', got)
         got = re.sub(r'\n$', "\n# ", got)
         got = "'%s'" % got
       print >> sys.stderr, "#          got: %s" % got
 
-      if isinstance(want, string_types):
+      if isinstance(want, basestring):
         want = re.sub(r'^', '# ', want)
         want = re.sub(r'^\#\ ', '', want)
         want = re.sub(r'\n$', "\n# ", want)
