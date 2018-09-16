@@ -1,6 +1,7 @@
 .precomp/
 *.pyc
 .testml/
+*.swp
 
 /compiler/
 /eg/

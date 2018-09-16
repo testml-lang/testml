@@ -89,7 +89,10 @@ method new(:$file='', :$testml={}, :$bridge, :$stdlib) {
 method from-file($file) {
   $!file = $file;
 
+  $!file.perl.say;
+  "from-file".say;
   my $testml = from-json slurp $!file;
+  say $testml.perl;
   ($!version, $!code, $!data) = $testml<testml code data>;
 
   self;

@@ -1,0 +1,146 @@
+---
+version: 0.0.27
+date:    Sun Jun 17 20:13:02 MDT 2018
+changes:
+- Test release
+---
+version: 0.0.26
+date:    Mon Jun 11 22:47:23 MDT 2018
+changes:
+- Change from () to <>
+---
+version: 0.0.25
+date:    Tue Jun  5 01:05:40 PDT 2018
+changes:
+- Some refactoring
+---
+version: 0.0.24
+date:    Sun Jun  3 23:17:15 PDT 2018
+changes:
+- User function calls with argument passing
+- More StdLib functions
+---
+version: 0.0.23
+date:    Sun Jun  3 08:19:50 PDT 2018
+changes:
+- Rework the entire type system internally
+---
+version: 0.0.22
+date:    Fri Jun  1 11:06:21 PDT 2018
+changes:
+- Hash index opcode changes to ":"
+- Support Plan variable for coffee-tap
+- Improve CLI invocations
+- Support (multiple) --eval= CLI options
+---
+version: 0.0.21
+date:    Wed May 30 11:51:29 PDT 2018
+changes:
+- Get all tests working with new pick compilation
+- Call a user defined function
+- Support top level function looping
+- More stdlib stuff and fix label interpolation bugs
+- Don't error if no bridge class exists
+- Support Error, Throw, Catch
+- Support hash lookups and hashes in bridge calls
+- Warn when using ONLY
+---
+version: 0.0.20
+date:    Mon May 28 12:15:58 PDT 2018
+changes:
+- Fix testml/run/mocha bug
+---
+version: 0.0.19
+date:    Mon May 28 11:43:42 PDT 2018
+changes:
+- Fix bad 0.0.18 release
+---
+version: 0.0.18
+date:    Mon May 28 10:20:04 PDT 2018
+changes:
+- Better test failure output
+---
+version: 0.0.17
+date:    Mon May 28 00:12:23 PDT 2018
+changes:
+- Fix bad 0.0.16 release
+---
+version: 0.0.16
+date:    Mon May 28 00:05:55 PDT 2018
+changes:
+- Add has (~~) assertion logic
+---
+version: 0.0.15
+date:    Sat May 26 15:31:48 PDT 2018
+changes:
+- Fix regression with Mocha
+---
+version: 0.0.14
+date:    Fri May 25 13:42:03 PDT 2018
+changes:
+- Added polymorphic == and =~ assertions
+---
+version: 0.0.13
+date:    Thu May 24 12:04:44 PDT 2018
+changes:
+- Adjust runtime for new list compilation
+---
+version: 0.0.12
+date:    Thu May 24 00:04:22 PDT 2018
+changes:
+- More stdlib
+---
+version: 0.0.11
+date:    Wed May 23 12:00:32 PDT 2018
+changes:
+- Support Label variable
+---
+version: 0.0.10
+date:    Tue May 22 15:09:53 PDT 2018
+changes:
+- Type stdlib function, and per language tests
+---
+version: 0.0.9
+date:    Sun May 20 21:26:15 PDT 2018
+changes:
+- Support JS Mocha framework in browser usage
+---
+version: 0.0.8
+date:    Fri May 18 13:26:17 PDT 2018
+changes:
+- Refactoring and bug fixes
+---
+version: 0.0.7
+date:    Fri May 18 13:26:17 PDT 2018
+changes:
+- Fix bug in Diff
+---
+version: 0.0.6
+date:    Fri May 18 10:24:37 PDT 2018
+changes:
+- Diff support
+---
+version: 0.0.5
+date:    Thu May 17 14:09:12 PDT 2018
+changes:
+- Support dynamic labels
+---
+version: 0.0.4
+date:    Thu May 17 08:32:47 PDT 2018
+changes:
+- Polymorphic == assertions (strings and numbers so far)
+---
+version: 0.0.3
+date:    Tue May 15 11:17:19 PDT 2018
+changes:
+- Fix context bug in run class
+---
+version: 0.0.2
+date:    Mon May 14 15:30:34 PDT 2018
+changes:
+- Support in browser testing
+---
+version: 0.0.1
+date:    Wed May  9 08:04:21 PDT 2018
+changes:
+- First release
