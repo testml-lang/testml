@@ -1,8 +1,9 @@
 import sys
 import collections
+
 # basestring is python2, str is python3 only
 try:
-  basestring
+  basestring = basestring
 except NameError:
   basestring = str
 

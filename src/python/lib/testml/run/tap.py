@@ -3,11 +3,7 @@
 import re, sys
 
 from testml.run import TestMLRun
-# basestring is python2, str is python3 only
-try:
-  basestring
-except NameError:
-  basestring = str
+from testml.util import basestring
 
 
 class TestMLRunTAP(TestMLRun):

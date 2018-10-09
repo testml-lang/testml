@@ -3,11 +3,7 @@
 import json, os, re, sys
 
 from testml.util import *
-# basestring is python2, str is python3 only
-try:
-  basestring
-except NameError:
-  basestring = str
+from testml.util import basestring
 
 class TestMLFunction():
   def __init__(self, func):
