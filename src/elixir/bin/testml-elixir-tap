@@ -5,10 +5,10 @@
 set -e
 
 testml-run-file() {
-  set -x
+  # set -x
   PYTHONPATH="$TESTML_ROOT_LIB:$TESTML_LIB${PYTHONPATH:+:$PYTHONPATH}" \
     "$TESTML_LANG_BIN" \
-      run -e "TestML.Run.Tap.run"
+      run -e "TestML.Run.Tap.run('$1')"
 }
 
 [[ -n $TESTML_SOURCED ]] ||
