@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# shellcheck disable=1090,2034
+
+set -e
+
+testml-run-file() {
+  set -x
+  PYTHONPATH="$TESTML_ROOT_LIB:$TESTML_LIB${PYTHONPATH:+:$PYTHONPATH}" \
+    "$TESTML_LANG_BIN" \
+      run -e "TestML.Run.Tap.run"
+}
+
+[[ -n $TESTML_SOURCED ]] ||
+  source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
+
+source-testml-config
+
+: "${TESTML_BIN:=testml-python-tap}"
+: "${TESTML_LANG:=elixir}"
+: "${TESTML_LANG_BIN:=mix}"
+: "${TESTML_MODULE:=testml.run.tap}"
+: "${TESTML_BRIDGE:=testml-bridge}"
+
+export TESTML_{BIN,BRIDGE,LANG{,_BIN},LIB,MODULE,PATH,RUN}
+
+testml_runner_sourced=true
+
+[[ $0 != "${BASH_SOURCE[0]}" ]] || testml-run "$@"
+
