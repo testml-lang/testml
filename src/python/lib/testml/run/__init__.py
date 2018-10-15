@@ -16,34 +16,9 @@ class TestMLRun:
   Null = TestMLNull()
 
   vtable = {
-    '==': [
-      'assert_eq',
-      'assert_%1_eq_%2', {
-        'str,str': '',
-        'num,num': '',
-        'bool,bool': '',
-      }
-    ],
-
-    '~~': [
-      'assert_has',
-      'assert_%1_has_%2', {
-        'str,str': '',
-        'str,list': '',
-        'list,str': '',
-        'list,list': '',
-      }
-    ],
-
-    '=~': [
-      'assert_like',
-      'assert_%1_like_%2', {
-        'str,regex': '',
-        'str,list': '',
-        'list,regex': '',
-        'list,list': '',
-      }
-    ],
+    '==': 'assert_eq',
+    '~~': 'assert_has',
+    '=~': 'assert_like',
 
     '.'  : 'exec_dot',
     '%'  : 'each_exec',
@@ -132,7 +107,7 @@ class TestMLRun:
     if call:
       if is_list(call):
         call = call[0]
-      return_ = getattr(self, call)(*args)
+      ret = getattr(self, call)(*args)
 
     else:
       context_ = list(context)
@@ -145,20 +120,20 @@ class TestMLRun:
         if len(args):
           if self.type_(value) != 'func':
             die("Variable value has args but is not a function")
-          return_ = self.exec_func(value, args)
+          ret = self.exec_func(value, args)
         else:
-          return_ = value
+          ret = value
 
       elif re.search(r'^[a-z]', name):
-        return_ = self.call_bridge(name, args)
+        ret = self.call_bridge(name, args)
 
       elif re.search(r'^[A-Z]', name):
-        return_ = self.call_stdlib(name, args)
+        ret = self.call_stdlib(name, args)
 
       else:
         die("Can't resolve TestML function '%s'" % name)
 
-    return [] if return_ is self.Nil else [return_]
+    return [] if ret is self.Nil else [ret]
 
   def exec_func(self, func, args=[]):
     signature = func[1]
@@ -192,11 +167,11 @@ class TestMLRun:
       (lambda x: self.uncook(self.exec_(x))),
       list(args)))
 
-    return_ = call(*args)
+    ret = call(*args)
 
-    if return_ is None: return self.Nil
+    if ret is None: return self.Nil
 
-    return self.cook(return_)
+    return self.cook(ret)
 
   def call_stdlib(self, name, args):
     if not self.stdlib:
@@ -211,17 +186,17 @@ class TestMLRun:
       (lambda x: self.uncook(self.exec_(x))),
       list(args)))
 
-    return_ = call(*args)
+    ret = call(*args)
 
-    if return_ is None: return self.Nil
+    if ret is None: return self.Nil
 
-    return self.cook(return_)
+    return self.cook(ret)
 
   #----------------------------------------------------------------------------
   def assert_eq(self, left, right, label=''):
     self.vars['Got'] = got = self.exec_(left)
     self.vars['Want'] = want = self.exec_(right)
-    method = self.get_method('==', got, want)
+    method = self.get_method('assert_%s_eq_%s', got, want)
     getattr(self, method)(got, want, label)
 
   def assert_str_eq_str(self, got, want, label):
@@ -237,7 +212,7 @@ class TestMLRun:
   def assert_has(self, left, right, label=''):
     got = self.exec_(left)
     want = self.exec_(right)
-    method = self.get_method('~~', got, want)
+    method = self.get_method('assert_%s_has_%s', got, want)
     getattr(self, method)(got, want, label)
 
   def assert_str_has_str(self, got, want, label):
@@ -262,7 +237,7 @@ class TestMLRun:
   def assert_like(self, left, right, label=''):
     got = self.exec_(left)
     want = self.exec_(right)
-    method = self.get_method('=~', got, want)
+    method = self.get_method('assert_%s_like_%s', got, want)
     getattr(self, method)(got, want, label)
 
   def assert_str_like_regex(self, got, want, label):
@@ -460,21 +435,9 @@ class TestMLRun:
     die("Can't uncook '%s'" % repr(value))
 
   #----------------------------------------------------------------------------
-  def get_method(self, key, *args):
-    sig = []
-    for arg in args:
-      sig.append(self.type_(arg))
-    sig_str = ','.join(sig)
+  def get_method(self, pattern, *args):
+    method = pattern % (self.type_(args[0]), self.type_(args[1]))
 
-    entry = self.vtable.get(key)
-    name = entry[0]
-    pattern = entry[1]
-    vtable = entry[2]
-    method = vtable.get(name) or \
-      re.sub(r'%(\d+)', lambda x: sig[int(x.group(1)) - 1], pattern)
-
-    if not method:
-      die("Can't resolve %(name)s(%(sig_str)s)" % locals())
     if not getattr(self, method):
       die("Method '%(method)s' does not exist" % locals())
 

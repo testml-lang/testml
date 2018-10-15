@@ -169,7 +169,7 @@ test-docker-command:
 # TestML repository managment rules:
 #------------------------------------------------------------------------------
 
-ext/coffee ext/node:
+ext/coffee ext/node ext/python:
 	@# Nothing to do for $@
 
 # The `make work` command:

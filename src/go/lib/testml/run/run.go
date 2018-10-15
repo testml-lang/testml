@@ -48,17 +48,21 @@ func (self *Run) dispatch(
     case "==":  self.assert_eq(args[0], args[1], args[2:]...)
     case "~~":  self.assert_has(args[0], args[1], args[2:]...)
     case "=~":  self.assert_like(args[0], args[1], args[2:]...)
+
     case ".":   res = self.exec_dot(args...)
     case "%":   self.each_exec(args[0].([]any), args[1])
     case "%<>": self.each_pick(args[0].([]any), args[1].([]any))
     case "<>":  self.pick_exec(args[0].([]any), args[1])
     case "&":   self.call_func(args[0])
+
     case "\"":  self.get_str(args[0].(string))
     case ":":   self.get_hash(args[0], args[1].(string))
     case "[]":  self.get_list(args[0].([]any), args[1].(int))
     case "*":   res = self.get_point(args[0].(string))
+
     case "=":   self.set_var(args[0].(string), args[1])
     case "||=": self.or_set_var(args[0].(string), args[1])
+
     default:    ok = false
   }
   return

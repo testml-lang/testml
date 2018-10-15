@@ -17,32 +17,9 @@ use Scalar::Util;
 # use XXX;
 
 my $vtable = {
-  '=='    => [
-    'assert_eq',
-    'assert_%1_eq_%2', {
-      'str,str' => '',
-      'num,num' => '',
-      'bool,bool' => '',
-    },
-  ],
-  '~~'    => [
-    'assert_has',
-    'assert_%1_has_%2', {
-      'str,str' => '',
-      'str,list' => '',
-      'list,str' => '',
-      'list,list' => '',
-    },
-  ],
-  '=~'    => [
-    'assert_like',
-    'assert_%1_like_%2', {
-      'str,regex' => '',
-      'str,list' => '',
-      'list,regex' => '',
-      'list,list' => '',
-    },
-  ],
+  '=='    => 'assert_eq',
+  '~~'    => 'assert_has',
+  '=~'    => 'assert_like',
 
   '.'     => 'exec_dot',
   '%'     => 'each_exec',
@@ -135,12 +112,12 @@ sub exec_expr {
   return [$expr] unless $self->type($expr) eq 'expr';
 
   my @args = @$expr;
-  my @return;
+  my @ret;
   my $name = shift @args;
   my $opcode = $name;
   if (my $call = $vtable->{$opcode}) {
     $call = $call->[0] if ref($call) eq 'ARRAY';
-    @return = $self->$call(@args);
+    @ret = $self->$call(@args);
   }
   else {
     unshift @args, $_ for reverse @$context;
@@ -149,24 +126,24 @@ sub exec_expr {
         if (@args) {
           die "Variable '$name' has args but is not a function"
             unless $self->type($value) eq 'func';
-          @return = $self->exec_func($value, \@args);
+          @ret = $self->exec_func($value, \@args);
         }
         else {
-          @return = ($value);
+          @ret = ($value);
         }
     }
     elsif ($name =~ /^[a-z]/) {
-      @return = $self->call_bridge($name, @args);
+      @ret = $self->call_bridge($name, @args);
     }
     elsif ($name =~ /^[A-Z]/) {
-      @return = $self->call_stdlib($name, @args);
+      @ret = $self->call_stdlib($name, @args);
     }
     else {
       die "Can't resolve TestML function '$name'";
     }
   }
 
-  return [@return];
+  return [@ret];
 }
 
 sub exec_func {
@@ -211,11 +188,11 @@ sub call_bridge {
 
   @args = map {$self->uncook($self->exec($_))} @args;
 
-  my @return = $self->{bridge}->$call(@args);
+  my @ret = $self->{bridge}->$call(@args);
 
-  return unless @return;
+  return unless @ret;
 
-  $self->cook($return[0]);
+  $self->cook($ret[0]);
 }
 
 sub call_stdlib {
@@ -240,7 +217,7 @@ sub assert_eq {
   my ($self, $left, $right, $label) = @_;
   my $got = $self->{vars}{Got} = $self->exec($left);
   my $want = $self->{vars}{Want} = $self->exec($right);
-  my $method = $self->get_method('==', $got, $want);
+  my $method = $self->get_method('assert_%s_eq_%s', $got, $want);
   $self->$method($got, $want, $label);
   return;
 }
@@ -265,7 +242,7 @@ sub assert_has {
   my ($self, $left, $right, $label) = @_;
   my $got = $self->exec($left);
   my $want = $self->exec($right);
-  my $method = $self->get_method('~~', $got, $want);
+  my $method = $self->get_method('assert_%s_has_%s', $got, $want);
   $self->$method($got, $want, $label);
   return;
 }
@@ -303,7 +280,7 @@ sub assert_like {
   my ($self, $left, $right, $label) = @_;
   my $got = $self->exec($left);
   my $want = $self->exec($right);
-  my $method = $self->get_method('=~', $got, $want);
+  my $method = $self->get_method('assert_%s_like_%s', $got, $want);
   $self->$method($got, $want, $label);
   return;
 }
@@ -578,21 +555,10 @@ sub uncook {
 
 #------------------------------------------------------------------------------
 sub get_method {
-  my ($self, $key, @args) = @_;
-  my @sig = ();
-  for my $arg (@args) {
-    push @sig, $self->type($arg);
-  }
-  my $sig_str = join ',', @sig;
+  my ($self, $pattern, @args) = @_;
 
-  my $entry = $vtable->{$key};
-  my ($name, $pattern, $vtable) = @$entry;
-  my $method = $vtable->{$sig_str} || do {
-    $pattern =~ s/%(\d+)/$sig[$1 - 1]/ge;
-    $pattern;
-  };
+  my $method = sprintf $pattern, map $self->type($_), @args;
 
-  die "Can't resolve $name($sig_str)" unless $method;
   die "Method '$method' does not exist" unless $self->can($method);
 
   return $method;

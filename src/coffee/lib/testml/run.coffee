@@ -4,6 +4,7 @@ TestML.env = global?.process?.env || {}
 
 require 'ingy-prelude' if TestML.env['TESTML_DEVEL']
 lodash = require 'lodash'
+util = require 'util'
 
 TestMLFunction = class
   constructor: (@func)->
@@ -11,31 +12,9 @@ TestMLFunction = class
 module.exports =
 class TestML.Run
   @vtable:
-    '==': [
-      'assert_eq',
-      'assert_%1_eq_%2',
-        'str,str': ''
-        'num,num': ''
-        'bool,bool': ''
-    ]
-
-    '~~': [
-      'assert_has',
-      'assert_%1_has_%2',
-        'str,str': ''
-        'str,list': ''
-        'list,str': ''
-        'list,list': ''
-    ]
-
-    '=~': [
-      'assert_like',
-      'assert_%1_like_%2',
-        'str,regex': ''
-        'str,list': ''
-        'list,regex': ''
-        'list,list': ''
-    ]
+    '==': 'assert_eq'
+    '~~': 'assert_has',
+    '=~': 'assert_like',
 
     '.'  : 'exec_dot'
     '%'  : 'each_exec'
@@ -88,7 +67,7 @@ class TestML.Run
 
     { testml,
       @code,
-      @data
+      @data,
     } = testml
 
     @version = testml
@@ -128,31 +107,29 @@ class TestML.Run
 
     opcode = name = args.shift()
     if call = @constructor.vtable[opcode]
-      call = call[0] if _.isArray call
-      # Might need to pass context to => calls here.
-      return_ = @[call](args...)
+      ret = @[call](args...)
 
     else
-      args.unshift (_.reverse context)...
+      args.unshift context...
 
       if (value = @vars[name])?
         if args.length
           die "Variable '#{name}' has args but is not a function" \
             unless @type value == 'func'
-          return_ = @exec_func value, args
+          ret = @exec_func value, args
         else
-          return_ = value
+          ret = value
 
       else if name.match /^[a-z]/
-        return_ = @call_bridge name, args
+        ret = @call_bridge name, args
 
       else if name.match /^[A-Z]/
-        return_ = @call_stdlib name, args
+        ret = @call_stdlib name, args
 
       else
         throw "Can't resolve TestML function '#{name}'"
 
-    return if return_ == undefined then [] else [return_]
+    return if ret == undefined then [] else [ret]
 
   exec_func: ([op, signature, statements], args=[])->
     if signature.length > 1 and args.length == 1 and @type(args) == 'list'
@@ -177,7 +154,7 @@ class TestML.Run
     throw "Unknown TestML Standard Library function: '#{name}'" \
       unless @stdlib[call]
 
-    args = _.map args, (x)=> @uncook @exec x
+    args = _.map args, (expr)=> @uncook @exec expr
 
     @cook @stdlib[call](args...)
 
@@ -188,19 +165,20 @@ class TestML.Run
     throw "Can't find bridge function: '#{name}'" \
       unless @bridge[call]
 
-    args = _.map args, (x)=> @uncook @exec x
+    args = _.map args, (expr)=> @uncook @exec expr
 
-    return_ = @bridge[call](args...)
+    ret = @bridge[call](args...)
 
-    return unless return_?
+    return unless ret?
 
-    @cook return_
+    @cook ret
 
   #----------------------------------------------------------------------------
   assert_eq: (left, right, label)->
+    # [ '.', [ '*', 'a' ], [ 'add', [ '*', 'b' ] ] ]
     @vars.Got = got = @exec left
     @vars.Want = want = @exec right
-    method = @get_method '==', got, want
+    method = @get_method 'assert_%s_eq_%s', got, want
     @[method] got, want, label
     return
 
@@ -217,7 +195,7 @@ class TestML.Run
   assert_has: (left, right, label)->
     got = @exec left
     want = @exec right
-    method = @get_method '~~', got, want
+    method = @get_method 'assert_%s_has_%s', got, want
     @[method] got, want, label
     return
 
@@ -243,7 +221,7 @@ class TestML.Run
   assert_like: (left, right, label)->
     got = @exec left
     want = @exec right
-    method = @get_method '=~', got, want
+    method = @get_method 'assert_%s_like_%s', got, want
     @[method] got, want, label
     return
 
@@ -410,7 +388,7 @@ class TestML.Run
           throw "Bad TestML internal value: '#{name}'"
 
     return type \
-      or throw "Can't get type of #{require('util').inspect value}"
+      or throw "Can't get type of #{util.inspect value}"
 
   cook: (value)->
     return [] if value == undefined
@@ -436,21 +414,12 @@ class TestML.Run
         if typeof value[1] == 'string' then new RegExp value[1]
         else value[1]
       when type == 'none' then undefined
-      else throw "Can't uncook '#{require('util').inspect value}'"
+      else throw "Can't uncook '#{util.inspect value}'"
 
   #----------------------------------------------------------------------------
-  get_method: (key, args...)->
-    sig = []
-    for arg in args
-      sig.push @type arg
-    sig_str = sig.join ','
+  get_method: (pattern, args...)->
+    method = util.format pattern, @type(args[0]), @type(args[1])
 
-    entry = @constructor.vtable[key]
-    [name, pattern, vtable] = entry
-    method = vtable[sig_str] ||
-      pattern.replace /%(\d+)/g, (m, num)-> sig[num - 1]
-
-    throw "Can't resolve #{name}(#{sig_str})" unless method
     throw "Method '#{method}' does not exist" unless @[method]
 
     return method
@@ -478,16 +447,13 @@ class TestML.Run
     return string
 
   transform: (value, label)=>
+    if @type(value).match /^(?:list|hash)$/
+      return JSON.stringify(value[0]).replace /"/g, ''
+
     if label
-      switch
-        when @type(value).match /^(?:list|hash)$/ then \
-          JSON.stringify(value[0]).replace /"/g, ''
-        else String(value).replace /\n/g, '␤'
+      String(value).replace /\n/g, '␤'
     else
-      switch
-        when @type(value).match /^(?:list|hash)$/ then \
-          JSON.stringify(value[0]).replace /"/g, ''
-        else String value
+      String value
 
   transform1: (name, label)=>
     return '' unless (value = @vars[name])?

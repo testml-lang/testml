@@ -7,34 +7,9 @@ class TestML::Run {
 use JSON::Tiny;
 
 has $!vtable = {
-  '==' => [
-    'assert-eq',
-    'assert-%1-eq-%2', {
-      'str,str' => '',
-      'num,num' => '',
-      'bool,bool' => '',
-    }
-  ],
-  '~~' => [
-    'assert-has',
-    'assert-%1-has-%2', {
-      'str,str' => '',
-      'str,str' => '',
-      'str,list' => '',
-      'list,str' => '',
-      'list,list' => '',
-    }
-  ],
-  '=~' => [
-    'assert-like',
-    'assert-%1-like-%2', {
-      'str,str' => '',
-      'str,regex' => '',
-      'str,list' => '',
-      'list,regex' => '',
-      'list,list' => '',
-    }
-  ],
+  '==' => 'assert-eq',
+  '~~' => 'assert-has',
+  '=~' => 'assert-like',
 
   '.'    => 'exec-dot',
   '%'    => 'each-exec',
@@ -90,6 +65,7 @@ method from-file($file) {
   $!file = $file;
 
   my $testml = from-json slurp $!file;
+
   ($!version, $!code, $!data) = $testml<testml code data>;
 
   self;
@@ -116,12 +92,12 @@ method exec-expr($expr, $context=[]) {
   return [$expr] unless self.type($expr) eq 'expr';
 
   my @args = @$expr.clone;
-  my @return;
+  my @ret;
   my $name = @args.shift;
   my $opcode = $name;
   if my $call = $!vtable{$opcode} {
     $call = $call[0] if $call ~~ Array;
-    @return = self."$call"(|@args);
+    @ret = self."$call"(|@args);
   }
   else {
     @args.unshift($_) for $context.reverse;
@@ -130,24 +106,24 @@ method exec-expr($expr, $context=[]) {
       if (@args) {
         die "Variable '$name' has args but is not a function"
           unless self.type($value) eq 'func';
-        @return = self.exec-func($value, @args);
+        @ret = self.exec-func($value, @args);
       }
       else {
-        @return = ($value);
+        @ret = ($value);
       }
     }
     elsif $name ~~ /^<[a..z]>/ {
-      @return = self.call-bridge($name, |@args);
+      @ret = self.call-bridge($name, |@args);
     }
     elsif ($name ~~ /^<[A..Z]>/) {
-      @return = self.call-stdlib($name, |@args);
+      @ret = self.call-stdlib($name, |@args);
     }
     else {
       die "Can't resolve TestML function '$name'";
     }
   }
 
-  return @return;
+  return @ret;
 }
 
 method exec-func($function, $args is copy = []) {
@@ -183,11 +159,11 @@ method call-bridge($name, +@args) {
 
   @args = [ @args.map: { self.uncook(self.exec($_)) } ];
 
-  my @return = $!bridge."$call"(|@args);
+  my @ret = $!bridge."$call"(|@args);
 
-  return unless @return;
+  return unless @ret;
 
-  self.cook(@return[0]);
+  self.cook(@ret[0]);
 }
 
 method call-stdlib($name, +@args) {
@@ -207,7 +183,7 @@ method call-stdlib($name, +@args) {
 method assert-eq($left, $right, $label='') {
   my $got = $!vars<Got> = self.exec($left);
   my $want = $!vars<Want> = self.exec($right);
-  my $method = self.get-method('==', $got, $want);
+  my $method = self.get-method('assert-%s-eq-%s', $got, $want);
   self."$method"($got, $want, $label);
   return;
 }
@@ -228,7 +204,7 @@ method assert-bool-eq-bool($got, $want, $label) {
 method assert-has($left, $right, $label='') {
   my $got = self.exec($left);
   my $want = self.exec($right);
-  my $method = self.get-method('~~', $got, $want);
+  my $method = self.get-method('assert-%s-has-%s', $got, $want);
   self."$method"($got, $want, $label);
   return;
 }
@@ -263,7 +239,7 @@ method assert-list-has-list($got, $want, $label) {
 method assert-like($left, $right, $label='') {
   my $got = self.exec($left);
   my $want = self.exec($right);
-  my $method = self.get-method('=~', $got, $want);
+  my $method = self.get-method('assert-%s-like-%s', $got, $want);
   self."$method"($got, $want, $label);
   return;
 }
@@ -515,22 +491,9 @@ method uncook($value) {
 }
 
 #------------------------------------------------------------------------------
-method get-method($key, +@args) {
-  my @sig;
-  for |@args -> $arg {
-    push @sig, self.type($arg);
-  }
-  my $sig-str = @sig.join(',');
+method get-method($pattern, +@args) {
+  my $method = sprintf($pattern, @args.map: {self.type($_)});
 
-  my $entry = $!vtable{$key};
-  my ($name, $pattern, $vtable) = @$entry;
-  my $method = $!vtable{$sig-str};
-  if not $method {
-    $method = $pattern;
-    $method ~~ s:g/\%(\d+)/@sig[$0 - 1]/;
-  };
-
-  die "Can't resolve $name($sig-str)" unless $method;
   die "Method '$method' does not exist" unless self.can($method);
 
   return $method;

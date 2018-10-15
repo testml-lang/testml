@@ -1,6 +1,6 @@
 export TESTML_ROOT := $(shell cd $(ROOT) && pwd)
 
-EXT := $(ROOT)/ext
+EXT := $(ROOT)/ext/$(RUNTIME_LANG)
 NODE_MODULES := $(ROOT)/src/node_modules
 
 TESTML_COMPILER_LANG ?= perl5
@@ -34,7 +34,7 @@ test-tap:: $(EXT) $(TEST_TAP_DEPS)
 	TESTML_RUN=$(RUNTIME_LANG)-tap prove $(prove_opts) $(test)
 
 $(EXT):
-	make -C $(ROOT) ext
+	make -C $(ROOT) ext/$(RUNTIME_LANG)
 
 $(NODE_MODULES):
 	make -C $(ROOT) src/node_modules
