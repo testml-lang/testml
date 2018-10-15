@@ -104,7 +104,7 @@ P := %
 C := $(shell tput cols)
 line := printf "$P$Cs\n" | tr " " "-"
 define header
-	$(line) && \
+	@$(line) && \
 	$(figlet) "$(1)" && \
 	$(line)
 endef
@@ -133,7 +133,7 @@ test-runtime-python2 test-runtime-python3: src/python
 	TESTML_LANG_BIN=$(@:test-runtime-%=%) make -C $< test j=$(j)
 
 # Run a specific language runtime test:
-test-runtime-%: src/% ext/%
+test-runtime-%: src/% ext/% ext/perl5
 	$(call header,$@)
 	make -C $< test j=$(j)
 
