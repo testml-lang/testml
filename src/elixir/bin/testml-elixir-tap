@@ -6,7 +6,8 @@ set -e
 
 testml-run-file() {
   # set -x
-  PYTHONPATH="$TESTML_ROOT_LIB:$TESTML_LIB${PYTHONPATH:+:$PYTHONPATH}" \
+  MIX_QUIET=1 \
+  MIX_PATH="$TESTML_ROOT_LIB:$TESTML_LIB${MIX_PATH:+:$MIX_PATH}" \
     "$TESTML_LANG_BIN" \
       run -e "TestML.Run.Tap.run('$1')"
 }
@@ -16,10 +17,10 @@ testml-run-file() {
 
 source-testml-config
 
-: "${TESTML_BIN:=testml-python-tap}"
+: "${TESTML_BIN:=testml-elixir-tap}"
 : "${TESTML_LANG:=elixir}"
 : "${TESTML_LANG_BIN:=mix}"
-: "${TESTML_MODULE:=testml.run.tap}"
+: "${TESTML_MODULE:=TestML.Run.Tap}"
 : "${TESTML_BRIDGE:=testml-bridge}"
 
 export TESTML_{BIN,BRIDGE,LANG{,_BIN},LIB,MODULE,PATH,RUN}

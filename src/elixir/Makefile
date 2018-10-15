@@ -7,5 +7,12 @@ default:
 
 test: test-tap
 
+clean::
+	rm -f mix.lock
+	rm -fr _build
+
+realclean::
+	rm -fr deps
+
 #------------------------------------------------------------------------------
 include $(ROOT)/.makefile/runtime.mk
