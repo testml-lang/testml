@@ -58,10 +58,15 @@ defmodule TestML.Run do
   def test(%Run{} = self) do
     self.tester |> self.tester.__struct__.testml_begin
 
-    t = self.tester
-    # for _expr <- self.code do
-      t |> t.__struct__.testml_eq_fake
-    # end
+    self = %{self | tester:
+      Enum.reduce(
+        self.code,
+        self.tester,
+        fn _expr, tester ->
+          tester |> self.tester.__struct__.testml_eq_fake
+        end
+      )
+    }
 
     self.tester |> self.tester.__struct__.testml_end
 
