@@ -6,7 +6,8 @@ branches: {only: [master, travis]}
 
 env:
   global:
-  - export PATH="/opt/rakudo-pkg/bin:/opt/rakudo-pkg/share/perl6/site/bin:$PATH"
+  - export GOROOT=/usr/local/go
+  - export PATH="/usr/local/go/bin:/opt/rakudo-pkg/bin:/opt/rakudo-pkg/share/perl6/site/bin:$PATH"
 addons:
   apt:
     sources:
@@ -18,7 +19,10 @@ addons:
     - python3
     - rakudo-pkg    # Perl 6
 
-install: []
+install:
+- wget --quiet https://dl.google.com/go/go1.11.linux-amd64.tar.gz
+- tar xzf go1.11.linux-amd64.tar.gz
+- sudo mv go /usr/local/
 
 script:
 - git fetch --unshallow
