@@ -90,6 +90,19 @@ ALL_WORK := $(filter-out $(NODE_MODULES),$(ALL_WORK))
 # All the branches for `make status`:
 STATUS := $(ALL_WORK)
 
+figlet := figlet -w 200
+ifeq ($(shell type figlet 2>/dev/null),)
+    figlet := echo
+endif
+P := %
+C := $(shell tput cols)
+line := printf "$P$Cs\n" | tr " " "-"
+define header
+	$(line) && \
+	$(figlet) "$(1)" && \
+	$(line)
+endef
+
 #------------------------------------------------------------------------------
 default: status
 
@@ -110,29 +123,38 @@ test-runtime: $(TEST_ALL)
 
 # Run a specific language runtime test:
 test-runtime-python2 test-runtime-python3: src/python
+	$(call header,$@)
 	TESTML_LANG_BIN=$(@:test-runtime-%=%) make -C $< test j=$(j)
 
 # Run a specific language runtime test:
 test-runtime-%: src/%
+	$(call header,$@)
 	make -C $< test j=$(j)
 
 test-compiler: test-compiler-perl5 test-compiler-coffee
 
 # Run all the compiler tests:    note:(`make -C` doesn't work here)
 test-compiler-perl5: src/testml-compiler-perl5
+	$(call header,$@)
 	cd $<; make test j=$(j)
 
 test-compiler-coffee: src/testml-compiler-coffee
 ifneq ($(shell which node),)
+	$(call header,$@)
 	cd $<; make test j=$(j)
 endif
 
 # Test the output of various testml CLI invocations:
 test-cli: ext
+	$(call header,$@)
 	PERL5LIB=ext/perl5 test=$(test) prove -v -j$(j) $${test:-test/cli-tml/*.tml}
 
 # A special rule to run tests on travis-ci:
 test-travis: test
+
+test-docker:
+	docker build --tag=testml-test-docker .docker/test
+	docker run --tty --rm --volume "$(PWD):/test" testml-test-docker bash -c 'cd /test && make test'
 
 #------------------------------------------------------------------------------
 # TestML repository managment rules:
