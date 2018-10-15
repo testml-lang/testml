@@ -194,8 +194,11 @@ realclean: clean
 	git worktree prune
 	rm -fr compiler eg ext runtime talk testml
 	rm -fr $(NODE_MODULES)
+	make -C src/coffee $@
+	make -C src/go $@
 	make -C src/node $@
 	make -C src/perl5 $@
+	make -C src/perl6 $@
 	make -C src/python $@
 	make -C src/testml-compiler-coffee $@
 	make -C src/testml-compiler-perl5 $@
