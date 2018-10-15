@@ -7,7 +7,7 @@ set -e
 testml-run-file() {
   # set -x
   MIX_QUIET=1 \
-  MIX_PATH="$TESTML_ROOT_LIB:$TESTML_LIB${MIX_PATH:+:$MIX_PATH}" \
+  MIX_PATH="$TESTML_ROOT/ext/elixir/poison/lib;$TESTML_ROOT_LIB;$TESTML_LIB${MIX_PATH:+:$MIX_PATH}" \
     "$TESTML_LANG_BIN" \
       run -e "TestML.Run.Tap.run('$1')"
 }

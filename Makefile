@@ -24,6 +24,9 @@ endif
 ifneq ($(shell which node),)
     LANG_ALL += coffee
 endif
+ifneq ($(shell which mix),)
+    LANG_ALL += elixir
+endif
 ifneq ($(shell which go),)
     LANG_ALL += go
 endif
@@ -68,6 +71,7 @@ NODE_MODULES := src/node_modules
 
 EXT_ALL := \
     ext/cpp \
+    ext/elixir \
     ext/go \
     ext/perl5 \
     ext/perl6 \
@@ -196,6 +200,7 @@ realclean: clean
 	rm -fr $(NODE_MODULES)
 	make -C src/coffee $@
 	make -C src/go $@
+	make -C src/elixir $@
 	make -C src/node $@
 	make -C src/perl5 $@
 	make -C src/perl6 $@

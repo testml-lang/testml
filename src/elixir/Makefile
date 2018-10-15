@@ -1,11 +1,14 @@
 RUNTIME_LANG := elixir
 ROOT := ../..
-TEST_TAP_DEPS := $(ROOT)/src/node_modules
+TEST_TAP_DEPS := $(ROOT)/src/node_modules deps
 
 #------------------------------------------------------------------------------
 default:
 
 test: test-tap
+
+deps:
+	mix deps.get
 
 clean::
 	rm -f mix.lock
