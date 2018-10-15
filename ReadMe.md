@@ -84,7 +84,7 @@ this assertion:
 
 does the following steps:
 
-* For each block
+* For each data block
 * If the block has an `in` point and an `out` point
 * Call a "bridge" method named `transform` passing the `in` point's data
 * Compare the output of `transform` to the `out` point's data
@@ -168,7 +168,7 @@ npm install -g testml-compiler
 ```
 
 NOTE: To hack on TestML, you won't need to install the compiler because it's
-builtin to the repository. In fact, it's probably better not to, so you know
+built into the repository. In fact, it's probably better not to, so you know
 that you are using the latest code.
 
 ## Current Implementation Level
@@ -178,16 +178,23 @@ To implement TestML, 2 things need to happen:
 * Implement all the TestML language features into the TestML Compiler
 * Implement the Runtime in each programming language / test framework
 
-Currently the compiler is fully implemented in JavaScript and passing all the
-compiler tests. The JS compiler is too slow on the server and is being ported
-to something faster.
+Currently the testml-compiler is fully implemented in JavaScript (NodeJS and
+Browser) and passing all the compiler tests. The testml-compiler is also
+implemented in Perl5 (default for server side) because NodeJS startup time was
+too slow.
 
 The following language runtimes are all fully implemented and passing all the
 runtime tests:
 
-* CoffeeScript - Complete. Runs all features presented by the compiler.
+* CoffeeScript - Complete.
 * JavaScript - Complete.
 * Perl 5 - Complete.
 * Perl 6 - Complete.
 * Python 2 - Complete.
 * Python 3 - Complete.
+
+These languages are in progress:
+
+* C++ - On branch wip/cpp.
+* Elixir - On branch wip/elixir.
+* Go - On master. Passing test 000-040.

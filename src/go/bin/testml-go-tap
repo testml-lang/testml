@@ -1,0 +1,93 @@
+#!/bin/bash
+
+# shellcheck disable=1090,2034
+
+set -e
+
+testml-run-file() {
+  local build=$TESTML_CACHE
+  local lib=$TESTML_ROOT_LIB
+  local ext="$TESTML_ROOT/ext/go"
+  local testml_runner="$build/testml-run-tap"
+  local need_build=false
+  [[ -e $testml_runner ]] || need_build=true
+  [[ -z $TESTML_ALWAYS_COMPILE ]] || need_build=true
+
+  update-file \
+    "$lib/../src/testml-run-tap.go" \
+    "$build/src/testml-run-tap.go"
+  update-file \
+    "$lib/testml/run/run.go" \
+    "$build/src/testml/run/run.go"
+  update-file \
+    "$lib/testml/run/tap/tap.go" \
+    "$build/src/testml/run/tap/tap.go"
+  update-file \
+    "$lib/testml/stdlib/stdlib.go" \
+    "$build/src/testml/stdlib/stdlib.go"
+  update-file \
+    "$lib/testml/util/util.go" \
+    "$build/src/testml/util/util.go"
+  update-file \
+    "$TESTML_DIR/$TESTML_BRIDGE.go" \
+    "$build/src/testml/bridge/bridge.go"
+
+  update-dir \
+    "$ext/go-spew/spew" \
+    "$build/src/spew"
+
+  if $need_build; then
+    export GOPATH=$build
+
+    go build \
+      -o "$testml_runner" \
+      "$build/src/testml-run-tap.go" ||
+    {
+      local rc=$?
+      rm -f "$testml_runner"
+      return $rc
+    }
+
+    chmod +x "$testml_runner" || return $?
+  fi
+
+  $testml_runner "$TESTML_EXEC"
+}
+
+update-file() {
+  local src=$1
+  local dst=$2
+  [[ -e $src ]] ||
+    die "Can't find required file '$src'"
+  if [[ $src -nt $dst ]]; then
+    mkdir -p "${dst%/*}"
+    cp "$src" "$dst"
+    need_build=true
+  fi
+}
+
+update-dir() {
+  local src=$1
+  local dst=$2
+  [[ -e $src ]] ||
+    die "Can't find required file '$src'"
+  if [[ ! -d $dst ]]; then
+    mkdir -p "${dst%/*}"
+    cp -r "$src" "$dst"
+    need_build=true
+  fi
+}
+
+[[ -n $TESTML_SOURCED ]] ||
+  source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
+
+source-testml-config
+
+: "${TESTML_BIN:=testml-go-tap}"
+: "${TESTML_LANG:=go}"
+: "${TESTML_MODULE:=testml/run/tap}"
+: "${TESTML_BRIDGE:=testml-bridge}"
+
+export TESTML_{BIN,BRIDGE,LANG,LIB,MODULE,PATH,RUN}
+
+[[ $0 != "${BASH_SOURCE[0]}" ]] || testml-run "$@"

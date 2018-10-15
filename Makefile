@@ -23,6 +23,11 @@ ifeq ($(shell which perl),)
 endif
 ifneq ($(shell which node),)
     LANG_ALL += coffee
+endif
+ifneq ($(shell which go),)
+    LANG_ALL += go
+endif
+ifneq ($(shell which node),)
     LANG_ALL += node
 endif
 LANG_ALL += perl5
@@ -63,6 +68,7 @@ NODE_MODULES := src/node_modules
 
 EXT_ALL := \
     ext/cpp \
+    ext/go \
     ext/perl5 \
     ext/perl6 \
 
@@ -127,7 +133,7 @@ test-runtime-python2 test-runtime-python3: src/python
 	TESTML_LANG_BIN=$(@:test-runtime-%=%) make -C $< test j=$(j)
 
 # Run a specific language runtime test:
-test-runtime-%: src/%
+test-runtime-%: src/% ext/%
 	$(call header,$@)
 	make -C $< test j=$(j)
 
@@ -145,7 +151,7 @@ ifneq ($(shell which node),)
 endif
 
 # Test the output of various testml CLI invocations:
-test-cli: ext
+test-cli: ext/perl5
 	$(call header,$@)
 	PERL5LIB=ext/perl5 test=$(test) prove -v -j$(j) $${test:-test/cli-tml/*.tml}
 
@@ -153,17 +159,21 @@ test-cli: ext
 test-travis: test
 
 test-docker:
-	docker build --tag=testml-test-docker .docker/test
+	docker build --tag=testml-test-docker test/docker
 	docker run --tty --rm --volume "$(PWD):/test" testml-test-docker bash -c 'cd /test && make test'
+
+test-docker-command:
+	@echo 'docker run --tty --rm --volume "$$PWD:/test" testml-test-docker bash -c "cd /test && make test"'
 
 #------------------------------------------------------------------------------
 # TestML repository managment rules:
 #------------------------------------------------------------------------------
 
+ext/coffee ext/node:
+	@# Nothing to do for $@
+
 # The `make work` command:
 work: $(WORK)
-
-ext: $(EXT_ALL)
 
 # worktree add a branch into a subdir:
 $(ALL_WORK):
