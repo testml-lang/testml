@@ -103,7 +103,7 @@ set-testml-vars() {
   [[ -n $TESTML_CACHE ]] ||
     TESTML_CACHE="$(abs-dir-path "$TESTML_INPUT")/.testml"
   export TESTML_CACHE
-  export TESTML_EXEC="$TESTML_CACHE/$TESTML_FILENAME.json"
+  export TESTML_EXEC="$TESTML_CACHE/$TESTML_FILENAME.lingy"
 }
 
 source-testml-config() {
