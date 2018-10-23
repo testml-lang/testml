@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+# shellcheck disable=1090,2034,2153
+
+set -e
+
+testml-run-file() {
+  source "$TESTML_ROOT_LIB/testml/run.bash"
+  source "$TESTML_ROOT_LIB/testml/run/tap.bash"
+
+  if [[ -f $TESTML_DIR/$TESTML_BRIDGE.bash ]]; then
+    source "$TESTML_DIR/$TESTML_BRIDGE.bash"
+  fi
+
+  TESTML_EXEC_BASH=${TESTML_EXEC%.lingy}.bash
+  TESTML_ROOT_BIN=${TESTML_ROOT_LIB%lib}bin
+
+  if [[ $TESTML_EXEC -nt $TESTML_EXEC_BASH ]]; then
+    "$TESTML_ROOT_BIN/lingy-to-bash" < "$TESTML_EXEC" \
+      > "$TESTML_EXEC_BASH"
+  fi
+  source "$TESTML_EXEC_BASH"
+
+  TestML.main
+}
+
+[[ -n $TESTML_SOURCED ]] ||
+  source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
+
+source-testml-config
+
+: "${TESTML_BIN:=testml-bash-tap}"
+: "${TESTML_LANG:=bash}"
+: "${TESTML_MODULE:=}"
+: "${TESTML_BRIDGE:=testml-bridge}"
+
+[[ $0 != "${BASH_SOURCE[0]}" ]] ||
+  testml-run "$@"

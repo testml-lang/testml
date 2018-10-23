@@ -40,7 +40,7 @@ $(NODE_MODULES):
 	make -C $(ROOT) src/node_modules
 
 clean::
-	rm -fr $(ROOT)/test/run-tml/.testml
+	rm -fr $(ROOT)/test/runtime-tml/.testml
 	find . -type f | grep -E '\.(swp|swo)$$' | xargs rm -f
 
 realclean:: clean

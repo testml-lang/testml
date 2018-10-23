@@ -1,0 +1,211 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use JSON::PP;
+use IO::All;
+
+use XXX -with => 'YAML::XS';
+
+main(@ARGV);
+
+our ($out, $i, $var);
+
+sub main {
+    my ($json_file) = @_;
+
+    my $json = -t STDIN
+        ? io($json_file)->all
+        : io('-')->all;
+
+    my $ast = decode_json $json;
+
+    print lingy_to_bash($ast);
+}
+
+sub lingy_to_bash {
+    my ($ast) = @_;
+    make_code($ast);
+    make_data($ast);
+    make_bash($ast);
+}
+
+sub make_code {
+    my ($ast) = @_;
+    $out = {
+        code => {
+            stmt => [],
+        },
+    };
+
+    $i = 0;
+    for my $stmt (@{$ast->{code}}) {
+        $i++;
+        push @{$out->{code}{stmt}}, make_stmt($stmt);
+    }
+}
+
+sub make_stmt {
+    my ($ast) = @_;
+    my $bash = '';
+    if ($ast->[0] eq '%<>') {
+        my ($each, $pick, $assert) = @$ast;
+        my ($op, $lexpr, $rexpr, $label) = @$assert;
+        $label //= '';
+
+        my $picks = join ' ', map "'$_'", @$pick;
+
+        $var = 'lhs';
+        my $lhs = join "\n", @{make_expr($lexpr)};
+        $lhs =~ s/^/    /gm;
+
+        $var = 'rhs';
+        my $rhs = join "\n", @{make_expr($rexpr)};
+        $rhs =~ s/^/    /gm;
+
+        $bash .= <<"...";
+TestML.stmt:$i() {
+  local lhs rhs label
+  for TestML_block in \$(TestML.blocks); do
+    TestML.Run.pick "\$TestML_block" $picks || continue
+$lhs
+$rhs
+    label=\$(TestML.Run.get-label '$label')
+    TestML.Run.assert-any-eq-any "\$lhs" "\$rhs" "\$label"
+  done
+}
+...
+    }
+    elsif ($ast->[0] eq '==') {
+        my ($op, $lexpr, $rexpr, $label) = @$ast;
+
+        $var = 'lhs';
+        my $lhs = join "\n", @{make_expr($lexpr)};
+        $lhs =~ s/^/  /gm;
+
+        $var = 'rhs';
+        my $rhs = join "\n", @{make_expr($rexpr)};
+        $rhs =~ s/^/  /gm;
+
+        $bash .= <<"...";
+TestML.stmt:$i() {
+  local lhs rhs label
+$lhs
+$rhs
+  label=\$(TestML.Run.get-label '$label')
+  TestML.Run.assert-any-eq-any "\$lhs" "\$rhs" "\$label"
+}
+...
+    }
+    else {
+        die "Can only compile assertion statements";
+    }
+
+    return $bash;
+}
+
+sub make_expr {
+    my ($ast, $ctx) = (@_, 0);
+    my @expr;
+
+    if (not ref $ast) {
+        my $expr = qq{"$ast"};
+        $expr = "$var=$expr" if $var;
+        push @expr, $expr;
+    }
+    elsif ($ast->[0] eq '.') {
+        $ctx = 0;
+        shift @$ast;
+        for my $expr (@$ast) {
+            push @expr, @{make_expr($expr, $ctx)};
+            $ctx = 1;
+        }
+    }
+    elsif ($ast->[0] eq '*') {
+        my $point = $ast->[1];
+        my $expr = qq{\$("TestML.block:\$TestML_block:$point")};
+        $expr = "$var=$expr" if $var;
+        push @expr, $expr;
+    }
+    elsif ($ast->[0] =~ /^[a-z][-a-z0-9]*$/) {
+        my ($method, @list) = @$ast;
+        push @expr, $ctx
+          ? qq{a=("\$$var")}
+          : 'a=()';
+        for my $elem (@list) {
+          local $var = '';
+          my $expr = make_expr($elem)->[0];
+          push @expr, "a+=($expr)";
+        }
+        push @expr,
+            qq{$var=\$(TestMLBridge.$method \${a[@]})};
+    }
+    else {
+        die "Can't handle '$ast->[0]' expressions yet"
+    }
+
+    return \@expr;
+
+    # XXX Make lhs and rhs from lexpr and rexpr
+    my $lhs = 'lhs=$("TestML.block:$TestML_block:aaa")' . "\n";
+    $lhs .= '    lhs=$(TestMLBridge.convert "$lhs")';
+    my $rhs = 'rhs=$("TestML.block:$TestML_block:bbb")';
+}
+
+sub make_data {
+    my ($ast) = @_;
+    my @bash = ();
+    $i = 0;
+    my $blocks = 0 + @{$ast->{data}};
+    push @bash, $blocks > 0
+        ? "TestML.blocks() { echo {1..$blocks}; }"
+        : "TestML.blocks() { true; }";
+    for my $block (@{$ast->{data}}) {
+        $i++;
+        push @bash, '';
+        push @bash, "TestML.block:$i:Label() { echo '$block->{label}'; }";
+        for my $point (sort keys %{$block->{point}}) {
+            my $value = $block->{point}{$point};
+            if ($value =~ /\n/) {
+                push @bash, "TestML.block:$i:$point() { echo \\\n'$value'; }";
+            }
+            else {
+                push @bash, "TestML.block:$i:$point() { echo '$value'; }";
+            }
+        }
+    }
+    $out->{data} = \@bash;
+}
+
+sub make_bash {
+    my ($ast) = @_;
+    my $bash = <<"...";
+#!/usr/bin/env bash
+
+TestML.VERSION() { echo '$ast->{testml}'; }
+
+TestML.main() {
+  "\$(TestML.Run.tester).testml-begin"
+
+...
+
+    for my $i (1..@{$out->{code}{stmt}}) {
+        $bash .= "  TestML.stmt:$i\n";
+    }
+
+    $bash .= <<"...";
+
+  "\$(TestML.Run.tester).testml-end"
+}
+
+...
+
+    for my $stmt (@{$out->{code}{stmt}}) {
+        $bash .= "$stmt\n";
+    }
+
+    $bash .= join "\n", @{$out->{data}}, '';
+
+    return $bash;
+}

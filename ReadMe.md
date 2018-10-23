@@ -178,10 +178,9 @@ To implement TestML, 2 things need to happen:
 * Implement all the TestML language features into the TestML Compiler
 * Implement the Runtime in each programming language / test framework
 
-Currently the testml-compiler is fully implemented in JavaScript (NodeJS and
-Browser) and passing all the compiler tests. The testml-compiler is also
-implemented in Perl5 (default for server side) because NodeJS startup time was
-too slow.
+The testml-compiler is fully implemented in both Perl5 and JavaScript (NodeJS
+and Browser) and passing all the compiler tests. The Perl5 version is default
+on server side for performance reasons.
 
 The following language runtimes are all fully implemented and passing all the
 runtime tests:
@@ -193,8 +192,20 @@ runtime tests:
 * Python 2 - Complete.
 * Python 3 - Complete.
 
-These languages are in progress:
+These languages are in progress, with some tests passing and available in
+the master branch:
 
+* Bash. Passing 000-010.
+* Go - On master. Passing test 000-040.
+
+These languages are in various states of development on their own branch:
 * C++ - On branch wip/cpp.
 * Elixir - On branch wip/elixir.
-* Go - On master. Passing test 000-040.
+* Gambas - On branch runtime/gambas.
+
+These languages are planned to happen soon:
+* Lua
+* Ruby
+* Java
+* Haskell
+* PHP

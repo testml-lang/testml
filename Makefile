@@ -21,6 +21,9 @@ export PATH := $(PWD)/bin:$(PWD)/src/testml-compiler-perl5/bin:$(PATH)
 ifeq ($(shell which perl),)
     $(error perl(5) is a minimum requirement for TestML development)
 endif
+ifneq ($(shell which bash),)
+    LANG_ALL += bash
+endif
 ifneq ($(shell which node),)
     LANG_ALL += coffee
 endif
@@ -169,7 +172,7 @@ test-docker-command:
 # TestML repository managment rules:
 #------------------------------------------------------------------------------
 
-ext/coffee ext/node ext/python:
+ext/bash ext/coffee ext/node ext/python:
 	@# Nothing to do for $@
 
 # The `make work` command:

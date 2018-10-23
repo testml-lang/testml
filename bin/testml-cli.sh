@@ -68,7 +68,7 @@ cmd-run() {
 
     set-testml-lib-vars
 
-    testml-run-file "$TESTML_EXEC" || true
+    testml-run-file "$TESTML_EXEC"
   done
 }
 
