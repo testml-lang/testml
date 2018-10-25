@@ -49,7 +49,7 @@ sub rule_undent {
   return;
 }
 
-sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.63)
+sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.64_01)
   {
     '+toprule' => 'testml_document',
     'DOT' => {
@@ -142,6 +142,33 @@ sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.63)
     },
     'block_heading' => {
       '.rgx' => qr/\G===(?:[\ \t]+(.*?)[\ \t]*)?\r?\n/
+    },
+    'bridge_code' => {
+      '.rgx' => qr/\G((?:.*\r?\n)*?)(?=%Bridge|===)/
+    },
+    'bridge_definition' => {
+      '.all' => [
+        {
+          '.ref' => 'bridge_directive'
+        },
+        {
+          '.ref' => 'bridge_code'
+        },
+        {
+          '+max' => 1,
+          '.ref' => 'bridge_end'
+        }
+      ]
+    },
+    'bridge_directive' => {
+      '.rgx' => qr/\G%Bridge[\ \t]+([a-z][a-z0-9]*|c\+\+)[\ \t]*\r?\n/
+    },
+    'bridge_end' => {
+      '.rgx' => qr/\G%Bridge[\ \t]+end[\ \t]*\r?\n/
+    },
+    'bridge_section' => {
+      '+min' => 0,
+      '.ref' => 'bridge_definition'
     },
     'call_arguments' => {
       '.all' => [
@@ -664,6 +691,9 @@ sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.63)
         },
         {
           '.ref' => 'code_section'
+        },
+        {
+          '.ref' => 'bridge_section'
         },
         {
           '.ref' => 'data_section'

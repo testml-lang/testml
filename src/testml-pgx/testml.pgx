@@ -4,6 +4,7 @@
 testml-document:
   head-section
   code-section
+  bridge-section
   data-section
 
 head-section:
@@ -204,6 +205,30 @@ assertion-like:
   code-expression
 
 #------------------------------------------------------------------------------
+bridge-section:
+  bridge-definition*
+
+bridge-definition:
+  bridge-directive
+  bridge-code
+  bridge-end?
+
+bridge-directive:
+  /'%Bridge' + bridge-language - EOL/
+
+bridge-language:
+  /( [a-z][a-z0-9]* | 'c++' )/
+
+bridge-code:
+  /((: ANY* EOL)*?) bridge-boundary/
+
+bridge-boundary:
+  /(= '%Bridge' | block-marker )/
+
+bridge-end:
+  /'%Bridge' + 'end' - EOL/
+
+#------------------------------------------------------------------------------
 data-section:
   block-definition*
 
@@ -273,7 +298,7 @@ point-marker: '---'
 point-boundary:
   /(= point-marker | block-marker | eos )/
 
-eos: EOS
+eos: / EOS /
 
 integer-literal:
   /(: '0' | DASH? [1-9] DIGIT* )/
@@ -295,12 +320,12 @@ point-name:
 pseudo-point-name:
   /(:HEAD|LAST|ONLY|SKIP|TODO|DIFF)/
 
-variable-name: identifier-name
+variable-name: / identifier-name /
 
 version-number:
   /( DIGIT+ DOT DIGIT+ DOT DIGIT+ )/
 
-ws: BLANK
+ws: / BLANK /
 
 xxx: 'XXX'
 

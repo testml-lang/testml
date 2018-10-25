@@ -1,0 +1,37 @@
+#!/usr/bin/env testml-switch
+
+Diff = 1
+*input.undent.compile == *output
+
+=== Inline bridge section
+--- input(<)
+    *a.foo == *b
+
+    %Bridge bash
+
+    TestMLBridge.foo() {
+      echo orange
+    }
+
+    === Test 1
+    a: apple
+    b: orange
+
+--- output
+{ "testml": "0.3.0",
+  "code": [
+    ["%<>",["*a","*b"],
+      ["==",
+        [".",
+          ["*","a"],
+          ["foo"]],
+        ["*","b"]]]],
+  "data": [
+    { "label": "Test 1",
+      "point": {},
+      "user": "a: apple\nb: orange\n"}],
+  "bridge": {
+    "bash": "TestMLBridge.foo() {\n  echo orange\n}\n"}}
+
+
+# vim: ft=:

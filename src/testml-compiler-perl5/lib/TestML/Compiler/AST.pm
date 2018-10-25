@@ -12,6 +12,8 @@ has importer => undef;
 
 has code => [];
 has data => [];
+has bridge => undef;
+
 has point => {};
 has transforms => {};
 
@@ -40,6 +42,8 @@ sub final {
     code => [],
     data => [],
   );
+
+  $got->{bridge} = $self->{bridge} if $self->{bridge};
 
   for my $statement (@{$self->{code}}) {
     if (ref($statement) eq 'HASH') {
@@ -403,6 +407,19 @@ sub got_assertion_expression {
   my $assertion = [$operator, undef, $expression];
   attach($assertion, pick => detach(pick => $expression) || {});
   return $assertion;
+}
+
+sub got_bridge_definition {
+  my ($self, $got) = @_;
+  my ($lang, $code) = @$got;
+  $code =~ s/\A\n+//;
+  $code =~ s/\n+\z/\n/;
+  $code =~ s/^\\//gm;
+  if (not defined $self->{bridge}) {
+    $self->{bridge} = {};
+    tie %{$self->{bridge}}, 'Tie::IxHash';
+  }
+  $self->{bridge}{$lang} = $code;
 }
 
 sub got_block_definition {

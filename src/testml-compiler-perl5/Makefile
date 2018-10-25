@@ -23,16 +23,10 @@ test: $(EXT)
 update: update-grammar
 
 update-grammar:
-	@echo "update-grammar not yet ported"
-	@exit 123
-	# ( \
-	# set -o pipefail; \
-	# grep -B99 make_tree lib/testml-compiler/grammar.coffee; \
-	# TESTML_COMPILER_GRAMMAR_PRINT=1 \
-	#     ./bin/testml-compiler Makefile \
-	#     | sed 's/^/    /' \
-	# ) > tmp-grammar
-	# mv tmp-grammar lib/testml-compiler/grammar.coffee
+	( \
+	    perl -Ilib -I../../ext/perl5 -MTestML::Compiler::Grammar=compile; \
+	    perl -pi -e 's/\(\?=(?==|\\~)/(=/' lib/TestML/Compiler/Grammar.pm; \
+	)
 
 clean::
 	rm -fr remove testml-compiler-*
