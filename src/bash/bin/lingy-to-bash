@@ -183,6 +183,8 @@ sub make_bash {
     my $bash = <<"...";
 #!/usr/bin/env bash
 
+set -e -u -o pipefail
+
 TestML.VERSION() { echo '$ast->{testml}'; }
 
 TestML.main() {

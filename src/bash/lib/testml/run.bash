@@ -1,5 +1,7 @@
 #! bash
 
+set -e -u -o pipefail
+
 TestML.Run.pick() {
   i=$1; shift
   for point in "$@"; do

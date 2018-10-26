@@ -2,7 +2,7 @@
 
 # shellcheck disable=1090,2034,2154
 
-set -e
+set -e -u -o pipefail
 
 export TESTML_VERSION='0.3.0'
 
@@ -63,14 +63,14 @@ check-input-file() {
 set-testml-bin() {
   local PATH="$TESTML_ROOT/bin:$PATH"
 
-  if [[ -n $TESTML_BIN ]]; then
+  if [[ -n ${TESTML_BIN-} ]]; then
     can "$TESTML_BIN" ||
       die "TESTML_BIN=$TESTML_BIN but '$TESTML_BIN' not found"
     export TESTML_BIN=$can_path
     return 0
   fi
 
-  if [[ -n $TESTML_RUN ]]; then
+  if [[ -n ${TESTML_RUN-} ]]; then
     TESTML_BIN="testml-$TESTML_RUN"
     can "$TESTML_BIN" ||
       die "TESTML_RUN=$TESTML_RUN but '$TESTML_BIN' not found"
@@ -100,20 +100,20 @@ set-testml-vars() {
 
   source-testml-config
 
-  [[ -n $TESTML_CACHE ]] ||
+  [[ -n ${TESTML_CACHE-} ]] ||
     TESTML_CACHE="$(abs-dir-path "$TESTML_INPUT")/.testml"
   export TESTML_CACHE
   export TESTML_EXEC="$TESTML_CACHE/$TESTML_FILENAME.lingy"
 }
 
 source-testml-config() {
-  if [[ -z $TESTML_CONFIG ]]; then
-    if [[ -e $TESTML_DIR/.testmlrc ]]; then
+  if [[ -z ${TESTML_CONFIG-} ]]; then
+    if [[ -e ${TESTML_DIR-}/.testmlrc ]]; then
       TESTML_CONFIG="$TESTML_DIR/.testmlrc"
     fi
   fi
 
-  [[ -n $TESTML_CONFIG ]] || return 0
+  [[ -n ${TESTML_CONFIG-} ]] || return 0
 
   [[ -f $TESTML_CONFIG ]] ||
     die "TestML config file '$TESTML_CONFIG' does not exist"
@@ -132,13 +132,15 @@ export-testml-vars() {
 set-testml-lib-vars() {
   TESTML_LIB="${TESTML_LIB:+$TESTML_LIB:}$TESTML_DIR"
 
-  if [[ $TESTML_LANG == 'perl6' ]]; then
+  if [[ ${TESTML_LANG-} == 'perl6' ]]; then
     TESTML_LIB=${TESTML_LIB//:/,}
   fi
 
   export TESTML_LIB
 
-  export TESTML_ROOT_LIB="$TESTML_ROOT/src/$TESTML_LANG/lib"
+  if [[ -n ${TESTML_LANG+x} ]]; then
+    export TESTML_ROOT_LIB="$TESTML_ROOT/src/$TESTML_LANG/lib"
+  fi
 }
 
 compile-testml() {

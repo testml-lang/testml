@@ -2,14 +2,14 @@
 
 # shellcheck disable=1090,2034
 
-set -e
+set -e -u -o pipefail
 
 testml-run-file() {
   PERL5LIB="$TESTML_ROOT_LIB:$TESTML_LIB${PERL5LIB:+:$PERL5LIB}" \
     perl -e "use $TESTML_MODULE; $TESTML_MODULE->run('$1')"
 }
 
-[[ -n $TESTML_SOURCED ]] ||
+[[ -n ${TESTML_SOURCED-} ]] ||
   source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
 
 source-testml-config

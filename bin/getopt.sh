@@ -1,6 +1,6 @@
 #! bash
 
-set -e
+set -e -u -o pipefail
 
 getopt() {
   local opt_spec
@@ -40,7 +40,7 @@ getopt() {
         printf -v "$opt_var" false
       else
         lines_var="${opt_var}_lines"
-        if [[ -n ${!lines_var} ]]; then
+        if [[ -n ${!lines_var-} ]]; then
           eval "$opt_var+=()"
         fi
       fi
@@ -76,7 +76,7 @@ getopt() {
       if [[ $option == "$match" ]]; then
         if $wants_value; then
           lines_var="${opt_var}_lines"
-          if [[ -n ${!lines_var} ]]; then
+          if [[ -n ${!lines_var-} ]]; then
             eval "$opt_var+=('$1')"
           else
             printf -v "$opt_var" "%s" "$1"

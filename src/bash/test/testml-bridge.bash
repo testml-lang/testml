@@ -1,5 +1,7 @@
 #! bash
 
+set -e -u
+
 TestMLBridge.add() {
   echo $(($1 + $2))
 }

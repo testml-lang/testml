@@ -2,7 +2,7 @@
 
 # shellcheck disable=1090,2034
 
-set -e
+set -e -u -o pipefail
 
 testml-run-file() {
   PERL6LIB="$TESTML_ROOT/ext/perl6,$TESTML_ROOT_LIB,$TESTML_LIB${PERL6LIB:+,$PERL6LIB}" \

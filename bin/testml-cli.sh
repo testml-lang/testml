@@ -1,6 +1,9 @@
 #! bash
 
 # shellcheck disable=1090,2034,2153,2154
+
+set -e -u -o pipefail
+
 GETOPT_SPEC="\
   $(basename "$0") <options...> [<testml-file>...]
 
@@ -62,7 +65,7 @@ cmd-run() {
 
     compile-testml
 
-    if [[ -z $testml_runner_sourced ]]; then
+    if [[ -z ${testml_runner_sourced-} ]]; then
       source "$TESTML_BIN"
     fi
 
@@ -159,18 +162,18 @@ get-options() {
     [[ ${#arguments[@]} -gt 0 ]] || exit 1
   fi
 
-  if [[ -n $option_config ]]; then
+  if [[ -n ${option_config-} ]]; then
     export TESTML_CONFIG=$option_config
   fi
 
-  if [[ -n $option_bridge ]]; then
+  if [[ -n ${option_bridge-} ]]; then
     export TESTML_BRIDGE=$option_bridge
   fi
-  if [[ -n $option_lib ]]; then
+  if [[ -n ${option_lib-} ]]; then
     TESTML_LIB="$(cd "$option_lib" && pwd)"
     export TESTML_LIB
   fi
-  if [[ -n $option_path ]]; then
+  if [[ -n ${option_path-} ]]; then
     TESTML_PATH="$(cd "$option_path" && pwd)"
     export TESTML_PATH
   fi
@@ -187,7 +190,7 @@ get-options() {
     cmd=run
   fi
 
-  [[ -n $option_run ]] &&
+  [[ -n ${option_run-} ]] &&
     export TESTML_RUN="$option_run"
 
   true
@@ -200,12 +203,12 @@ setup-eval() {
     testml_eval_input+="$line"$'\n'
   done
 
-  if [[ -n $option_input ]]; then
+  if [[ -n ${option_input-} ]]; then
     testml_eval_input+="$(cat "$option_input")"$'\n'
   fi
 
   if $option_all; then
-    [[ ${#arguments[@]} -gt 0 ]] ||
+    [[ -n ${arguments+x} && ${#arguments[@]} -gt 0 ]] ||
       die "--all used but no input files specified"
     for file in "${arguments[@]}"; do
       testml_eval_input="$testml_eval_input$(cat "$file")"$'\n'
@@ -215,12 +218,12 @@ setup-eval() {
     testml_eval_text=$testml_eval_input
   fi
 
-  [[ ${#arguments[@]} -gt 0 ]] ||
+  [[ ${arguments+x} && ${#arguments[@]} -gt 0 ]] ||
     arguments=('-')
 }
 
 add-eval-text() {
-  [[ -n $testml_eval_text ]] || return 0
+  [[ -n ${testml_eval_text-} ]] || return 0
 
   testml_eval_input=$testml_eval_text
   if [[ $file != '-' ]]; then
