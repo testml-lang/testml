@@ -100,7 +100,7 @@ ALL_WORK := $(filter-out $(NODE_MODULES),$(ALL_WORK))
 STATUS := $(ALL_WORK)
 
 figlet := figlet -w 200
-ifeq ($(shell type figlet 2>/dev/null),)
+ifeq ($(shell type figlet 2>/dev/null || true),)
     figlet := echo
 endif
 P := %
@@ -171,6 +171,8 @@ test-docker-command:
 #------------------------------------------------------------------------------
 # TestML repository managment rules:
 #------------------------------------------------------------------------------
+
+ext: $(EXT_ALL)
 
 ext/bash ext/coffee ext/node ext/python:
 	@# Nothing to do for $@
