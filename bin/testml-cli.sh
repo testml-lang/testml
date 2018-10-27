@@ -199,9 +199,11 @@ get-options() {
 setup-eval() {
   testml_eval_input=''
 
-  for line in "${option_eval[@]}"; do
-    testml_eval_input+="$line"$'\n'
-  done
+  if [[ -n ${option_eval+x} ]]; then
+    for line in "${option_eval[@]}"; do
+      testml_eval_input+="$line"$'\n'
+    done
+  fi
 
   if [[ -n ${option_input-} ]]; then
     testml_eval_input+="$(cat "$option_input")"$'\n'
