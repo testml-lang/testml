@@ -14,6 +14,10 @@ TestML.Run.assert-any-eq-any() {
   "$(TestML.Run.tester).testml-eq" "$@"
 }
 
+TestML.Run.assert-any-like-any() {
+  "$(TestML.Run.tester).testml-like" "$@"
+}
+
 TestML.Run.get-label() {
   if [[ -z $1 ]]; then
     echo " - $(TestML.block:$TestML_block:Label)"

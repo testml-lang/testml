@@ -43,7 +43,7 @@ sub write_bridge {
     my ($code) = @_;
 
     my $file = $ENV{TESTML_EXEC};
-    $file =~ s/\.tml\.lingy$/.bridge.bash/;
+    $file =~ s/\.\w+\.lingy$/.bridge.bash/;
 
     open my $fh, '>', $file
         or die "Can't open '$file' for output";
@@ -91,6 +91,12 @@ sub make_stmt {
         my $rhs = join "\n", @{make_expr($rexpr)};
         $rhs =~ s/^/    /gm;
 
+        my $assert_type =
+          $op eq '==' ? 'eq' :
+          $op eq '~~' ? die 'has not yet supported' :
+          $op eq '=~' ? 'like' :
+          die "Unknown assertion operator '$op'";
+
         $bash .= <<"...";
 TestML.stmt:$i() {
   local lhs rhs label
@@ -99,7 +105,7 @@ TestML.stmt:$i() {
 $lhs
 $rhs
     label=\$(TestML.Run.get-label '$label')
-    TestML.Run.assert-any-eq-any "\$lhs" "\$rhs" "\$label"
+    TestML.Run.assert-any-$assert_type-any "\$lhs" "\$rhs" "\$label"
   done
 }
 ...
@@ -163,10 +169,10 @@ sub make_expr {
         for my $elem (@list) {
           local $var = '';
           my $expr = make_expr($elem)->[0];
-          push @expr, "a+=($expr)";
+          push @expr, qq{a+=("$expr")};
         }
         push @expr,
-            qq{$var=\$(TestMLBridge.$method \${a[@]})};
+            qq{$var=\$(TestMLBridge.$method "\${a[@]}")};
     }
     else {
         die "Can't handle '$ast->[0]' expressions yet"

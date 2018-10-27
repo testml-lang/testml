@@ -24,7 +24,7 @@ testml-run-file() {
 
   source "$TESTML_EXEC_BASH"
 
-  bridge=${TESTML_EXEC%.tml.lingy}.bridge.bash
+  bridge=${TESTML_EXEC%.*.lingy}.bridge.bash
 
   if [[ -f $bridge ]]; then
     source "$bridge"
@@ -33,7 +33,7 @@ testml-run-file() {
   TestML.main
 }
 
-[[ -n $TESTML_SOURCED ]] ||
+[[ -n ${TESTML_SOURCED-} ]] ||
   source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
 
 source-testml-config

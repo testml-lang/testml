@@ -40,3 +40,25 @@ TestML.Run.Tap.testml-eq() {
     fi
   fi
 }
+
+TestML.Run.Tap.testml-like() {
+  : $((TestML_Run_Tap_count++))
+
+  local got=$1
+  local want=$2
+  local label=${3-}
+
+  if [[ $got =~ $want ]]; then
+    echo "ok ${TestML_Run_Tap_count}${label}"
+
+  else
+    echo "not ok ${TestML_Run_Tap_count}${label}"
+
+    ( cat <<...
+  Failed test '${label# - }'
+                  '$got'
+    doesn't match '$want'
+...
+    ) | sed 's/^/# /' || true >&2
+  fi
+}
