@@ -4,24 +4,51 @@ use strict;
 use warnings;
 
 use JSON::PP;
-use IO::All;
 
-use XXX -with => 'YAML::XS';
+# use XXX -with => 'YAML::XS';
 
 main(@ARGV);
 
 our ($out, $i, $var);
 
 sub main {
-    my ($json_file) = @_;
+    my ($input_file) = (@_, '');
 
-    my $json = -t STDIN
-        ? io($json_file)->all
-        : io('-')->all;
+    my $json = read_json($input_file);
 
     my $ast = decode_json $json;
 
     print lingy_to_bash($ast);
+
+    if ($ast->{bridge} and my $bridge = $ast->{bridge}{bash}) {
+      write_bridge($bridge);
+    }
+}
+
+sub read_json {
+    my ($file) = @_;
+    local $/;
+
+    if (-t STDIN) {
+        open my $fh, '<', $file
+            or die "Can't open '$file' for input";
+        return <$fh>;
+    }
+    else {
+        return <>;
+    }
+}
+
+sub write_bridge {
+    my ($code) = @_;
+
+    my $file = $ENV{TESTML_EXEC};
+    $file =~ s/\.tml\.lingy$/.bridge.bash/;
+
+    open my $fh, '>', $file
+        or die "Can't open '$file' for output";
+
+    print $fh $code;
 }
 
 sub lingy_to_bash {

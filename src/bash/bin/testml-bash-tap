@@ -5,6 +5,8 @@
 set -e -u -o pipefail
 
 testml-run-file() {
+  local bridge
+
   source "$TESTML_ROOT_LIB/testml/run.bash"
   source "$TESTML_ROOT_LIB/testml/run/tap.bash"
 
@@ -19,7 +21,14 @@ testml-run-file() {
     "$TESTML_ROOT_BIN/lingy-to-bash" < "$TESTML_EXEC" \
       > "$TESTML_EXEC_BASH"
   fi
+
   source "$TESTML_EXEC_BASH"
+
+  bridge=${TESTML_EXEC%.tml.lingy}.bridge.bash
+
+  if [[ -f $bridge ]]; then
+    source "$bridge"
+  fi
 
   TestML.main
 }

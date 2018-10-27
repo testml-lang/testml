@@ -1,0 +1,28 @@
+#!/usr/bin/env testml
+
+*a.mul(*b) == *c
+*b.mul(*a) == *c
+*c.div(*a) == *b
+*c.div(*b) == *a
+
+
+%Bridge bash
+
+TestMLBridge.mul() {
+  echo $(($1 * $2))
+}
+
+TestMLBridge.div() {
+  echo $(($1 / $2))
+}
+
+
+=== Test 1
+--- a: 111
+--- b: 222
+--- c: 24642
+
+=== Test 2
+--- a: 444
+--- b: 555
+--- c: 246420
