@@ -1,5 +1,16 @@
 #! bash
 
+# echo ">>> Entering bin/testml-cli.bash
+# \$0 = $0
+# \$BASH_SOURCE = $BASH_SOURCE
+# \$TESTML_SOURCED = ${TESTML_SOURCED-}
+# -t 0 = $([[ -t 0 ]] && echo yes || echo no)
+# -t 1 = $([[ -t 1 ]] && echo yes || echo no)
+# <<<
+# " >&2
+
+# die DEAD
+
 # shellcheck disable=1090,2034,2153,2154
 
 set -e -u -o pipefail
@@ -43,7 +54,7 @@ C,config=   TestML config file
 x,debug     Print lots of debugging info
 "
 
-source "$TESTML_ROOT/bin/getopt.sh"
+source "$TESTML_ROOT/bin/getopt.bash"
 
 testml-run-cli() {
   get-options "$@"
@@ -237,3 +248,5 @@ add-eval-text() {
   export TESTML_FILEVAR="$TESTML_INPUT"
   export TESTML_INPUT='-'
 }
+
+# vim: ft=sh sw=2 lisp:
