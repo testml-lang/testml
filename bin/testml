@@ -1,27 +1,42 @@
 #!/usr/bin/env bash
 
+# echo ">>> Entering bin/testml
+# \$0 = $0
+# \$BASH_SOURCE = $BASH_SOURCE
+# \$TESTML_SOURCED = ${TESTML_SOURCED-}
+# -t 0 = $([[ -t 0 ]] && echo yes || echo no)
+# -t 1 = $([[ -t 1 ]] && echo yes || echo no)
+# <<<
+# " >&2
+
 # shellcheck disable=1090,2034,2154
 
 set -e -u -o pipefail
 
 export TESTML_VERSION='0.3.0'
 
-TESTML_ROOT=${TESTML_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}
+TESTML_ROOT=${TESTML_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}
 export TESTML_ROOT
 
 main() {
-  if is-tty; then
-    run-cli "$@"
-
-  else
+  if is-meant-to-run-file "$@"; then
     check-input-file "$@"
-
-    set-testml-vars
 
     set-testml-bin
 
-    exec "$TESTML_BIN" "$TESTML_INPUT"
+    source "$TESTML_BIN"
+
+    testml-run "$@"
+
+  else
+    run-cli "$@"
   fi
+}
+
+is-meant-to-run-file() {
+  [[ $# == 1 && ! $1 =~ ^-. ]] &&
+  [[ -f $1 && -r $1 || $1 == - && -t 0 ]] &&
+    [[ $(read -r line < "$1" && echo "$line") =~ ^#!.*testml ]]
 }
 
 testml-run() {
@@ -29,10 +44,9 @@ testml-run() {
 
   export-testml-vars
 
-  if is-tty; then
-    run-cli "$@"
+  if is-meant-to-run-file "$@"; then
+    check-input-file "$@"
 
-  else
     set-testml-vars
 
     compile-testml
@@ -40,11 +54,14 @@ testml-run() {
     set-testml-lib-vars
 
     testml-run-file "$TESTML_EXEC"
+
+  else
+    run-cli "$@"
   fi
 }
 
 run-cli() {
-  source "$TESTML_ROOT/bin/testml-cli.sh"
+  source "$TESTML_ROOT/bin/testml-cli.bash"
 
   testml-run-cli "$@"
 }
@@ -153,7 +170,7 @@ compile-testml() {
 
   rc=0
   output=$(
-    if [[ -n $testml_eval_input ]]; then
+    if [[ -n ${testml_eval_input-} ]]; then
       echo "$testml_eval_input" | "${TESTML_COMPILER_BIN}" -
     else
       "${TESTML_COMPILER_BIN}" "$TESTML_FILE"
@@ -171,7 +188,7 @@ compile-testml() {
 }
 
 is-tty() {
-  [[ -t 0 || -t 1 ]]
+  [[ -t 1 ]]
 }
 
 can() {

@@ -1,10 +1,19 @@
 #!/bin/bash
+# echo ">>> Entering bin/testml-perl5-tap
+# \$0 = $0
+# \$BASH_SOURCE = $BASH_SOURCE
+# \$TESTML_SOURCED = ${TESTML_SOURCED-}
+# -t 0 = $([[ -t 0 ]] && echo yes || echo no)
+# -t 1 = $([[ -t 1 ]] && echo yes || echo no)
+# <<<
+# " >&2
 
 # shellcheck disable=1090,2034
 
 set -e -u -o pipefail
 
 testml-run-file() {
+  # die "testml-run-file $1"
   PERL5LIB="$TESTML_ROOT_LIB:$TESTML_LIB${PERL5LIB:+:$PERL5LIB}" \
     perl -e "use $TESTML_MODULE; $TESTML_MODULE->run('$1')"
 }

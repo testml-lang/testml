@@ -10,7 +10,7 @@ testml-run-file() {
       -c "from $TESTML_MODULE import TestMLRunTAP; TestMLRunTAP.run('$1')"
 }
 
-[[ -n $TESTML_SOURCED ]] ||
+[[ -n ${TESTML_SOURCED-} ]] ||
   source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
 
 source-testml-config
