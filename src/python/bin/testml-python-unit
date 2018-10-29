@@ -6,7 +6,7 @@ set -e -u -o pipefail
 
 testml-run-file() {
   PYTHONPATH="$TESTML_ROOT_LIB:$TESTML_LIB${PYTHONPATH:+:$PYTHONPATH}" \
-    "$TESTML_LANG" -u \
+    "$TESTML_LANG_BIN" -u \
       -c "from $TESTML_MODULE import TestMLRunUnit; TestMLRunUnit.run('$1')"
 }
 
@@ -17,6 +17,7 @@ source-testml-config
 
 : "${TESTML_BIN:=testml-python-unit}"
 : "${TESTML_LANG:=python}"
+: "${TESTML_LANG_BIN:=python}"
 : "${TESTML_MODULE:=testml.run.unit}"
 : "${TESTML_BRIDGE:=testml-bridge}"
 
