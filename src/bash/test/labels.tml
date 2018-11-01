@@ -1,0 +1,18 @@
+#!/usr/bin/env testml-bash
+
+1 == 1 :"Test 'single quotes' in labels"
+
+*in == *in
+  :"+: block label in front"
+
+*in == *in
+  :"block label at end - +"
+
+*in == *in
+  :"point expansion *in => '{*in}'"
+
+=== Test 1
+--- in: foo foo
+
+=== Test 2
+--- in: bar

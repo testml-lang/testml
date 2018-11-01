@@ -19,16 +19,25 @@ TestML.Run.assert-any-like-any() {
 }
 
 TestML.Run.get-label() {
-  if [[ -z $1 ]]; then
-    echo " - $(TestML.block:$TestML_block:Label)"
+  local label=${1-}
 
-  elif [[ $1 =~ \+ ]]; then
+  if [[ -z $label ]]; then
+    label=$(TestML.block:$TestML_block:Label)
+
+  elif [[ $label =~ \+ ]]; then
     if [[ -n ${TestML_block-} ]]; then
-      echo " - ${1/+/$(TestML.block:$TestML_block:Label)}"
+      label="${label/+/$(TestML.block:$TestML_block:Label)}"
+
     else
       die "Can't use '+' in label when there are no data blocks"
     fi
-  else
-    echo " - $1"
   fi
+
+  while [[ $label =~ \{\*([-a-z0-9]+)\} ]]; do
+    local var=${BASH_REMATCH[1]}
+    local val=$(TestML.block:$TestML_block:$var)
+    label=${label/\{\*$var\}/$val}
+  done
+
+  echo " - $label"
 }

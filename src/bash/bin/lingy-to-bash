@@ -104,7 +104,7 @@ TestML.stmt:$i() {
     TestML.Run.pick "\$TestML_block" $picks || continue
 $lhs
 $rhs
-    label=\$(TestML.Run.get-label '$label')
+    label=\$(TestML.Run.get-label "$label")
     TestML.Run.assert-any-$assert_type-any "\$lhs" "\$rhs" "\$label"
   done
 }
@@ -126,7 +126,7 @@ TestML.stmt:$i() {
   local lhs rhs label
 $lhs
 $rhs
-  label=\$(TestML.Run.get-label '$label')
+  label=\$(TestML.Run.get-label "$label")
   TestML.Run.assert-any-eq-any "\$lhs" "\$rhs" "\$label"
 }
 ...
@@ -200,11 +200,12 @@ sub make_data {
         push @bash, "TestML.block:$i:Label() { echo '$block->{label}'; }";
         for my $point (sort keys %{$block->{point}}) {
             my $value = $block->{point}{$point};
+            $value =~ s/([\\"])/\\$1/g;
             if ($value =~ /\n/) {
-                push @bash, "TestML.block:$i:$point() { echo \\\n'$value'; }";
+                push @bash, qq<TestML.block:$i:$point() { echo \\\n"$value"; }>;
             }
             else {
-                push @bash, "TestML.block:$i:$point() { echo '$value'; }";
+                push @bash, qq<TestML.block:$i:$point() { echo "$value"; }>;
             }
         }
     }
