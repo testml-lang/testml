@@ -14,17 +14,17 @@ testml-run-file() {
     source "$TESTML_DIR/$TESTML_BRIDGE.bash"
   fi
 
-  TESTML_EXEC_BASH=${TESTML_EXEC%.lingy}.bash
+  TESTML_EXEC_BASH=${TESTML_AST%.lingy}.bash
   TESTML_ROOT_BIN=${TESTML_ROOT_LIB%lib}bin
 
-  if [[ $TESTML_EXEC -nt $TESTML_EXEC_BASH ]]; then
-    "$TESTML_ROOT_BIN/lingy-to-bash" < "$TESTML_EXEC" \
+  if [[ $TESTML_AST -nt $TESTML_EXEC_BASH ]]; then
+    "$TESTML_ROOT_BIN/lingy-to-bash" < "$TESTML_AST" \
       > "$TESTML_EXEC_BASH"
   fi
 
   source "$TESTML_EXEC_BASH"
 
-  bridge=${TESTML_EXEC%.*.lingy}.bridge.bash
+  bridge=${TESTML_AST%.*.lingy}.bridge.bash
 
   if [[ -f $bridge ]]; then
     source "$bridge"

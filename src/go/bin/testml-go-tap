@@ -51,7 +51,7 @@ testml-run-file() {
     chmod +x "$testml_runner" || return $?
   fi
 
-  $testml_runner "$TESTML_EXEC"
+  $testml_runner "$TESTML_AST"
 }
 
 update-file() {

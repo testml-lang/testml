@@ -53,7 +53,7 @@ testml-run() {
 
     set-testml-lib-vars
 
-    testml-run-file "$TESTML_EXEC"
+    testml-run-file "$TESTML_AST"
 
   else
     run-cli "$@"
@@ -120,7 +120,7 @@ set-testml-vars() {
   [[ -n ${TESTML_CACHE-} ]] ||
     TESTML_CACHE="$(abs-dir-path "$TESTML_INPUT")/.testml"
   export TESTML_CACHE
-  export TESTML_EXEC="$TESTML_CACHE/$TESTML_FILENAME.lingy"
+  export TESTML_AST="$TESTML_CACHE/$TESTML_FILENAME.lingy"
 }
 
 source-testml-config() {
@@ -161,15 +161,17 @@ set-testml-lib-vars() {
 }
 
 compile-testml() {
-  [[ $TESTML_INPUT == '-' || -e $TESTML_EXEC && ! -s $TESTML_EXEC ]] &&
-    rm -f "$TESTML_EXEC"
-  [[ $TESTML_EXEC -nt $TESTML_FILE ]] &&
+  local ast rc
+
+  [[ $TESTML_INPUT == '-' || -e $TESTML_AST && ! -s $TESTML_AST ]] &&
+    rm -f "$TESTML_AST"
+  [[ $TESTML_AST -nt $TESTML_FILE ]] &&
     return 0
 
   : "${TESTML_COMPILER_BIN:=testml-compiler}"
 
   rc=0
-  output=$(
+  ast=$(
     if [[ -n ${testml_eval_input-} ]]; then
       echo "$testml_eval_input" | "${TESTML_COMPILER_BIN}" -
     else
@@ -177,11 +179,11 @@ compile-testml() {
     fi
   ) || rc=$?
 
-  if [[ -n $TESTML_EXEC ]]; then
+  if [[ -n $TESTML_AST ]]; then
     mkdir -p "$TESTML_CACHE"
-    echo -n "$output" > "$TESTML_EXEC"
+    echo -n "$ast" > "$TESTML_AST"
   else
-    echo "$output"
+    echo "$ast"
   fi
 
   return $rc

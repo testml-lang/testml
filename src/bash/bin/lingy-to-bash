@@ -42,7 +42,7 @@ sub read_json {
 sub write_bridge {
     my ($code) = @_;
 
-    my $file = $ENV{TESTML_EXEC};
+    my $file = $ENV{TESTML_AST};
     $file =~ s/\.\w+\.lingy$/.bridge.bash/;
 
     open my $fh, '>', $file

@@ -82,7 +82,7 @@ cmd-run() {
 
     set-testml-lib-vars
 
-    testml-run-file "$TESTML_EXEC"
+    testml-run-file "$TESTML_AST"
   done
 }
 
@@ -95,10 +95,10 @@ cmd-compile() {
     set-testml-vars
 
     if $option_print; then
-      TESTML_EXEC=''
+      TESTML_AST=''
     fi
 
-    compile-testml "$TESTML_FILE" "$TESTML_EXEC"
+    compile-testml "$TESTML_FILE" "$TESTML_AST"
   done
 }
 

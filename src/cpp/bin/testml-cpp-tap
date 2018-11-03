@@ -23,7 +23,7 @@ testml-run-file() {
     $bridge_file || return
 
   chmod +x $testml_runner
-  $testml_runner "$TESTML_EXEC"
+  $testml_runner "$TESML_AST"
 }
 
 : "${TESTML_BIN:=testml-cpp-tap}"

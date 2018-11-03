@@ -51,9 +51,7 @@ sub new {
 
   return bless {
     file => $params{file},
-    version => $testml->{testml},
-    code => $testml->{code},
-    data => $testml->{data},
+    ast => $params{testml},
 
     bridge => $params{bridge},
     stdlib => $params{stdlib},
@@ -74,11 +72,7 @@ sub from_file {
   open INPUT, $file
     or die "Can't open '$file' for input";
 
-  my $testml = decode_json do { local $/; <INPUT> };
-
-  $self->{version} = $testml->{version};
-  $self->{code} = $testml->{code};
-  $self->{data} = $testml->{data};
+  $self->{ast} = decode_json do { local $/; <INPUT> };
 
   return $self;
 }
@@ -88,7 +82,7 @@ sub test {
 
   $self->testml_begin;
 
-  for my $statement (@{$self->{code}}) {
+  for my $statement (@{$self->{ast}{code}}) {
     $self->exec_expr($statement);
   }
 
@@ -177,7 +171,19 @@ sub call_bridge {
 
   if (not $self->{bridge}) {
     my $bridge_module = $ENV{TESTML_BRIDGE} || 'TestMLBridge';
-    eval "require $bridge_module; 1" or die $@;
+
+    if (my $code = $self->{ast}{bridge}{perl5}) {
+      eval <<"..." or die $@;
+package TestMLBridge;
+use base 'TestML::Bridge';
+$code;
+1;
+...
+    }
+    else {
+      eval "require $bridge_module; 1" or die $@;
+    }
+
     $self->{bridge} = $bridge_module->new;
   }
 
@@ -382,7 +388,7 @@ sub each_exec {
 sub each_pick {
   my ($self, $list, $expr) = @_;
 
-  for my $block (@{$self->{data}}) {
+  for my $block (@{$self->{ast}{data}}) {
     $self->{block} = $block;
 
     $self->exec_expr(['<>', $list, $expr]);
@@ -581,6 +587,7 @@ sub get_label {
   }
   else {
     $label = $block_label;
+    $label = '' unless defined $label;
   }
 
   return $self->interpolate($label, true);
