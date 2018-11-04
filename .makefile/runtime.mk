@@ -21,7 +21,7 @@ export PATH
 export TESTML_DEVEL := $(devel)
 export TESTML_COMPILER_DEBUG := $(debug)
 
-test = test/*.tml
+test ?= test/*.tml
 j = 1
 
 prove_opts = -v

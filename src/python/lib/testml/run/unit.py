@@ -17,7 +17,6 @@ class TestMLRunUnit(TestMLRun):
     TestMLRun.__init__(self, **params)
 
   def testml_begin(self):
-    print('Testing:', self.file)
     self.suite = unittest.TestSuite()
 
   def testml_end(self):
@@ -25,7 +24,6 @@ class TestMLRunUnit(TestMLRun):
     runner = unittest.TextTestRunner(verbosity=verbosity)
     runner.resultclass = TestResult
     runner.run(self.suite)
-    print()
 
   def testml_eq(self, got, want, label):
     self.suite.addTest(testml_case_eq(got, want, label))

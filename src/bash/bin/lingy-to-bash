@@ -42,6 +42,10 @@ sub read_json {
 sub write_bridge {
     my ($code) = @_;
 
+    if ($code !~ /^TestMLBridge\./m) {
+        $code =~ s/^(?=[-\w]+\(\))/TestMLBridge./mg;
+    }
+
     my $file = $ENV{TESTML_AST};
     $file =~ s/\.\w+\.lingy$/.bridge.bash/;
 

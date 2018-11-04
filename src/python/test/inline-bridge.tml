@@ -6,15 +6,13 @@
 *c.div(*b) == *a
 
 
-%Bridge bash
+%Bridge python
 
-mul() {
-  echo $(($1 * $2))
-}
+def mul(self, a, b):
+  return a * b
 
-div() {
-  echo $(($1 / $2))
-}
+def div(self, a, b):
+  return a / b
 
 
 === Test 1
@@ -26,3 +24,4 @@ div() {
 --- a: 444
 --- b: 555
 --- c: 246420
+

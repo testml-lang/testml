@@ -17,12 +17,12 @@ class StdLib():
     if selector is None:
       return self.run.block
 
-    for block in self.run.data:
+    for block in self.run.ast.get('data', []):
       if block['label'] == selector:
         return block
 
   def blocks(self):
-    return list(self.run.data)
+    return list(self.run.ast.get('data', []))
 
   def bool(self, value):
     return not(value is None or value is False)

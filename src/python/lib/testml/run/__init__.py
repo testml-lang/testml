@@ -53,12 +53,8 @@ class TestMLRun:
 
   #----------------------------------------------------------------------------
   def __init__(self, **params):
-    testml = params.get('testml', {})
-
     self.file = params.get('file')
-    self.version = testml.get('testml')
-    self.code = testml.get('code')
-    self.data = testml.get('data')
+    self.ast = params.get('testml', {})
 
     self.bridge = params.get('bridge')
     self.stdlib = params.get('stdlib')
@@ -73,21 +69,16 @@ class TestMLRun:
     self.file = file_
 
     if file_ == '-':
-      testml = json.loads(sys.stdin.readlines())
+      self.ast = json.loads(sys.stdin.readlines())
     else:
-      testml = json.loads(open(file_).read())
-
-    self.code = testml.get('code')
-    self.data = testml.get('data')
-
-    self.version = testml.get('testml')
+      self.ast = json.loads(open(file_).read())
 
     return self
 
   def test(self):
     self.testml_begin()
 
-    for statement in self.code:
+    for statement in self.ast.get('code', []):
       self.exec_expr(statement)
 
     self.testml_end()
@@ -154,10 +145,21 @@ class TestMLRun:
       self.exec_expr(statement)
 
   #----------------------------------------------------------------------------
+  def make_class(self, code):
+    exec(code)
+    return eval('TestMLBridge')
+
   def call_bridge(self, name, args):
     if not self.bridge:
       bridge_module = __import__(os.environ['TESTML_BRIDGE'])
-      self.bridge = (bridge_module.TestMLBridge)()
+      code = self.ast.get('bridge', {}).get('python', None)
+      if code:
+        self.bridge = (self.make_class(
+          'class TestMLBridge():\n' + \
+            re.sub(r'^', '  ', code, 0, re.M)
+        ))()
+      else:
+        self.bridge = (bridge_module.TestMLBridge)()
 
     call = getattr(self.bridge, re.sub(r'-', '_', name))
     if not call:
@@ -298,7 +300,7 @@ class TestMLRun:
         self.exec_func(expr)
 
   def each_pick(self, list_, expr):
-    for block in self.data:
+    for block in self.ast.get('data', []):
       self.block = block
 
       if block['point'].get('ONLY') and not self.warned_only:
