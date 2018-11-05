@@ -30,7 +30,7 @@ ifneq ($(shell which node),)
     LANG_ALL += coffee
 endif
 ifneq ($(shell which go),)
-  ifeq ($(shell perl -e 'print "ok" if $$ARGV[0] =~ /go1\./' '$(shell go version)'),ok)
+  ifeq ($(shell perl -e 'print "ok" if $$ARGV[0] =~ /go1\.1[01]/' '$(shell go version)'),ok)
     LANG_ALL += go
   endif
 endif
