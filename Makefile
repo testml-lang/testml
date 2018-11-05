@@ -18,19 +18,21 @@ export HELP
 export PATH := $(PWD)/bin:$(PWD)/src/testml-compiler-perl5/bin:$(PATH)
 
 # All the current support languages:
+ifeq ($(shell which bash),)
+    $(error 'bash' is a minimum requirement for TestML development)
+endif
 ifeq ($(shell which perl),)
-    $(error perl(5) is a minimum requirement for TestML development)
+    $(error 'perl' (5) is a minimum requirement for TestML development)
 endif
-ifneq ($(shell which bash),)
-    LANG_ALL += bash
-endif
+
+LANG_ALL = bash
 ifneq ($(shell which node),)
     LANG_ALL += coffee
 endif
 ifneq ($(shell which go),)
-ifeq ($(shell perl -e 'print "ok" if $$ARGV[0] =~ /go1\./' '$(shell go version)'),ok)
+  ifeq ($(shell perl -e 'print "ok" if $$ARGV[0] =~ /go1\./' '$(shell go version)'),ok)
     LANG_ALL += go
-endif
+  endif
 endif
 ifneq ($(shell which node),)
     LANG_ALL += node
@@ -215,3 +217,5 @@ realclean: clean
 #------------------------------------------------------------------------------
 # Import `make status` support:
 include .makefile/status.mk
+
+SHELL = bash

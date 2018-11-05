@@ -45,3 +45,5 @@ clean::
 
 realclean:: clean
 	rm -fr $(ROOT)/src/node_modules
+
+SHELL = bash
