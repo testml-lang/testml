@@ -28,7 +28,9 @@ ifneq ($(shell which node),)
     LANG_ALL += coffee
 endif
 ifneq ($(shell which go),)
+ifeq ($(shell perl -e 'print "ok" if $$ARGV[0] =~ /go1\./' '$(shell go version)'),ok)
     LANG_ALL += go
+endif
 endif
 ifneq ($(shell which node),)
     LANG_ALL += node
@@ -100,7 +102,7 @@ ALL_WORK := $(filter-out $(NODE_MODULES),$(ALL_WORK))
 STATUS := $(ALL_WORK)
 
 figlet := figlet -w 200
-ifeq ($(shell type figlet 2>/dev/null || true),)
+ifeq ($(shell which figlet 2>/dev/null),)
     figlet := echo
 endif
 P := %
