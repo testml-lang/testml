@@ -103,25 +103,55 @@ cmd-compile() {
 }
 
 cmd-list() {
-  cat <<...
-TestML runners use a programming language with one of its testing frameworks.
+  less -FRX <<...
+TestML programs are meant to be run against any programming language along with
+any existing test framework. To run a TestML test you need to specify which
+'runner' (aka 'runtime') to use.
+
+You can specify which runner to use with the -R/--run command option, or the
+extended command name or the TESTML_RUN variable. Like this:
+
+    testml -R python-unit my-test.tml
+    testml --run=python-unit my-test.tml
+    testml-python-unit my-test.tml
+    TESTML_RUN=python-unit my-test.tml
+
+If the TestML test is only ever meant to run against one runner, then you can
+name the runner in the test file's shebang line:
+
+    #!/usr/bin/env testml-python-unit
+
+and then simply run it like:
+
+    testml my-test.tml
+
+or if the TestML file is executable, like this:
+
+    ./my-test.tml
 
 TestML supports the following runners:
 
-    coffee-mocha    CoffeeScript with Mocha
-    coffee-tap      CoffeeScript with TAP
-    node-mocha      NodeJS with Mocha
-    node-tap        NodeJS with TAP
-    perl-tap        Perl 5 with TAP (Test::Builder)
-    perl6-tap       Perl 6 with TAP (Test::Builder)
-    python-pytest   Python 2 with Pytest
+    bash-tap        Bash language, with the TAP test framework
+    coffee-mocha    CoffeeScript w/ Mocha
+    coffee-tap      CoffeeScript w/ TAP
+    go-tap          Go w/ TAP
+    node-mocha      NodeJS w/ Mocha
+    node-tap        NodeJS w/ TAP
+    perl5-tap       Perl 5 w/ TAP
+    perl6-tap       Perl 6 w/ TAP
+    python-tap      Python (2 or 3) w/ TAP
+    python-tap      Python (2 or 3) w/ unittest
 
 Aliases:
     coffee          Alias for coffee-mocha
     node            Alias for node-mocha
-    perl            Alias for perl-tap
-    perl6           Alias for perl-tap
-    python          Alias for python-pytest
+    perl            Alias for perl5-tap
+    perl5           Alias for perl5-tap
+    perl6           Alias for perl6-tap
+    python          Alias for python-unit
+
+NOTE: For shebang line usage with Perl (5 or 6) use 'testml-pl5' or
+'testml-pl6' (instead of 'testml-perl5' or 'testml-perl6'.
 
 ...
 }

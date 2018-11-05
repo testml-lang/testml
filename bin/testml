@@ -20,7 +20,8 @@ export TESTML_ROOT
 
 main() {
   if is-meant-to-run-file "$@"; then
-    check-input-file "$@"
+    from_main=1 check-input-file "$@" ||
+      exec "$TESTML_INPUT" "$@"
 
     set-testml-bin
 
@@ -74,7 +75,14 @@ check-input-file() {
       die "TestML input file '$1' does not exist"
   fi
 
-  export TESTML_INPUT=$1
+  if [[ -n ${from_main-} && $1 != - &&
+        $(head -n1 "$1") =~ \ (testml-[-a-z0-9]+)$ ]]; then
+    export TESTML_INPUT=${BASH_REMATCH[1]}
+    return 1
+  else
+    export TESTML_INPUT=$1
+    return 0
+  fi
 }
 
 set-testml-bin() {

@@ -10,6 +10,7 @@ sub _clean {
 
   $output =~ s/\ +$//mg;
   $output =~ s/^Files=.*\n//m;
+  $output =~ s/Ran (\d+) tests in .+s/Ran $1 tests in ...s/;
 
   return $output;
 }
@@ -27,7 +28,9 @@ sub run_command {
   my ($self, $command) = @_;
 
   $ENV{LANG} = 'C';
+  for (keys %ENV) { delete $ENV{$_} if /TESTML_/ }
   $ENV{TESTML_LIB} = 'src/perl5/test';
+
   _clean capture_merged {
     system "$command";
   };
