@@ -16,9 +16,9 @@ class TestMLRun:
   Null = TestMLNull()
 
   vtable = {
-    '==': 'assert_eq',
-    '~~': 'assert_has',
-    '=~': 'assert_like',
+    '==' : 'assert_eq',
+    '~~' : 'assert_has',
+    '=~' : 'assert_like',
 
     '.'  : 'exec_dot',
     '%'  : 'each_exec',
@@ -48,7 +48,7 @@ class TestMLRun:
     'groups': {
       'list': 'list',
       'dict': 'hash',
-    }
+    },
   }
 
   #----------------------------------------------------------------------------

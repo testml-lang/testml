@@ -76,7 +76,7 @@ check-input-file() {
   fi
 
   if [[ -n ${from_main-} && $1 != - &&
-        $(head -n1 "$1") =~ \ (testml-[-a-z0-9]+)$ ]]; then
+    $(head -n1 "$1") =~ \ (testml-[-a-z0-9]+) ]]; then
     export TESTML_INPUT=${BASH_REMATCH[1]}
     return 1
   else
