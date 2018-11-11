@@ -1,0 +1,43 @@
+TESTML_ROOT           - abspath of testml repo/installation being used
+TESTML_ROOT_LIB       - lib dir in TESTML_ROOT; contains runtime code
+TESTML_LIB            - path or dirs to find modules in
+TESTML_BRIDGE         - name of bride class to use (TestMLBridge)
+TESTML_CACHE          - abspath if cache directory ($TESTML_DIR/.testml/)
+TESTML_CONFIG         - path of config file ($TESTML_DIR/.testmlrc)
+TESTML_LANG           - common name of language being used (perl6)
+TESTML_LANG_BIN       - executable binary for a language (usually TESTML_LANG)
+TESTML_RUN            - name of runtime (lang + framework) (python-tap)
+TESTML_BIN            - name of testml runner bin script (bin/testml-perl5-tap)
+TESTML_FILE           - the testml input file specified
+TESTML_FILENAME       - the TESTML_FILE file name
+TESTML_DIR            - the TESTML_FILE directory path
+TESTML_AST            - the compiled testml .lingy file
+
+
+TESTML_ALWAYS_COMPILE - Used by compiled langs like Go
+TESTML_COMPILER_BIN
+TESTML_COMPILER_BOOTSTRAP
+TESTML_COMPILER_DEBUG
+TESTML_COMPILER_GRAMMAR_PRINT
+TESTML_COMPILER_LANG
+TESTML_COMPILER_ROOT
+TESTML_COMPILER_TEST
+TESTML_DEBUG
+TESTML_DEBUG_TRACE
+TESTML_DEVEL
+TESTML_DIFF
+TESTML_EXEC_PATH
+TESTML_FILEVAR
+TESTML_IMPORT
+TESTML_INPUT
+TESTML_INPUT_DIR
+TESTML_INPUT_FILE
+TESTML_INPUT_PATH
+TESTML_MODULE
+TESTML_NONE
+TESTML_PATH
+TESTML_SOURCED
+TESTML_TRACE
+TESTML_UPDIR
+TESTML_VERBOSITY
+TESTML_VERSION

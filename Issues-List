@@ -1,0 +1,44 @@
+Underscores in call names should give better error message
+Empty string points not picked in Python
+Allow %Bridge section to come after data section
+Consider using Faker.pm for generating test data
+Compiler should trim whitespace on single line points
+Allow numeric parts in call names (foo-123)
+Implement 'Groovy' runtime
+Implement 'Ruby' runtime
+Implement 'PHP' runtime
+Implement 'Haskell' runtime
+Implement 'Elixir' runtime
+Implement 'Java' runtime
+Support inline bridge in testml-compiler-coffee
+Use DIFF by default
+testml-python-unit invokes testml-cli.sh
+Support Inline bridges in all languages
+Support --verbose mode for runtimes
+Support 'make install' method of installation
+Support --to=<lang> compiler native code generators
+Change names with 'run' to 'runner' or 'runtime'
+Support Test2::Harness in Perl5
+New TestML.pm release to CPAN
+Test TAP output for all langs
+Test error messages
+Restructure and renumber tests for optimal development
+Better error mesg for: Method 'assert_num_eq_str' does not exist...
+If/ElseIf/Else language support
+ImportData StdLib method
+Subtest support for TAP
+Interpolation support for "{File}" and "{Line}"
+Support source mapping
+TESTML_SOURCED: unbound variable; coffee, node, perl6
+Bash error for (source ../testml/.rc; testml-bash -e '1 == 1')
+Tests for === with no (empty) label
+%ImportData compiler feature
+Better %Import behavior
+Fix *foo.bar.Catch:msg compiler precedence bug
+Add ONLY warning to all langs
+Support FailMsg variable
+Shuffle blocks with: Shuffle = True
+Finish tests for all StdLib methods
+Use digests rather than timestamps for cache validation
+Make testml-compiler be a standalone executable
+Move site branch to separate repository

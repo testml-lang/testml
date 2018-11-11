@@ -7,70 +7,45 @@
 - Use testml in yaml-test-suite for make test
   - Fix https://gist.github.com/perlpunk/d5b4eea65f61446875dcc8b174e7f8b6
   - Rearrange
-- Test output of all tap tests in all langs in a testml test
 
 == Packaging
 - #!/usr/bin/env testml-exe-node tap
   - written in nodejs (not bash)
 
 == Repo Refactor
-- Restructure and renumber tests for developemnt
 
 == Releases
-- CPAN Release
-  - Need to package entire runtime framework and compiler
-  - Probably shouldn't ship bin/testml
 - Perl6 Release
 - PyPI placeholder release
 - Work on testml.org website
 - Release RotN.pm
 
 == Error Messages (make these more user friendly:)
-- Method 'assert_num_eq_str' does not exist at...
-- Add tests for error messages
 
 == Language (compiler and runtime)
 - <If ...> ... <Else> ...
   <*AAAA, !*BBBB> == <If *AAAA, !*BBBB>
   <Else ...> is like <ElseIf ...>
-- ImportData, ImportDataPush stdlib
-- Support "{File}"
-- Support TAP SubTests
+- ImportDataPush stdlib
 - Foo = ... assignment for TestML vars can
   - Only support TestML approved vars
   - Type check them
 
 == Compiler
 - Fix Pegex bugs
-- Support `_` in var names and bridge method names
-  - Or make _ throw appropriate compile error
-- Support source mapping
-  - Use in labels
-- Support === with no (empty) label
-- %ImportData compiler feature
-- %Import  (...compiler fix...)
-  - With or without .tml suffix
-  - Multinode name should be 'foo/bar'
-    - Look under $TESTML_PATH and then $TESTML_DIR
-- Fix foo.bar:baz precedence bug
-  - *foo.bar.Catch:msg
 - Honor and enforce %TestML statement
 - Nested functions
   - Make work with subtests
 
 == Runtime
-- Add ONLY warning to all langs
-- Support FailMsg variable
 - Check for TestML version number before run
 - All runners should handle stdin ('-') for testml
-- Shuffle blocks with:  Shuffle = True
 - Warn if block is never used at runtime
   - Support %NoWarn or somesuch to disable warnings
 
 == Perl5
 - Support TestML::Run::Test2
   - https://metacpan.org/pod/Test2::Manual::Anatomy::Event#THE-FACET-API
-- Wide chars in Test::Builder (ask exodist)
 - Add TestML::Base for perl5; new & has
 
 == NodeJS
@@ -79,17 +54,14 @@
 - Add travis support
 
 == Standard Library
-- Finish tests for all stdlib methods
 
 == CLI
 - Support .testml/config .testmlrc testmlrc
   - Add $TESTML_DIR/.testmlrc config file
   - Also look in $TESTML_UPDIR/.testmlrc
 - Support and test all env-vars / options
-- Add TESTML_DIFF
 - Use <sha1>.tml.json cache name for stdin
 - Prompt an offer to download and cache testml-compiler if not in PATH
-  - Need to build tesml-compiler into a standalone
 
 == Playground
 - Move playground to testml.org Try
@@ -106,11 +78,6 @@
   - https://codepen.io/ingydotnet/pen/gzvBON
 
 == Next Runtimes
-- Haskell
-- Go
-- C++
-- Java
-- Ruby
 
 == Not Doing
 - Named compile-time filters
