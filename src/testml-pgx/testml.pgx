@@ -188,21 +188,15 @@ each-call:
   code-expression
 
 assertion-expression:
-  | assertion-eq
-  | assertion-has
-  | assertion-like
-
-assertion-eq:
-  /+ ('==') +/
-  code-expression
-
-assertion-has:
-  /+ ('~~') +/
-  code-expression
-
-assertion-like:
-  /+ ('=~') +/
-  code-expression
+  /+
+    ( '=='
+    | '=~'
+    | '~~'
+    | '!=='
+    | '!=~'
+    | '!~~'
+    )
+  +/ code-expression
 
 #------------------------------------------------------------------------------
 bridge-section:

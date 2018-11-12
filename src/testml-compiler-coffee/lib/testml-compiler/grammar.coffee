@@ -49,6 +49,9 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
             ".ref": "code_section"
           },
           {
+            ".ref": "bridge_section"
+          },
+          {
             ".ref": "data_section"
           }
         ]
@@ -579,42 +582,9 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         ".rgx": "\"((?:[^\\n\\\\\"]|\\\\[\\\\\"0nt])*?)\":\\s*"
       },
       "assertion_expression": {
-        ".any": [
-          {
-            ".ref": "assertion_eq"
-          },
-          {
-            ".ref": "assertion_has"
-          },
-          {
-            ".ref": "assertion_like"
-          }
-        ]
-      },
-      "assertion_eq": {
         ".all": [
           {
-            ".rgx": "[\\ \\t]+(==)[\\ \\t]+"
-          },
-          {
-            ".ref": "code_expression"
-          }
-        ]
-      },
-      "assertion_has": {
-        ".all": [
-          {
-            ".rgx": "[\\ \\t]+(\\~\\~)[\\ \\t]+"
-          },
-          {
-            ".ref": "code_expression"
-          }
-        ]
-      },
-      "assertion_like": {
-        ".all": [
-          {
-            ".rgx": "[\\ \\t]+(=\\~)[\\ \\t]+"
+            ".rgx": "[\\ \\t]+(==|=\\~|\\~\\~|\\!==|\\!=\\~|\\!\\~\\~)[\\ \\t]+"
           },
           {
             ".ref": "code_expression"
@@ -623,6 +593,33 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
       },
       "suffix_label": {
         ".rgx": "\\s*:\"((?:[^\\n\\\\\"]|\\\\[\\\\\"0nt])*?)\""
+      },
+      "bridge_section": {
+        ".ref": "bridge_definition",
+        "+min": 0
+      },
+      "bridge_definition": {
+        ".all": [
+          {
+            ".ref": "bridge_directive"
+          },
+          {
+            ".ref": "bridge_code"
+          },
+          {
+            ".ref": "bridge_end",
+            "+max": 1
+          }
+        ]
+      },
+      "bridge_directive": {
+        ".rgx": "%Bridge[\\ \\t]+([a-z][a-z0-9]*|c\\+\\+)[\\ \\t]*\\r?\\n"
+      },
+      "bridge_code": {
+        ".rgx": "((?:.*\\r?\\n)*?)(?=%Bridge|===)"
+      },
+      "bridge_end": {
+        ".rgx": "%Bridge[\\ \\t]+end[\\ \\t]*\\r?\\n"
       },
       "data_section": {
         ".ref": "block_definition",

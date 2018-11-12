@@ -20,6 +20,9 @@ my $vtable = {
   '=='    => 'assert_eq',
   '~~'    => 'assert_has',
   '=~'    => 'assert_like',
+  '!=='   => 'assert_not_eq',
+  '!~~'   => 'assert_not_has',
+  '!=~'   => 'assert_not_like',
 
   '.'     => 'exec_dot',
   '%'     => 'each_exec',
@@ -174,6 +177,7 @@ sub call_bridge {
 
     if (my $code = $self->{ast}{bridge}{perl5}) {
       eval <<"..." or die $@;
+use strict; use warnings;
 package TestMLBridge;
 use base 'TestML::Bridge';
 $code;
@@ -220,106 +224,121 @@ sub call_stdlib {
 
 #------------------------------------------------------------------------------
 sub assert_eq {
-  my ($self, $left, $right, $label) = @_;
+  my ($self, $left, $right, $label, $not) = @_;
   my $got = $self->{vars}{Got} = $self->exec($left);
   my $want = $self->{vars}{Want} = $self->exec($right);
   my $method = $self->get_method('assert_%s_eq_%s', $got, $want);
-  $self->$method($got, $want, $label);
+  $self->$method($got, $want, $label, $not);
   return;
 }
 
 sub assert_str_eq_str {
-  my ($self, $got, $want, $label) = @_;
-  $self->testml_eq($got, $want, $self->get_label($label));
+  my ($self, $got, $want, $label, $not) = @_;
+  $self->testml_eq($got, $want, $self->get_label($label), $not);
 }
 
 sub assert_num_eq_num {
-  my ($self, $got, $want, $label) = @_;
-  $self->testml_eq($got, $want, $self->get_label($label));
+  my ($self, $got, $want, $label, $not) = @_;
+  $self->testml_eq($got, $want, $self->get_label($label), $not);
 }
 
 sub assert_bool_eq_bool {
-  my ($self, $got, $want, $label) = @_;
-  $self->testml_eq($got, $want, $self->get_label($label));
+  my ($self, $got, $want, $label, $not) = @_;
+  $self->testml_eq($got, $want, $self->get_label($label), $not);
 }
 
 
 sub assert_has {
-  my ($self, $left, $right, $label) = @_;
+  my ($self, $left, $right, $label, $not) = @_;
   my $got = $self->exec($left);
   my $want = $self->exec($right);
   my $method = $self->get_method('assert_%s_has_%s', $got, $want);
-  $self->$method($got, $want, $label);
+  $self->$method($got, $want, $label, $not);
   return;
 }
 
 sub assert_str_has_str {
-  my ($self, $got, $want, $label) = @_;
+  my ($self, $got, $want, $label, $not) = @_;
   $self->{vars}{Got} = $got;
   $self->{vars}{Want} = $want;
-  $self->testml_has($got, $want, $self->get_label($label));
+  $self->testml_has($got, $want, $self->get_label($label), $not);
 }
 
 sub assert_str_has_list {
-  my ($self, $got, $want, $label) = @_;
+  my ($self, $got, $want, $label, $not) = @_;
   for my $str (@{$want->[0]}) {
-    $self->assert_str_has_str($got, $str, $label);
+    $self->assert_str_has_str($got, $str, $label, $not);
   }
 }
 
 sub assert_list_has_str {
-  my ($self, $got, $want, $label) = @_;
+  my ($self, $got, $want, $label, $not) = @_;
   $self->{vars}{Got} = $got;
   $self->{vars}{Want} = $want;
-  $self->testml_list_has($got->[0], $want, $self->get_label($label));
+  $self->testml_list_has($got->[0], $want, $self->get_label($label), $not);
 }
 
 sub assert_list_has_list {
-  my ($self, $got, $want, $label) = @_;
+  my ($self, $got, $want, $label, $not) = @_;
   for my $str (@{$want->[0]}) {
-    $self->assert_list_has_str($got, $str, $label);
+    $self->assert_list_has_str($got, $str, $label, $not);
   }
 }
 
 
 sub assert_like {
-  my ($self, $left, $right, $label) = @_;
+  my ($self, $left, $right, $label, $not) = @_;
   my $got = $self->exec($left);
   my $want = $self->exec($right);
   my $method = $self->get_method('assert_%s_like_%s', $got, $want);
-  $self->$method($got, $want, $label);
+  $self->$method($got, $want, $label, $not);
   return;
 }
 
 sub assert_str_like_regex {
-  my ($self, $got, $want, $label) = @_;
+  my ($self, $got, $want, $label, $not) = @_;
   $self->{vars}{Got} = $got;
   $self->{vars}{Want} = "/${\ $want->[1]}/";
   $want = $self->uncook($want);
-  $self->testml_like($got, $want, $self->get_label($label));
+  $self->testml_like($got, $want, $self->get_label($label), $not);
 }
 
 sub assert_str_like_list {
-  my ($self, $got, $want, $label) = @_;
+  my ($self, $got, $want, $label, $not) = @_;
   for my $regex (@{$want->[0]}) {
-    $self->assert_str_like_regex($got, $regex, $label);
+    $self->assert_str_like_regex($got, $regex, $label, $not);
   }
 }
 
 sub assert_list_like_regex {
-  my ($self, $got, $want, $label) = @_;
+  my ($self, $got, $want, $label, $not) = @_;
   for my $str (@{$got->[0]}) {
-    $self->assert_str_like_regex($str, $want, $label);
+    $self->assert_str_like_regex($str, $want, $label, $not);
   }
 }
 
 sub assert_list_like_list {
-  my ($self, $got, $want, $label) = @_;
+  my ($self, $got, $want, $label, $not) = @_;
   for my $str (@{$got->[0]}) {
     for my $regex (@{$want->[0]}) {
-      $self->assert_str_like_regex($str, $regex, $label);
+      $self->assert_str_like_regex($str, $regex, $label, $not);
     }
   }
+}
+
+sub assert_not_eq {
+  my ($self, $got, $want, $label) = @_;
+  $self->assert_eq($got, $want, $label, true);
+}
+
+sub assert_not_has {
+  my ($self, $got, $want, $label) = @_;
+  $self->assert_has($got, $want, $label, true);
+}
+
+sub assert_not_like {
+  my ($self, $got, $want, $label) = @_;
+  $self->assert_like($got, $want, $label, true);
 }
 
 #------------------------------------------------------------------------------
@@ -611,10 +630,11 @@ sub transform {
     if ($type =~ /^(?:list|hash)$/) {
       return encode_json($value->[0]);
     }
-    else {
-      $value =~ s/\n/␤/g;
-      return "$value";
+    if ($type eq 'regex') {
+      return "$value->[1]";
     }
+    $value =~ s/\n/␤/g;
+    return "$value";
   }
   else {
     if ($type =~ /^(?:list|hash)$/) {

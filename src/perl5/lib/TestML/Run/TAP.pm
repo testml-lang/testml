@@ -31,10 +31,11 @@ sub testml_end {
 }
 
 sub testml_eq {
-  my ($self, $got, $want, $label) = @_;
+  my ($self, $got, $want, $label, $not) = @_;
   $self->check_plan;
 
-  if ($got ne $want and
+  if (not $not and
+      $got ne $want and
       $want =~ /\n/ and (
         $self->getv('Diff') or
         $self->getp('DIFF')
@@ -55,29 +56,38 @@ sub testml_eq {
 
     $self->tap_diag($diff);
   }
-
+  elsif ($not) {
+    $self->tap_isnt($got, $want, $label ? ($label) : ());
+  }
   else {
     $self->tap_is($got, $want, $label ? ($label) : ());
   }
 }
 
 sub testml_like {
-  my ($self, $got, $want, $label) = @_;
+  my ($self, $got, $want, $label, $not) = @_;
   $self->check_plan;
 
-  $self->tap_like($got, $want, $label);
+  if ($not) {
+    $self->tap_unlike($got, $want, $label);
+  }
+  else {
+    $self->tap_like($got, $want, $label);
+  }
 }
 
 sub testml_has {
-  my ($self, $got, $want, $label) = @_;
+  my ($self, $got, $want, $label, $not) = @_;
   $self->check_plan;
 
-  if (index($got, $want) != -1) {
+  my $index = index($got, $want);
+  if ($not ? ($index == -1) : ($index != -1)) {
     $self->tap_ok(1, $label);
   }
   else {
     $self->tap_ok(0, $label);
-    $self->tap_diag("     this string: $got\n  doesn't contain: $want");
+    my $verb = $not ? '   does' : "doesn't";
+    $self->tap_diag("     this string: '$got'\n $verb contain: '$want'");
   }
 }
 
@@ -140,21 +150,50 @@ sub tap_ok {
 }
 
 sub tap_is {
-  my ($self, $got, $want, $label, $diff) = @_;
-  $diff = 0 unless defined $diff;
+  my ($self, $got, $want, $label) = @_;
   my $ok = $got eq $want;
   if ($ok) {
     $self->tap_pass($label);
   }
   else {
     $self->tap_fail($label);
-    $self->show_error('         got:', $got, '    expected:', $want, $label);
+    $self->show_error(
+      '         got:', $got,
+      '    expected:', $want,
+      $label,
+    );
+  }
+}
+
+sub tap_isnt {
+  my ($self, $got, $want, $label) = @_;
+  my $ok = $got ne $want;
+  if ($ok) {
+    $self->tap_pass($label);
+  }
+  else {
+    $self->tap_fail($label);
+    $self->show_error(
+      '         got:', $got,
+      '    expected:', 'anything else',
+      $label,
+    );
   }
 }
 
 sub tap_like {
   my ($self, $got, $want, $label) = @_;
   if ($got =~ $want) {
+    $self->tap_pass($label);
+  }
+  else {
+    $self->tap_fail($label);
+  }
+}
+
+sub tap_unlike {
+  my ($self, $got, $want, $label) = @_;
+  if ($got !~ $want) {
     $self->tap_pass($label);
   }
   else {
@@ -189,7 +228,7 @@ sub show_error {
   $self->tap_diag("$got_prefix $got");
 
   if (not ref $want) {
-    $want = "'{$want}'"
+    $want = "'$want'"
   }
   $self->tap_diag("$want_prefix $want");
 }

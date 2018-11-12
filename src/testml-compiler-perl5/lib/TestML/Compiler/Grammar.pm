@@ -70,43 +70,10 @@ sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.64_01)
     '__' => {
       '.rgx' => qr/\G[\ \t]+/
     },
-    'assertion_eq' => {
-      '.all' => [
-        {
-          '.rgx' => qr/\G[\ \t]+(==)[\ \t]+/
-        },
-        {
-          '.ref' => 'code_expression'
-        }
-      ]
-    },
     'assertion_expression' => {
-      '.any' => [
-        {
-          '.ref' => 'assertion_eq'
-        },
-        {
-          '.ref' => 'assertion_has'
-        },
-        {
-          '.ref' => 'assertion_like'
-        }
-      ]
-    },
-    'assertion_has' => {
       '.all' => [
         {
-          '.rgx' => qr/\G[\ \t]+(\~\~)[\ \t]+/
-        },
-        {
-          '.ref' => 'code_expression'
-        }
-      ]
-    },
-    'assertion_like' => {
-      '.all' => [
-        {
-          '.rgx' => qr/\G[\ \t]+(=\~)[\ \t]+/
+          '.rgx' => qr/\G[\ \t]+(==|=\~|\~\~|\!==|\!=\~|\!\~\~)[\ \t]+/
         },
         {
           '.ref' => 'code_expression'
