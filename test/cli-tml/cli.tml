@@ -179,6 +179,31 @@ ok 1
 --- command: TESTML_RUN=python-unit testml test/cli-tml/a-test.t
 --- ^output
 
+===
+--- command: testml-bash-tap -e '1 == 1'
+--- output
+ok 1
+1..1
+
+===
+--- command: testml-coffee-tap -e '1 == 1'
+--- ^output
+
+===
+--- command: testml-node-tap -e '1 == 1'
+--- ^output
+
+===
+--- command: testml-perl5-tap -e '1 == 1'
+--- ^output
+
+===
+--- command: testml-perl6-tap -e '1 == 1'
+--- ^output
+
+===
+--- command: testml-python-tap -e '1 == 1'
+--- ^output
 
 
 

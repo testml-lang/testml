@@ -117,6 +117,8 @@ $rhs
     elsif ($ast->[0] eq '==') {
         my ($op, $lexpr, $rexpr, $label) = @$ast;
 
+        $label = '' unless defined $label;
+
         $var = 'lhs';
         my $lhs = join "\n", @{make_expr($lexpr)};
         $lhs =~ s/^/  /gm;

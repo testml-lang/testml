@@ -78,7 +78,7 @@ update-dir() {
   fi
 }
 
-[[ -n $TESTML_SOURCED ]] ||
+[[ -n ${TESTML_SOURCED-} ]] ||
   source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
 
 source-testml-config
@@ -87,7 +87,5 @@ source-testml-config
 : "${TESTML_LANG:=go}"
 : "${TESTML_MODULE:=testml/run/tap}"
 : "${TESTML_BRIDGE:=testml-bridge}"
-
-export TESTML_{BIN,BRIDGE,LANG,LIB,MODULE,PATH,RUN}
 
 [[ $0 != "${BASH_SOURCE[0]}" ]] || testml-run "$@"

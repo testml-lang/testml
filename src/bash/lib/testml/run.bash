@@ -21,7 +21,7 @@ TestML.Run.assert-any-like-any() {
 TestML.Run.get-label() {
   local label=${1-}
 
-  if [[ -z $label ]]; then
+  if [[ -z $label && -n ${TestML_block-} ]]; then
     label=$(TestML.block:$TestML_block:Label)
 
   elif [[ $label =~ \+ ]]; then
@@ -39,5 +39,7 @@ TestML.Run.get-label() {
     label=${label/\{\*$var\}/$val}
   done
 
-  echo " - $label"
+  label=${label:+ - $label}
+
+  echo "$label"
 }
