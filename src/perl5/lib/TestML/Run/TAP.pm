@@ -36,10 +36,9 @@ sub testml_eq {
 
   if (not $not and
       $got ne $want and
-      $want =~ /\n/ and (
-        $self->getv('Diff') or
-        $self->getp('DIFF')
-      )
+      $want =~ /\n/ and
+      (not defined $self->getv('Diff') or $self->getv('Diff')) and
+      not($ENV{TESTML_NO_DIFF})
   ) {
     require Text::Diff;
 
