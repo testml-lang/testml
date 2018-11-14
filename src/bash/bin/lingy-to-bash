@@ -206,7 +206,7 @@ sub make_data {
         push @bash, "TestML.block:$i:Label() { echo '$block->{label}'; }";
         for my $point (sort keys %{$block->{point}}) {
             my $value = $block->{point}{$point};
-            $value =~ s/([\\"])/\\$1/g;
+            $value =~ s/([\\\"\`\$])/\\$1/g;
             if ($value =~ /\n/) {
                 push @bash, qq<TestML.block:$i:$point() { echo \\\n"$value"; }>;
             }
