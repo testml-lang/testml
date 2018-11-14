@@ -413,7 +413,6 @@ sub got_bridge_definition {
   my ($self, $got) = @_;
   my ($lang, $code) = @$got;
   $code =~ s/\A\n+//;
-  $code =~ s/\n+\z/\n/;
   $code =~ s/^\\//gm;
   if (not defined $self->{bridge}) {
     $self->{bridge} = {};

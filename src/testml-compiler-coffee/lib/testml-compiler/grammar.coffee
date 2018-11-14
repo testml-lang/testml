@@ -73,7 +73,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         ]
       },
       "comment_lines": {
-        ".rgx": "(?:(?:\\#.*\\r?\\n)|(\\s*\\r?\\n|\\s+$))+"
+        ".rgx": "(?:(?:(?:\\#.*\\r?\\n)|(?:\\s*\\r?\\n|\\s+$))+)"
       },
       "testml_directive": {
         ".rgx": "%TestML[\\ \\t]+([0-9]+\\.[0-9]+\\.[0-9]+)(?:;(?: (?=\\S))?|\\r?\\n?)"
@@ -616,7 +616,7 @@ class TestMLCompiler.Grammar extends Pegex.Grammar
         ".rgx": "%Bridge[\\ \\t]+([a-z][a-z0-9]*|c\\+\\+)[\\ \\t]*\\r?\\n"
       },
       "bridge_code": {
-        ".rgx": "((?:.*\\r?\\n)*?)(?=%Bridge|===)"
+        ".rgx": "((?:.*\\r?\\n)*?)(?=%Bridge|(?:(?:(?:\\#.*\\r?\\n)|(?:\\s*\\r?\\n|\\s+$))+)?===)(?:(?:(?:\\#.*\\r?\\n)|(?:\\s*\\r?\\n|\\s+$))+)?"
       },
       "bridge_end": {
         ".rgx": "%Bridge[\\ \\t]+end[\\ \\t]*\\r?\\n"

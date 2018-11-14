@@ -214,10 +214,10 @@ bridge-language:
   /( [a-z][a-z0-9]* | 'c++' )/
 
 bridge-code:
-  /((: ANY* EOL)*?) bridge-boundary/
+  /((: ANY* EOL)*?) bridge-boundary comment-lines?/
 
 bridge-boundary:
-  /(= '%Bridge' | block-marker )/
+  /(= '%Bridge' | comment-lines? block-marker )/
 
 bridge-end:
   /'%Bridge' + 'end' - EOL/
@@ -273,7 +273,7 @@ assignment-operator:
   /(: '=' | '||=' )/
 
 blank-line:
-  /( WS* EOL | WS+ EOS )/
+  /(: WS* EOL | WS+ EOS )/
 
 call-operator: DOT
 
@@ -283,7 +283,7 @@ comment-line:
   /(: HASH ANY* EOL)/
 
 comment-lines:
-  /(: comment-line | blank-line )+/
+  /(: (: comment-line | blank-line )+ )/
 
 block-marker: '==='
 

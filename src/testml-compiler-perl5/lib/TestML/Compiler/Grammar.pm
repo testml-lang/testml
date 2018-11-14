@@ -111,7 +111,7 @@ sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.64_01)
       '.rgx' => qr/\G===(?:[\ \t]+(.*?)[\ \t]*)?\r?\n/
     },
     'bridge_code' => {
-      '.rgx' => qr/\G((?:.*\r?\n)*?)(?=%Bridge|===)/
+      '.rgx' => qr/\G((?:.*\r?\n)*?)(?=%Bridge|(?:(?:(?:\#.*\r?\n)|(?:\s*\r?\n|\s+\z))+)?===)(?:(?:(?:\#.*\r?\n)|(?:\s*\r?\n|\s+\z))+)?/
     },
     'bridge_definition' => {
       '.all' => [
@@ -289,7 +289,7 @@ sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.64_01)
       ]
     },
     'comment_lines' => {
-      '.rgx' => qr/\G(?:(?:\#.*\r?\n)|(\s*\r?\n|\s+\z))+/
+      '.rgx' => qr/\G(?:(?:(?:\#.*\r?\n)|(?:\s*\r?\n|\s+\z))+)/
     },
     'data_section' => {
       '+min' => 0,
