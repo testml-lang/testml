@@ -35,10 +35,10 @@ test-tap:: $(EXT) $(TEST_TAP_DEPS)
 	TESTML_RUN=$(RUNTIME_LANG)-tap prove $(prove_opts) $(test)
 
 $(EXT):
-	make -C $(ROOT) ext/$(RUNTIME_LANG)
+	$(MAKE) -C $(ROOT) ext/$(RUNTIME_LANG)
 
 $(NODE_MODULES):
-	make -C $(ROOT) src/node_modules
+	$(MAKE) -C $(ROOT) src/node_modules
 
 clean::
 	rm -fr ./test/.testml $(ROOT)/test/runtime-tml/.testml
