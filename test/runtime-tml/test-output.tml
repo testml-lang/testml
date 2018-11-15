@@ -13,7 +13,7 @@ sub make_test {
 
     for (keys %ENV) { delete $ENV{$_} if /^TESTML_/; };
     my $out = capture_merged {
-        system "make test-tap test=test/$test";
+        system "$ENV{MAKE} test-tap test=test/$test";
     };
 
     $out =~ s/.*?\n(?=test)//s;

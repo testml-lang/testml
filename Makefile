@@ -150,12 +150,12 @@ test-compiler: test-compiler-perl5 test-compiler-coffee
 # Run all the compiler tests:    note:(`$(MAKE) -C` doesn't work here)
 test-compiler-perl5: src/testml-compiler-perl5
 	$(call header,$@)
-	cd $<; make test j=$(j)
+	cd $<; $(MAKE) test j=$(j)
 
 test-compiler-coffee: src/testml-compiler-coffee
 ifneq ($(shell which node),)
 	$(call header,$@)
-	cd $<; make test j=$(j)
+	cd $<; $(MAKE) test j=$(j)
 endif
 
 # Test the output of various testml CLI invocations:
@@ -168,10 +168,10 @@ test-travis: test
 
 test-docker:
 	docker build --tag=testml-test-docker test/docker
-	docker run --tty --rm --volume "$(PWD):/test" testml-test-docker bash -c 'cd /test && make test'
+	docker run --tty --rm --volume "$(PWD):/test" testml-test-docker bash -c 'cd /test && $(MAKE) test'
 
 test-docker-command:
-	@echo 'docker run --tty --rm --volume "$$PWD:/test" testml-test-docker bash -c "cd /test && make test"'
+	@echo 'docker run --tty --rm --volume "$$PWD:/test" testml-test-docker bash -c "cd /test && $(MAKE) test"'
 
 #------------------------------------------------------------------------------
 # TestML repository managment rules:
