@@ -91,6 +91,7 @@ WORK := \
     site \
     talk/2018-lapm \
     talk/2018-openwest \
+    talk/2018-pdxpm \
     talk/2018-tpc \
     talk/2018-tpceu \
     testml/compiler-tml \
