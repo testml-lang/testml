@@ -138,16 +138,16 @@ test-runtime: $(TEST_ALL)
 # Run a specific language runtime test:
 test-runtime-python2 test-runtime-python3: src/python
 	$(call header,$@)
-	TESTML_LANG_BIN=$(@:test-runtime-%=%) make -C $< test j=$(j)
+	TESTML_LANG_BIN=$(@:test-runtime-%=%) $(MAKE) -C $< test j=$(j)
 
 # Run a specific language runtime test:
 test-runtime-%: src/% ext/% ext/perl5
 	$(call header,$@)
-	make -C $< test j=$(j)
+	$(MAKE) -C $< test j=$(j)
 
 test-compiler: test-compiler-perl5 test-compiler-coffee
 
-# Run all the compiler tests:    note:(`make -C` doesn't work here)
+# Run all the compiler tests:    note:(`$(MAKE) -C` doesn't work here)
 test-compiler-perl5: src/testml-compiler-perl5
 	$(call header,$@)
 	cd $<; make test j=$(j)
@@ -204,14 +204,14 @@ realclean: clean
 	git worktree prune
 	rm -fr compiler eg ext runtime talk testml
 	rm -fr $(NODE_MODULES)
-	make -C src/coffee $@
-	make -C src/go $@
-	make -C src/node $@
-	make -C src/perl5 $@
-	make -C src/perl6 $@
-	make -C src/python $@
-	make -C src/testml-compiler-coffee $@
-	make -C src/testml-compiler-perl5 $@
+	$(MAKE) -C src/coffee $@
+	$(MAKE) -C src/go $@
+	$(MAKE) -C src/node $@
+	$(MAKE) -C src/perl5 $@
+	$(MAKE) -C src/perl6 $@
+	$(MAKE) -C src/python $@
+	$(MAKE) -C src/testml-compiler-coffee $@
+	$(MAKE) -C src/testml-compiler-perl5 $@
 
 .PHONY: test
 

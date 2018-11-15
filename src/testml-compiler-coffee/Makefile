@@ -54,7 +54,7 @@ realclean:: clean
 
 #------------------------------------------------------------------------------
 $(NODE_MODULES):
-	make -C $(ROOT) src/node_modules
+	$(MAKE) -C $(ROOT) src/node_modules
 
 #------------------------------------------------------------------------------
 include pkg/package.mk
