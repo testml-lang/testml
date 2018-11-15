@@ -1,4 +1,5 @@
 export TESTML_ROOT := $(shell cd $(ROOT) && pwd)
+export MAKE
 
 EXT := $(ROOT)/ext/$(RUNTIME_LANG)
 NODE_MODULES := $(ROOT)/src/node_modules
