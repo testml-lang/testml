@@ -15,7 +15,7 @@ define HELP
 endef
 export HELP
 
-export PATH := $(PWD)/bin:$(PWD)/src/testml-compiler-perl5/bin:$(PATH)
+export PATH := $(PWD)/bin:$(PWD)/src/testml-compiler-perl5/bin:$(PWD)/src/node_modules/.bin:$(PATH)
 
 # All the current support languages:
 ifeq ($(shell which bash),)
@@ -159,7 +159,7 @@ ifneq ($(shell which node),)
 endif
 
 # Test the output of various testml CLI invocations:
-test-cli: ext/perl5
+test-cli: ext/perl5 ext/perl6 src/node/lib $(NODE_MODULES)
 	$(call header,$@)
 	PERL5LIB=ext/perl5 test=$(test) prove -v -j$(j) $${test:-test/cli-tml/*.tml}
 
@@ -181,6 +181,9 @@ ext: $(EXT_ALL)
 
 ext/bash ext/coffee ext/node ext/python:
 	@# Nothing to do for $@
+
+src/node/lib: $(NODE_MODULES)
+	$(MAKE) -C src/node js-files
 
 # The `make work` command:
 work: $(WORK)
