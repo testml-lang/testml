@@ -43,7 +43,7 @@ sub write_bridge {
     my ($code) = @_;
 
     if ($code !~ /^TestMLBridge\./m) {
-        $code =~ s/^(?=[-\w]+\(\))/TestMLBridge./mg;
+        $code =~ s/^(?=[-a-zA-Z0-9]+\(\))/TestMLBridge./mg;
     }
 
     my $file = $ENV{TESTML_AST};
