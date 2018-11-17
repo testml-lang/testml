@@ -57,6 +57,9 @@ ifneq ($(shell which python3 2>/dev/null),)
     export TESTML_HAS_LANG_PYTHON3 := 1
     LANG_ALL += python3
 endif
+ifneq ($(shell which ruby),)
+    LANG_ALL += ruby
+endif
 
 
 # New language runtimes in progress:
@@ -188,7 +191,7 @@ test-docker-command:
 
 ext: $(EXT_ALL)
 
-ext/bash ext/coffee ext/node ext/python:
+ext/bash ext/coffee ext/node ext/python ext/ruby:
 	@# Nothing to do for $@
 
 src/node/lib: $(NODE_MODULES)
@@ -222,6 +225,7 @@ realclean: clean
 	$(MAKE) -C src/perl5 $@
 	$(MAKE) -C src/perl6 $@
 	$(MAKE) -C src/python $@
+	$(MAKE) -C src/ruby $@
 	$(MAKE) -C src/testml-compiler-coffee $@
 	$(MAKE) -C src/testml-compiler-perl5 $@
 

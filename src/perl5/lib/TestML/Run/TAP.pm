@@ -12,6 +12,8 @@ sub run {
 sub new {
   my ($class, @params) = @_;
   my $self = $class->SUPER::new(@params);
+  ##### TODO
+  $self->{count} = 0;
 
   return $self;
 }
