@@ -137,6 +137,14 @@ $rhs
 }
 ...
     }
+    elsif (@$ast == 1 and $ast->[0] =~ /^[-\w]+$/) {
+        my $stmt = $ast->[0];
+        $bash .= <<"...";
+TestML.stmt:$i() {
+  TestMLBridge.$stmt
+}
+...
+    }
     else {
         die "Can only compile assertion statements";
     }
