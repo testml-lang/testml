@@ -27,32 +27,35 @@ endif
 
 LANG_ALL = bash
 ifneq ($(shell which node),)
+    export TESTML_HAS_LANG_COFFEE := 1
     LANG_ALL += coffee
 endif
 ifneq ($(shell which go),)
   ifeq ($(shell perl -e 'print "ok" if $$ARGV[0] =~ /go1\.1[01]/' '$(shell go version)'),ok)
+    export TESTML_HAS_LANG_GO := 1
     LANG_ALL += go
   endif
 endif
 ifneq ($(shell which node),)
+    export TESTML_HAS_LANG_NODE := 1
     LANG_ALL += node
 endif
 LANG_ALL += perl5
 ifneq ($(shell which perl6),)
+    export TESTML_HAS_LANG_PERL6 := 1
     LANG_ALL += perl6
 endif
+ifneq ($(shell which python),)
+    export TESTML_HAS_LANG_PYTHON := 1
+    LANG_ALL += python
+endif
 ifneq ($(shell which python2),)
+    export TESTML_HAS_LANG_PYTHON2 := 1
     LANG_ALL += python2
-    found_python := ok
 endif
 ifneq ($(shell which python3),)
+    export TESTML_HAS_LANG_PYTHON3 := 1
     LANG_ALL += python3
-    found_python := ok
-endif
-ifeq ($(found_python),)
-    ifneq ($(shell which python),)
-	LANG_ALL += python
-    endif
 endif
 
 

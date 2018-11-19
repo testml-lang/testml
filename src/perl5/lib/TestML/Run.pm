@@ -422,15 +422,23 @@ sub pick_exec {
   my ($self, $list, $expr) = @_;
 
   my $pick = 1;
-  for my $point (@$list) {
-    if (
-      ($point =~ /^\*/ and
-        not exists $self->{block}{point}{substr($point, 1)}) or
-      ($point =~ /^!*/) and
-        exists $self->{block}{point}{substr($point, 2)}
-    ) {
-      $pick = 0;
-      last;
+  if (my $when = $self->{block}{point}{WHEN}) {
+    if ($when =~ /^Env:(\w+)$/) {
+      $pick = 0 unless $ENV{$1};
+    }
+  }
+
+  if ($pick) {
+    for my $point (@$list) {
+      if (
+        ($point =~ /^\*/ and
+          not exists $self->{block}{point}{substr($point, 1)}) or
+        ($point =~ /^!*/) and
+          exists $self->{block}{point}{substr($point, 2)}
+      ) {
+        $pick = 0;
+        last;
+      }
     }
   }
 

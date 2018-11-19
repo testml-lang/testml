@@ -312,7 +312,7 @@ point-name:
   /(: identifier-user | pseudo-point-name)/
 
 pseudo-point-name:
-  /(:HEAD|LAST|ONLY|SKIP|TODO|DIFF)/
+  /(:HEAD|LAST|ONLY|SKIP|TODO|DIFF|WHEN)/
 
 variable-name: / identifier-name /
 

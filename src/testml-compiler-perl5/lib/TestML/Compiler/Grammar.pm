@@ -614,7 +614,7 @@ sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.64_01)
       ]
     },
     'point_multi' => {
-      '.rgx' => qr/\G\-\-\-[\ \t]+(\^?)((?:[a-z][a-zA-Z0-9]*(?:\-[a-zA-Z][a-zA-Z0-9]*)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF)))(?:=((?:[a-z][a-zA-Z0-9]*(?:\-[a-zA-Z][a-zA-Z0-9]*)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF))))?(?:(\()([<\#\+\-\~\"\/\@%]*)\))?\r?\n((?:.*\r?\n)*?(?=\-\-\-|===|\z))/
+      '.rgx' => qr/\G\-\-\-[\ \t]+(\^?)((?:[a-z][a-zA-Z0-9]*(?:\-[a-zA-Z][a-zA-Z0-9]*)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF|WHEN)))(?:=((?:[a-z][a-zA-Z0-9]*(?:\-[a-zA-Z][a-zA-Z0-9]*)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF|WHEN))))?(?:(\()([<\#\+\-\~\"\/\@%]*)\))?\r?\n((?:.*\r?\n)*?(?=\-\-\-|===|\z))/
     },
     'point_object' => {
       '.all' => [
@@ -627,7 +627,7 @@ sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.64_01)
       ]
     },
     'point_single' => {
-      '.rgx' => qr/\G\-\-\-[\ \t]+(\^?)((?:[a-z][a-zA-Z0-9]*(?:\-[a-zA-Z][a-zA-Z0-9]*)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF)))(?:=((?:[a-z][a-zA-Z0-9]*(?:\-[a-zA-Z][a-zA-Z0-9]*)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF))))?(?:(\()([\#\+\-\~\/\@%]*)\))?:((?=\r?\n)|[\ \t]+(?:.*?[\ \t]*))\r?\n(?:.*\r?\n)*?(?=\-\-\-|===|\z)/
+      '.rgx' => qr/\G\-\-\-[\ \t]+(\^?)((?:[a-z][a-zA-Z0-9]*(?:\-[a-zA-Z][a-zA-Z0-9]*)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF|WHEN)))(?:=((?:[a-z][a-zA-Z0-9]*(?:\-[a-zA-Z][a-zA-Z0-9]*)*|(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF|WHEN))))?(?:(\()([\#\+\-\~\/\@%]*)\))?:((?=\r?\n)|[\ \t]+(?:.*?[\ \t]*))\r?\n(?:.*\r?\n)*?(?=\-\-\-|===|\z)/
     },
     'regex_object' => {
       '.rgx' => qr/\G\/((?:[^\n\\\/]|\\[\\\/ntwds\{\}\[\]\?\*\+])*?)\//

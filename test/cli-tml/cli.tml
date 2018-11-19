@@ -1,9 +1,9 @@
 #!/usr/bin/env testml-pl5
 
-Diff = True
 
 "Test command '{*command}'":
   *command.run-command == *output
+
 
 ===
 --- command: testml
@@ -152,31 +152,29 @@ ok 1
 
 ===
 --- command: test/cli-tml/a-test.t
---- output(<)
-    ..
-    ----------------------------------------------------------------------
-    Ran 2 tests in ...s
-
-    OK
+--- output
+ok 1
+ok 2 - foo
+1..2
 
 ===
 --- command: testml test/cli-tml/a-test.t
 --- ^output
 
 ===
---- command: testml -R python test/cli-tml/a-test.t
+--- command: testml -R perl5 test/cli-tml/a-test.t
 --- ^output
 
 ===
---- command: testml -R python-unit test/cli-tml/a-test.t
+--- command: testml -R perl5-tap test/cli-tml/a-test.t
 --- ^output
 
 ===
---- command: testml --run=python-unit test/cli-tml/a-test.t
+--- command: testml --run=perl5-tap test/cli-tml/a-test.t
 --- ^output
 
 ===
---- command: TESTML_RUN=python-unit testml test/cli-tml/a-test.t
+--- command: TESTML_RUN=perl5-tap testml test/cli-tml/a-test.t
 --- ^output
 
 ===
@@ -186,10 +184,12 @@ ok 1
 1..1
 
 ===
+--- WHEN: Env:TESTML_HAS_LANG_COFFEE
 --- command: testml-coffee-tap -e '1 == 1'
 --- ^output
 
 ===
+--- WHEN: Env:TESTML_HAS_LANG_NODE
 --- command: testml-node-tap -e '1 == 1'
 --- ^output
 
@@ -198,10 +198,12 @@ ok 1
 --- ^output
 
 ===
+--- WHEN: Env:TESTML_HAS_LANG_PERL6
 --- command: testml-perl6-tap -e '1 == 1'
 --- ^output
 
 ===
+--- WHEN: Env:TESTML_HAS_LANG_PYTHON
 --- command: testml-python-tap -e '1 == 1'
 --- ^output
 
