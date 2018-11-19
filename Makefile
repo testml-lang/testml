@@ -58,6 +58,7 @@ ifneq ($(shell which python3 2>/dev/null),)
     LANG_ALL += python3
 endif
 ifneq ($(shell which ruby),)
+    export TESTML_HAS_LANG_RUBY := 1
     LANG_ALL += ruby
 endif
 
