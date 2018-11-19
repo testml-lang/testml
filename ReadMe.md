@@ -195,8 +195,9 @@ runtime tests:
 These languages are in progress, with some tests passing and available in
 the master branch:
 
-* Bash. Passing 000-010.
+* Bash - On master. Passing 000-010.
 * Go - On master. Passing test 000-040.
+* Ruby - On master. Passing test 000-010.
 
 These languages are in various states of development on their own branch:
 * C++ - On branch wip/cpp.
@@ -205,7 +206,7 @@ These languages are in various states of development on their own branch:
 
 These languages are planned to happen soon:
 * Lua
-* Ruby
+* Groovy
 * Java
 * Haskell
 * PHP
