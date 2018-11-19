@@ -148,7 +148,11 @@ test-runtime-%: src/% ext/% ext/perl5
 	$(call header,$@)
 	$(MAKE) -C $< test j=$(j)
 
+ifneq ($(TESTML_HAS_LANG_NODE),)
 test-compiler: test-compiler-perl5 test-compiler-coffee
+else
+test-compiler: test-compiler-perl5
+endif
 
 # Run all the compiler tests:    note:(`$(MAKE) -C` doesn't work here)
 test-compiler-perl5: src/testml-compiler-perl5
@@ -156,13 +160,15 @@ test-compiler-perl5: src/testml-compiler-perl5
 	cd $<; $(MAKE) test j=$(j)
 
 test-compiler-coffee: src/testml-compiler-coffee
-ifneq ($(shell which node 2>/dev/null),)
 	$(call header,$@)
 	cd $<; $(MAKE) test j=$(j)
-endif
 
 # Test the output of various testml CLI invocations:
+ifneq ($(TESTML_HAS_LANG_NODE),)
 test-cli: ext/perl5 ext/perl6 src/node/lib $(NODE_MODULES)
+else
+test-cli: ext/perl5 ext/perl6
+endif
 	$(call header,$@)
 	PERL5LIB=ext/perl5 test=$(test) prove -v -j$(j) $${test:-test/cli-tml/*.tml}
 

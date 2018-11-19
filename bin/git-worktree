@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -e -u -o pipefail
+
+main() {
+  if [[ $# -eq 1 && $1 == prune ]]; then
+    exit 0
+
+  elif [[ $# -eq 4 && $1 == add && $2 == '-f' ]]; then
+    path=$3
+    commit=$4
+    git clone --branch="$commit" "$(git rev-parse --show-toplevel)"/.git "$path"
+
+  else
+    echo "Bad arguments to '$TESTML_ROOT/bin/git-worktree': '$*'" >&2
+    exit 1
+  fi
+}
+
+[[ $0 != "${BASH_SOURCE[0]}" ]] || main "$@"
