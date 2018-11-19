@@ -18,6 +18,6 @@ source-testml-config
 : "${TESTML_BIN:=testml-ruby-tap}"
 : "${TESTML_LANG:=ruby}"
 : "${TESTML_MODULE:=TestML::Run::TAP}"
-: "${TESTML_BRIDGE:=TestMLBridge}"
+: "${TESTML_BRIDGE:=testml-bridge}"
 
 [[ $0 != "${BASH_SOURCE[0]}" ]] || testml-run "$@"

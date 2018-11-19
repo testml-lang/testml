@@ -1,6 +1,7 @@
 require 'json'
 
 class TestML end
+class TestML::Null end
 
 class TestML::Run
 
@@ -21,6 +22,8 @@ class TestML::Run
 # use Scalar::Util;
 
 # # use XXX;
+
+  @@Null = TestML::Null.new
 
   @@vtable = {
     '=='    => 'assert_eq',
@@ -112,23 +115,22 @@ class TestML::Run
       call = call[0] if call.class == Array
       ret = self.public_send(call, *args)
     else
-#      context.each do |v|
-#        args.unshift v
-#      end
-#     unshift @args, $_ for reverse @$context;
+      args.unshift *context
 
-#     if (defined(my $value = $self->{vars}{$name})) {
-#         if (@args) {
-#           die "Variable '$name' has args but is not a function"
-#             unless $self->type($value) eq 'func';
-#           @ret = $self->exec_func($value, \@args);
-#         }
-#         else {
-#           @ret = ($value);
-#         }
-#     }
-#     elsif ($name =~ /^[a-z]/) {
-#       @ret = $self->call_bridge($name, @args);
+      if (@vars.key? name)
+        value = @vars[name]
+
+        if args.length > 0
+          throw "Variable '#{name}' has args but is not a function" \
+            unless self.type(value) == 'func'
+          ret = self.exec_func value, args
+        else
+          ret = [value]
+        end
+        throw ret
+
+      elsif name.match /^[a-z]/
+        ret = self.call_bridge name, *args
 #     }
 #     elsif ($name =~ /^[A-Z]/) {
 #       @ret = $self->call_stdlib($name, @args);
@@ -136,11 +138,11 @@ class TestML::Run
 #     else {
 #       die "Can't resolve TestML function '$name'";
 #     }
+      end
     end
-  end
 
-#   return [@ret];
-# }
+    return [*ret]
+  end
 
 # sub exec_func {
 #   my ($self, $function, $args) = @_;
@@ -168,13 +170,14 @@ class TestML::Run
 # }
 
 # #------------------------------------------------------------------------------
-# sub call_bridge {
-#   my ($self, $name, @args) = @_;
+  def call_bridge(name, *args)
 
-#   if (not $self->{bridge}) {
-#     my $bridge_module = $ENV{TESTML_BRIDGE} || 'TestMLBridge';
+    if not @bridge
+      bridge_module = ENV["TESTML_BRIDGE"]
+      bridge_module = 'testml-bridge' if bridge_module == nil
 
-#     if (my $code = $self->{ast}{bridge}{perl5}) {
+      if @ast['bridge'] and @ast['bridge'].key? 'ruby'
+        code = @ast['bridge']['ruby']
 #       eval <<"..." or die $@;
 # use strict; use warnings;
 # package TestMLBridge;
@@ -183,26 +186,27 @@ class TestML::Run
 # 1;
 # ...
 #     }
-#     else {
-#       eval "require $bridge_module; 1" or die $@;
-#     }
+      else
+        require bridge_module
+      end
 
-#     $self->{bridge} = $bridge_module->new;
-#   }
+      @bridge = TestMLBridge.new
+    end
 
-#   (my $call = $name) =~ s/-/_/g;
+    call = name.gsub /-/, '_'
 
-#   die "Can't find bridge function: '$name'"
-#     unless $self->{bridge} and $self->{bridge}->can($call);
+    throw "Can't find bridge function: '#{name}'" \
+      unless @bridge and @bridge.respond_to? call
 
-#   @args = map {$self->uncook($self->exec($_))} @args;
 
-#   my @ret = $self->{bridge}->$call(@args);
+    args = args.map { |arg| self.uncook self.exec arg }
 
-#   return unless @ret;
+    ret = @bridge.public_send call, *args
 
-#   $self->cook($ret[0]);
-# }
+    return unless ret != nil
+
+    self.cook(ret)
+  end
 
 # sub call_stdlib {
 #   my ($self, $name, @args) = @_;
@@ -222,7 +226,7 @@ class TestML::Run
 # }
 
 # #------------------------------------------------------------------------------
-  def assert_eq(left, right, label, not_=false)
+  def assert_eq(left, right, label=nil, not_=false)
     got = @vars["Got"] = self.exec(left)
     want = @vars["Want"] = self.exec(right)
 
@@ -236,10 +240,9 @@ class TestML::Run
     self.testml_eq got, want, self.get_label(label), not_
   end
 
-# sub assert_num_eq_num {
-#   my ($self, $got, $want, $label, $not) = @_;
-#   $self->testml_eq($got, $want, $self->get_label($label), $not);
-# }
+  def assert_num_eq_num(got, want, label, not_)
+    self.testml_eq got, want, self.get_label(label), not_
+  end
 
 # sub assert_bool_eq_bool {
 #   my ($self, $got, $want, $label, $not) = @_;
@@ -341,22 +344,22 @@ class TestML::Run
 # }
 
 # #------------------------------------------------------------------------------
-# sub exec_dot {
-#   my ($self, @args) = @_;
+  def exec_dot(*args)
 
-#   my $context = [];
+    context = []
 
-#   delete $self->{error};
-#   for my $call (@args) {
+    @error = nil
+
+    args.each do |call|
 #     if (not $self->{error}) {
 #       eval {
-#         if ($self->type($call) eq 'func') {
+          if self.type(call) == 'func'
+            throw 'todo'
 #           $self->exec_func($call, $context->[0]);
 #           $context = [];
-#         }
-#         else {
-#           $context = $self->exec_expr($call, $context);
-#         }
+          else
+            context = self.exec_expr call, context
+          end
 #       };
 #       if ($@) {
 #         if ($ENV{TESTML_DEVEL}) {
@@ -374,13 +377,13 @@ class TestML::Run
 #         $context = [delete $self->{error}];
 #       }
 #     }
-#   }
+    end
 
 #   die "Uncaught Error: ${\ $self->{error}[1]{msg}}"
 #     if $self->{error};
 
-#   return @$context;
-# }
+    return context[0]
+  end
 
 # sub each_exec {
 #   my ($self, $list, $expr) = @_;
@@ -403,47 +406,40 @@ class TestML::Run
 #   }
 # }
 
-# sub each_pick {
-#   my ($self, $list, $expr) = @_;
+  def each_pick(list, expr)
 
-#   for my $block (@{$self->{ast}{data}}) {
-#     $self->{block} = $block;
+    @ast["data"].each do |block|
+      @block = block
+      self.exec_expr ['<>', list, expr]
+    end
 
-#     $self->exec_expr(['<>', $list, $expr]);
-#   }
+    @block = nil
 
-#   delete $self->{block};
+    return
+  end
 
-#   return;
-# }
+  def pick_exec(list, expr)
+    pick = true
 
-# sub pick_exec {
-#   my ($self, $list, $expr) = @_;
+    list.each do |point|
+      if point.match /^\*/ and not @block["point"].key? point[1..-1] or
+         point.match /^!*/ and @block["point"].key? point[2..-1]
+        throw point
+        pick = false
+        break
+      end
+    end
 
-#   my $pick = 1;
-#   for my $point (@$list) {
-#     if (
-#       ($point =~ /^\*/ and
-#         not exists $self->{block}{point}{substr($point, 1)}) or
-#       ($point =~ /^!*/) and
-#         exists $self->{block}{point}{substr($point, 2)}
-#     ) {
-#       $pick = 0;
-#       last;
-#     }
-#   }
+    if pick
+      if self.type(expr) == 'func'
+        self.exec_func expr
+      else
+        self.exec_expr expr
+      end
+    end
 
-#   if ($pick) {
-#     if ($self->type($expr) eq 'func') {
-#       $self->exec_func($expr);
-#     }
-#     else {
-#       $self->exec_expr($expr);
-#     }
-#   }
-
-#   return;
-# }
+    return
+  end
 
 # sub call_func {
 #   my ($self, $func) = @_;
@@ -473,10 +469,9 @@ class TestML::Run
 #   $self->cook($list->[0][$index]);
 # }
 
-# sub get_point {
-#   my ($self, $name) = @_;
-#   $self->getp($name);
-# }
+  def get_point(name)
+    return self.getp name
+  end
 
 # sub set_var {
 #   my ($self, $name, $expr) = @_;
@@ -500,12 +495,12 @@ class TestML::Run
 # }
 
 # #------------------------------------------------------------------------------
-# sub getp {
-#   my ($self, $name) = @_;
-#   return unless $self->{block};
-#   my $value = $self->{block}{point}{$name};
-#   $self->exec($value) if defined $value;
-# }
+  def getp(name)
+    return unless @block
+    value = @block["point"][name]
+    value = self.exec value if defined? value
+    return value
+  end
 
 # sub getv {
 #   my ($self, $name) = @_;
@@ -521,7 +516,7 @@ class TestML::Run
 # #------------------------------------------------------------------------------
   def type(value)
 
-    return 'null' if not defined? value
+    return 'null' if value == nil
 
     if value.class == String
       return 'str'
@@ -546,9 +541,10 @@ class TestML::Run
     throw "Can't determine type of this value: '#{value}'"
   end
 
-# sub cook {
-#   my ($self, @value) = @_;
+  def cook(value)
 
+    return value if value.class == Integer
+    throw "not implemented yet"
 #   return [] if not @value;
 #   my $value = $value[0];
 #   return undef if not defined $value;
@@ -560,14 +556,14 @@ class TestML::Run
 #   return ['!', $value] if ref($value) eq 'TestMLError';
 #   return $value->{func} if ref($value) eq 'TestMLFunction';
 #   return ['?', $value];
-# }
+  end
 
-# sub uncook {
-#   my ($self, $value) = @_;
+  def uncook(value)
 
-#   my $type = $self->type($value);
+    type = self.type value
 
-#   return $value if $type =~ /^(?:str|num|bool|null)$/;
+    return value if type.match /^(?:str|num|bool|null)$/;
+    throw "hahaha"
 #   return $value->[0] if $type =~ /^(?:list|hash)$/;
 #   return $value->[1] if $type =~ /^(?:error|native)$/;
 #   return TestMLFunction->new($value) if $type eq 'func';
@@ -580,7 +576,7 @@ class TestML::Run
 
 #   require XXX;
 #   XXX::ZZZ("Can't uncook this value of type '$type':", $value);
-# }
+  end
 
 #------------------------------------------------------------------------------
   def get_method(pattern, *args)
@@ -597,21 +593,21 @@ class TestML::Run
 
     label = self.exec label_expr
 
-    return label
 #   $label ||= $self->getv('Label') || '';
 
-#   my $block_label = $self->{block} ? $self->{block}{label} : '';
+    block_label = @block ? @block['label'] : ''
 
-#   if ($label) {
+    if label
 #     $label =~ s/^\+/$block_label/;
 #     $label =~ s/\+$/$block_label/;
 #     $label =~ s/\{\+\}/$block_label/;
-#   }
-#   else {
-#     $label = $block_label;
-#     $label = '' unless defined $label;
-#   }
 
+    else
+      label = block_label
+      label = '' unless defined? label
+    end
+
+    return label
 #   return $self->interpolate($label, true);
   end
 
