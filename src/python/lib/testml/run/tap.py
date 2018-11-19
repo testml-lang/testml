@@ -1,5 +1,6 @@
 # -*- coding: utf8 -*-
 
+from __future__ import print_function
 import re, sys
 
 from testml.run import TestMLRun
@@ -101,24 +102,24 @@ class TestMLRunTAP(TestMLRun):
       self.tap_fail(label)
 
       if label:
-        print >> sys.stderr, "#   Failed test '%s'" % label
+        print("#   Failed test '%s'" % label, file=sys.stderr)
 
       else:
-        print >> sys.stderr, "#   Failed test"
+        print("#   Failed test", file=sys.stderr)
 
       if isinstance(got, basestring):
         got = re.sub(r'^', '# ', got)
         got = re.sub(r'^\#\ ', '', got)
         got = re.sub(r'\n$', "\n# ", got)
         got = "'%s'" % got
-      print >> sys.stderr, "#          got: %s" % got
+      print("#          got: %s" % got, file=sys.stderr)
 
       if isinstance(want, basestring):
         want = re.sub(r'^', '# ', want)
         want = re.sub(r'^\#\ ', '', want)
         want = re.sub(r'\n$', "\n# ", want)
         want = "'%s'" % want
-      print >> sys.stderr, "#     expected: %s" % want
+      print("#     expected: %s" % want, file=sys.stderr)
 
   def tap_like(self, got, want, label):
     if re.search(want, got):
@@ -134,10 +135,10 @@ class TestMLRunTAP(TestMLRun):
 
 
   def tap_note(self, msg):
-    print >> sys.stdout, re.sub(r'^', '# ', msg, flags=re.M)
+    print(re.sub(r'^', '# ', msg, flags=re.M))
 
   def tap_diag(self, msg):
-    print >> sys.stderr, re.sub(r'^', '# ', msg, flags=re.M)
+    print(re.sub(r'^', '# ', msg, flags=re.M), file=sys.stderr)
 
   def tap_done(self):
     print("1..%s" % self.count)
