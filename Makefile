@@ -18,42 +18,42 @@ export HELP
 export PATH := $(PWD)/bin:$(PWD)/src/testml-compiler-perl5/bin:$(PWD)/src/node_modules/.bin:$(PATH)
 
 # All the current support languages:
-ifeq ($(shell which bash),)
+ifeq ($(shell which bash 2>/dev/null),)
     $(error 'bash' is a minimum requirement for TestML development)
 endif
-ifeq ($(shell which perl),)
+ifeq ($(shell which perl 2>/dev/null),)
     $(error 'perl' (5) is a minimum requirement for TestML development)
 endif
 
 LANG_ALL = bash
-ifneq ($(shell which node),)
+ifneq ($(shell which node 2>/dev/null),)
     export TESTML_HAS_LANG_COFFEE := 1
     LANG_ALL += coffee
 endif
-ifneq ($(shell which go),)
+ifneq ($(shell which go 2>/dev/null),)
   ifeq ($(shell perl -e 'print "ok" if $$ARGV[0] =~ /go1\.1[01]/' '$(shell go version)'),ok)
     export TESTML_HAS_LANG_GO := 1
     LANG_ALL += go
   endif
 endif
-ifneq ($(shell which node),)
+ifneq ($(shell which node 2>/dev/null),)
     export TESTML_HAS_LANG_NODE := 1
     LANG_ALL += node
 endif
 LANG_ALL += perl5
-ifneq ($(shell which perl6),)
+ifneq ($(shell which perl6 2>/dev/null),)
     export TESTML_HAS_LANG_PERL6 := 1
     LANG_ALL += perl6
 endif
-ifneq ($(shell which python),)
+ifneq ($(shell which python 2>/dev/null),)
     export TESTML_HAS_LANG_PYTHON := 1
     LANG_ALL += python
 endif
-ifneq ($(shell which python2),)
+ifneq ($(shell which python2 2>/dev/null),)
     export TESTML_HAS_LANG_PYTHON2 := 1
     LANG_ALL += python2
 endif
-ifneq ($(shell which python3),)
+ifneq ($(shell which python3 2>/dev/null),)
     export TESTML_HAS_LANG_PYTHON3 := 1
     LANG_ALL += python3
 endif
@@ -139,7 +139,7 @@ test: test-runtime test-compiler test-cli
 test-runtime: $(TEST_ALL)
 
 # Run a specific language runtime test:
-test-runtime-python2 test-runtime-python3: src/python
+testml-python test-runtime-python2 test-runtime-python3: src/python
 	$(call header,$@)
 	TESTML_LANG_BIN=$(@:test-runtime-%=%) $(MAKE) -C $< test j=$(j)
 
@@ -156,7 +156,7 @@ test-compiler-perl5: src/testml-compiler-perl5
 	cd $<; $(MAKE) test j=$(j)
 
 test-compiler-coffee: src/testml-compiler-coffee
-ifneq ($(shell which node),)
+ifneq ($(shell which node 2>/dev/null),)
 	$(call header,$@)
 	cd $<; $(MAKE) test j=$(j)
 endif
