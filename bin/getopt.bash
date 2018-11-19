@@ -7,7 +7,7 @@ getopt() {
   opt_spec="$(
     echo "$GETOPT_SPEC" |
       grep -A999999 '^--$' |
-      grep -v '^\s*$' |
+      grep -v '^ *$' |
       tail -n+2
   )"
 
@@ -117,7 +117,7 @@ getopt() {
         shift
       fi
     fi
-    if $required && [[ -z ${!arg_var} ]]; then
+    if $required && [[ -z ${!arg_var-} ]]; then
       die "'$arg_name' is required"
     fi
   done
