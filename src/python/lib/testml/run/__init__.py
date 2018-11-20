@@ -419,7 +419,7 @@ class TestMLRun:
     type_ = type(value).__name__
     if re.search(r'^(unicode|str|int|float|bool)$', type_): return value
     if re.search(r'^(list|dict)$', type_): return [value]
-    if type_ == 'SRE_Pattern': return ['/', value]
+    if type_ == 'SRE_Pattern' or type_ == 'Pattern': return ['/', value]
     if value.__class__.__name__ == 'TestMLError': return ['!', value]
     if value.__class__.__name__ == 'TestMLFunction': return value.func
     return ['?', value]
