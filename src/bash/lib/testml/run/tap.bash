@@ -25,7 +25,7 @@ TestML.Run.Tap.testml-eq() {
   else
     echo "not ok ${TestML_Run_Tap_count}${label}"
 
-    if [[ -z ${NO_DIFF-} && $want =~ $'\n' ]]; then
+    if [[ -z ${TESTML_NO_DIFF-} && $want =~ $'\n' ]]; then
       dir=$(mktemp -d)
       echo -n "$got" > "$dir/got"
       echo -n "$want" > "$dir/want"
