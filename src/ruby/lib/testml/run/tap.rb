@@ -121,28 +121,19 @@ class TestML::Run::TAP < TestML::Run
 #   my ($self, $plan) = @_;
 #   $self->out("1..$plan");
 # }
-# 
+
   def tap_pass(label='')
+    label = " - #{label}" if label != '';
     @count += 1
-    self.out "ok #{@count} - #{label}"
+    self.out "ok #{@count}#{label}"
+    return
   end
-#   my ($self, $label) = @_;
-#   $label = '' unless defined $label;
-#   $label = " - $label" if $label;
-#   $self->out("ok ${\ ++$self->{count}}$label");
-#   return;
-# }
-# 
+
   def tap_fail(label='')
-    self.out "not ok #{++@count}#{label}"
+    label = " - #{label}" if label != '';
+    @count += 1
+    self.out "not ok #{@count}#{label}"
   end
-# sub tap_fail {
-#   my ($self, $label) = @_;
-#   $label = '' unless defined $label;
-#   $label = " - $label" if $label;
-#   $self->out("not ok ${\ ++$self->{count}}$label");
-#   return;
-# }
 
   def tap_ok(ok, label)
     if ok

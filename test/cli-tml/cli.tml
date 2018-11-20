@@ -208,7 +208,6 @@ ok 1
 --- ^output
 
 ===
---- SKIP
 --- WHEN: Env:TESTML_HAS_LANG_RUBY
 --- command: testml-ruby-tap -e '1 == 1'
 --- ^output
