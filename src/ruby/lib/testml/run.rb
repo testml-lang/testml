@@ -1,7 +1,9 @@
 require 'json'
 
-class TestML end
-class TestML::Null end
+class TestML
+end
+class TestML::Null
+end
 
 class TestML::Run
 
@@ -520,7 +522,7 @@ class TestML::Run
 
     if value.class == String
       return 'str'
-    elsif value.class == Integer
+    elsif value.kind_of? Integer
       return 'num'
     elsif value.class == Float
       return 'num'
@@ -543,7 +545,7 @@ class TestML::Run
 
   def cook(value)
 
-    return value if value.class == Integer
+    return value if value.kind_of? Integer
     throw "not implemented yet"
 #   return [] if not @value;
 #   my $value = $value[0];
