@@ -41,6 +41,26 @@ TestML.Run.Tap.testml-eq() {
   fi
 }
 
+TestML.Run.Tap.testml-ne() {
+  : $((TestML_Run_Tap_count++))
+
+  local got=$1
+  local want=$2
+  local label=${3-}
+
+  if [[ $got != "$want" ]]; then
+    echo "ok ${TestML_Run_Tap_count}${label}"
+
+  else
+    echo "not ok ${TestML_Run_Tap_count}${label}"
+
+    (
+      echo "         got: '$got'"
+      echo "    expected: anything else"
+    ) | sed 's/^/# /' || true >&2
+  fi
+}
+
 TestML.Run.Tap.testml-like() {
   : $((TestML_Run_Tap_count++))
 

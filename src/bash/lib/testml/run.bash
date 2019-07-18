@@ -14,6 +14,10 @@ TestML.Run.assert-any-eq-any() {
   "$(TestML.Run.tester).testml-eq" "$@"
 }
 
+TestML.Run.assert-any-ne-any() {
+  "$(TestML.Run.tester).testml-ne" "$@"
+}
+
 TestML.Run.assert-any-like-any() {
   "$(TestML.Run.tester).testml-like" "$@"
 }

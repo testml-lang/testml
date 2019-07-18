@@ -97,6 +97,7 @@ sub make_stmt {
 
         my $assert_type =
           $op eq '==' ? 'eq' :
+          $op eq '!==' ? 'ne' :
           $op eq '~~' ? die 'has not yet supported' :
           $op eq '=~' ? 'like' :
           die "Unknown assertion operator '$op'";
