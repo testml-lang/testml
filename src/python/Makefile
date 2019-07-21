@@ -21,4 +21,4 @@ clean::
 
 #------------------------------------------------------------------------------
 include $(ROOT)/.makefile/runtime.mk
-include pkg/package.mk
+include package.mk

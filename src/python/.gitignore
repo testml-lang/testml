@@ -1,3 +1,6 @@
 *.pyc
 /build/
 /testml-*
+testml.egg-info/
+dist
+.nox
