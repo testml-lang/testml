@@ -1,0 +1,23 @@
+#!/usr/bin/env testml
+
+*not !== *str
+  :"+: '{*not} !== '{*str}'"
+
+*not !=~ *rgx
+  :"+: '{*not} !=~ '{*rgx}'"
+
+*not !~~ *word
+  :"+: '{*not} !~~ '{*word}'"
+
+=== Test 1
+--- not: I like pie
+--- str: I love pie
+--- rgx(/): ^I .+ P.*$
+--- word: pike
+
+=== Test 2
+--- not
+This is a line
+--- str: This is a line
+--- rgx(/): x+y+z+
+--- word: spline

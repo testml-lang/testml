@@ -1,0 +1,48 @@
+#!/usr/bin/env testml-pl5
+
+*test.make-test == *out
+  :"'test/{*test}' output is correct"
+
+
+%Bridge perl5
+
+use Capture::Tiny 'capture_merged';
+
+sub make_test {
+    my ($self, $test) = @_;
+
+    for (keys %ENV) { delete $ENV{$_} if /^TESTML_/; };
+    my $out = capture_merged {
+        system "$ENV{MAKE} test-tap test=test/$test";
+    };
+
+    $out =~ s/.*?\n(?=test)//s;
+    $out =~ s/^All tests successful.*//ms;
+
+    return $out;
+}
+
+
+===
+--- test: 000-basic.tml
+--- out
+test/000-basic.tml .. 
+ok 1 - String Equality
+1..1
+ok
+
+
+===
+--- test: 010-math.tml
+--- out
+test/010-math.tml .. 
+ok 1 - Test 1
+ok 2 - Test 2
+ok 3 - Test 1
+ok 4 - Test 2
+ok 5 - Test 1
+ok 6 - Test 2
+ok 7 - Test 1
+ok 8 - Test 2
+1..8
+ok

@@ -1,0 +1,3 @@
+#!/usr/bin/env testml
+
+"abc" == "abc" :"String Equality"
