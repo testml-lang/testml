@@ -418,7 +418,8 @@ class TestML.Run
 
   #----------------------------------------------------------------------------
   get_method: (pattern, args...)->
-    method = util.format pattern, @type(args[0]), @type(args[1])
+    # method = util.format pattern, @type(args[0]), @type(args[1])
+    method = pattern.replace('%s', @type(args[0])).replace('%s', @type(args[1]))
 
     throw "Method '#{method}' does not exist" unless @[method]
 
