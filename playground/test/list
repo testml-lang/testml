@@ -1,3 +1,4 @@
+000-basic
 010-math
 020-pick-exclude
 030-assertion-label
@@ -16,3 +17,5 @@
 160-plan
 170-block-access
 180-interpolation
+190-not-assertions
+test-output

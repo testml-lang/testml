@@ -3,7 +3,12 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
   <title>CoffeeScript Test Suite</title>
-  <script src="browser-compiler/coffeescript.js"></script>
+  <script nomodule src="browser-compiler-legacy/coffeescript.js"></script>
+  <script type="module">
+    import CoffeeScript from './browser-compiler-modern/coffeescript.js';
+    window.CoffeeScript = CoffeeScript;
+    window.addEventListener('DOMContentLoaded', CoffeeScript.runScripts, false);
+  </script>
   <script src="https://cdn.jsdelivr.net/underscorejs/1.8.3/underscore-min.js"></script>
   <style>
     body, pre {
@@ -451,6 +456,12 @@ test "array elisions nested destructuring", ->
   [,d,,[,,{w}]] = aobj
   deepEqual d, {x:2}
   arrayEq w, [1,2,4]
+
+test "#5112: array elisions not detected inside strings", ->
+  arr = [
+    str: ", #{3}"
+  ]
+  eq arr[0].str, ', 3'
 
 # Splats in Array Literals
 
@@ -1551,6 +1562,14 @@ test "async methods in classes", ->
 
   eq await Child.static(), 1
   eq await new Child().method(), 2
+
+test "#3199: await multiline implicit object", ->
+  do ->
+    y =
+      if no then await
+        type: 'a'
+        msg: 'b'
+    eq undefined, y
 
 </script>
 <script type="text/x-coffeescript" class="test" id="async_iterators">
@@ -3515,6 +3534,42 @@ test "#4868: Incorrect ‘Can’t call super with @params’ error", ->
 
   d = new (new D).c
   eq 3, d.a
+
+test "#4609: Support new.target", ->
+  class A
+    constructor: ->
+      @calledAs = new.target.name
+
+  class B extends A
+
+  b = new B
+  eq b.calledAs, 'B'
+
+  newTarget = null
+  Foo = ->
+    newTarget = !!new.target
+
+  Foo()
+  eq newTarget, no
+
+  newTarget = null
+
+  new Foo()
+  eq newTarget, yes
+
+test "#5085: Bug: @ reference to class not maintained in do block", ->
+  thisFoo = 'initial foo'
+  thisBar = 'initial bar'
+  fn = (o) -> o.bar()
+
+  class A
+    @foo = 'foo assigned in class'
+    do => thisFoo = @foo
+    fn bar: => thisBar = @foo
+
+  eq thisFoo, 'foo assigned in class'
+  eq thisBar, 'foo assigned in class'
+
 </script>
 <script type="text/x-coffeescript" class="test" id="cluster">
 # Cluster Module
@@ -4673,7 +4728,7 @@ transpile = (method, code, options = {}) ->
   options.bare = yes
   options.transpile =
     # Target Internet Explorer 6, which supports no ES2015+ features.
-    presets: [['env', {targets: browsers: ['ie 6']}]]
+    presets: [['@babel/env', {targets: browsers: ['ie 6']}]]
   CoffeeScript[method] code, options
 
 
@@ -4839,6 +4894,7 @@ test "#3306: trailing comma in a function call in the last line", ->
   ''', '''
   foo(bar);
   '''
+
 </script>
 <script type="text/x-coffeescript" class="test" id="comprehensions">
 # Comprehensions
@@ -7480,6 +7536,47 @@ test '#4686: comments inside interpolations that also contain CSX attributes', -
     </div>;
   '''
 
+test '#5086: comments inside CSX tags but outside interpolations', ->
+  eqJS '''
+    <div>
+      <div ###comment### attribute={value} />
+    </div>
+  ''', '''
+    <div>
+      <div /*comment*/attribute={value} />
+    </div>;
+  '''
+
+test '#5086: comments inside CSX attributes but outside interpolations', ->
+  eqJS '''
+    <div>
+      <div attribute={###attr comment### value} />
+    </div>
+  ''', '''
+    <div>
+      <div attribute={/*attr comment*/value} />
+    </div>;
+  '''
+
+test '#5086: comments inside nested CSX tags and attributes but outside interpolations', ->
+  eqJS '''
+    <div>
+      <div>
+        <div>
+          <div ###comment### attribute={###attr comment### value} />
+        </div>
+      </div>
+    </div>
+  ''', '''
+    <div>
+      <div>
+        <div>
+          <div /*comment*/attribute={/*attr comment*/value} />
+        </div>
+      </div>
+    </div>;
+  '''
+
 # https://reactjs.org/blog/2017/11/28/react-v16.2.0-fragment-support.html
 test 'JSX fragments: empty fragment', ->
   eqJS '''
@@ -9377,6 +9474,50 @@ test "#3199: error message for throw indented comprehension", ->
       ^
   '''
 
+test "#3199: error message for yield indented non-object", ->
+  assertErrorFormat '''
+    ->
+      yield
+        1
+  ''', '''
+    [stdin]:3:5: error: unexpected number
+        1
+        ^
+  '''
+
+test "#3199: error message for yield indented comprehension", ->
+  assertErrorFormat '''
+    ->
+      yield
+        x for x in [1, 2, 3]
+  ''', '''
+    [stdin]:3:5: error: unexpected identifier
+        x for x in [1, 2, 3]
+        ^
+  '''
+
+test "#3199: error message for await indented non-object", ->
+  assertErrorFormat '''
+    ->
+      await
+        1
+  ''', '''
+    [stdin]:3:5: error: unexpected number
+        1
+        ^
+  '''
+
+test "#3199: error message for await indented comprehension", ->
+  assertErrorFormat '''
+    ->
+      await
+        x for x in [1, 2, 3]
+  ''', '''
+    [stdin]:3:5: error: unexpected identifier
+        x for x in [1, 2, 3]
+        ^
+  '''
+
 test "#3098: suppressed newline should be unsuppressed by semicolon", ->
   assertErrorFormat '''
     a = ; 5
@@ -9443,6 +9584,50 @@ test "#3933: prevent implicit calls when cotrol flow is missing `THEN`", ->
     [stdin]:2:10: error: unexpected ->
       when a ->
              ^^
+  '''
+
+test "`new.target` outside of a function", ->
+  assertErrorFormat '''
+    new.target
+  ''', '''
+    [stdin]:1:1: error: new.target can only occur inside functions
+    new.target
+    ^^^^^^^^^^
+  '''
+
+test "`new.target` is only allowed meta property", ->
+  assertErrorFormat '''
+    -> new.something
+  ''', '''
+    [stdin]:1:4: error: the only valid meta property for new is new.target
+    -> new.something
+       ^^^^^^^^^^^^^
+  '''
+
+test "#4834: dynamic import requires exactly one argument", ->
+  assertErrorFormat '''
+    import()
+  ''', '''
+    [stdin]:1:1: error: import() requires exactly one argument
+    import()
+    ^^^^^^^^
+  '''
+
+  assertErrorFormat '''
+    import('x', {})
+  ''', '''
+    [stdin]:1:1: error: import() requires exactly one argument
+    import('x', {})
+    ^^^^^^^^^^^^^^^
+  '''
+
+test "#4834: dynamic import requires explicit call parentheses", ->
+  assertErrorFormat '''
+    promise = import 'foo'
+  ''', '''
+    [stdin]:1:23: error: unexpected end of input
+    promise = import 'foo'
+                          ^
   '''
 
 </script>
@@ -10107,6 +10292,22 @@ test "#3199: throw multiline implicit object", ->
       type: 'a'
       msg: 'b'
   eq undefined, y
+
+  y = do ->
+    yield
+      type: 'a'
+      msg: 'b'
+
+    if no then yield
+      type: 'c'
+      msg: 'd'
+
+    1
+  {value, done} = y.next()
+  ok value.type is 'a' and done is no
+
+  {value, done} = y.next()
+  ok value is 1 and done is yes
 
 test "#4576: multiple row function chaining", ->
   ->
@@ -11573,6 +11774,10 @@ test "#4657: destructured array parameters", ->
   arrayEq result.a, [1, 2, 3]
   eq result.b, 4
 
+test "#5128: default parameters of function in binary operation", ->
+  foo = yes or (a, b = {}) -> null
+  eq foo, yes
+
 </script>
 <script type="text/x-coffeescript" class="test" id="generators">
 # Generators
@@ -12259,7 +12464,7 @@ coffeeCommand = if isWindows() then 'node coffee' else 'coffee'
 spawnOptions =
   cwd: coffeeBinFolder
   encoding: 'utf8'
-  env:
+  env: Object.assign {}, process.env,
     PATH: coffeeBinFolder + (if isWindows() then ';' else ':') + process.env.PATH
   shell: isWindows()
 
@@ -14292,6 +14497,27 @@ test "#4874: backslash `export`", ->
     } from 'underscore';
     """
 
+test "#4834: dynamic import", ->
+  eqJS """
+    import('module').then ->
+  """,
+  """
+    import('module').then(function() {});
+  """
+
+  eqJS """
+    foo = ->
+      bar = await import('bar')
+  """,
+  """
+    var foo;
+
+    foo = async function() {
+      var bar;
+      return bar = (await import('bar'));
+    };
+  """
+
 </script>
 <script type="text/x-coffeescript" class="test" id="numbers">
 # Number Literals
@@ -14805,6 +15031,16 @@ test "#4673: complex destructured object spread variables", ->
   g = ({@y...}) ->
     eq @y.b, 1
   g b: 1
+
+test "#4834: dynamic import can technically be object spread", ->
+  eqJS """
+    x = {...import('module')}
+  """,
+  """
+    var x;
+
+    x = {...import('module')};
+  """
 
 </script>
 <script type="text/x-coffeescript" class="test" id="objects">
@@ -16987,7 +17223,7 @@ ctrlV = { ctrl: true, name: 'v'}
 
 
 testRepl 'reads history file', (input, output, repl) ->
-  input.emitLine repl.rli.history[0]
+  input.emitLine repl.history[0]
   eq '3', output.lastWrite()
 
 testRepl "starts with coffee prompt", (input, output) ->
