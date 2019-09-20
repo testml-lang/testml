@@ -1,13 +1,18 @@
+SHELL = bash
+
 # Maybe use something based on `git rev-parse --git-dir`
 export ROOT := ../..
 SITE := ../gh-pages
+
+OPEN := $(shell command -v xdg-open)
+OPEN ?= open
 
 #------------------------------------------------------------------------------
 default:
 
 .PHONY: test
 test: build compiler testml
-	(sleep 0.5; open http://localhost:1234/) &
+	(sleep 0.5; $(OPEN) http://localhost:1234/ &>/dev/null) &
 	static -p 1234
 
 site: $(SITE) build update
