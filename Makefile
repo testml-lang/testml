@@ -1,3 +1,5 @@
+SHELL = bash
+
 export ROOT := ../..
 
 export PATH := $(PWD)/node_modules/.bin:$(PATH)
@@ -8,6 +10,9 @@ WORK := \
 
 STATUS := $(WORK)
 
+OPEN := $(shell command -v xdg-open)
+OPEN ?= open
+
 #------------------------------------------------------------------------------
 default: status
 
@@ -16,7 +21,7 @@ publish: site
 	make -C playground publish
 
 site: gh-pages playground build
-	cp -r docs/* $<
+	(cd docs/ && find . | cpio -Ldump ../$<)
 	rm -f $</v2/*.html
 	make -C playground site
 
@@ -25,7 +30,7 @@ build: coffeescript node_modules
 
 .PHONY: test
 test: site
-	(sleep 0.5; open http://localhost:1234/) &
+	(sleep 0.5; $(OPEN) http://localhost:1234/ &>/dev/null) &
 	(cd gh-pages && static -p 1234)
 
 work: $(WORK)
