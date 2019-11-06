@@ -1,15 +1,18 @@
 #include <iostream>
-#include "../lib/testml/run/tap.h"
+#include <exception>
 
+#include "../lib/testml/run/tap.hpp"
+#include "../test/testml-bridge.hpp"
 
-int main(int argc, char* argv[]) {
+int main(int, char* argv[]) {
 
-  std::string file(argv[1]);
-//   TestML_Run_TAP tap;
-//   std::string f("asdf");
-
-  TestML_Run_TAP::run(file);
-//   tap.run();
+  TestMLBridge bridge;
+  try {
+    testml::run::TAP tap{argv[1], bridge};
+    tap.test();
+  } catch (std::exception& e) {
+    std::cout << "exception thrown: " << e.what() << std::endl;
+  }
 
   return 0;
 }
