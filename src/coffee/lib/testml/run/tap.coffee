@@ -44,10 +44,10 @@ module.exports = class TestML.Run.TAP extends TestML.Run
 
     diff = (
       _.isString(want) and
-      want.match(/\n/) and (
-        @getv('Diff') or
+      want.match(/\n/) and
+        (not @getv('Diff')? or @getv('Diff')) and
+        not process.env.TESTML_NO_DIFF? or
         @getp('DIFF')
-      )
     )
 
     @tap_is got, want, label, diff
