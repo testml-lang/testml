@@ -1,5 +1,3 @@
-#! bash
-
 set -e -u -o pipefail
 
 TestML.Run.tester() { echo TestML.Run.Tap; }

@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
-# shellcheck disable=1090,2034
+# shellcheck disable=1090,2034,2153
 
 set -e -u -o pipefail
 
 testml-run-file() {
   local build=$TESTML_CACHE
   local lib=$TESTML_ROOT_LIB
-  local ext="$TESTML_ROOT/ext/go"
-  local testml_runner="$build/testml-run-tap"
+  local ext=$TESTML_ROOT/ext/go
+  local testml_runner=$build/testml-run-tap
   local need_build=false
   [[ -e $testml_runner ]] || need_build=true
   [[ -z ${TESTML_ALWAYS_COMPILE-} ]] || need_build=true
@@ -78,7 +78,7 @@ update-dir() {
   fi
 }
 
-[[ -n ${TESTML_SOURCED-} ]] ||
+[[ ${TESTML_SOURCED-} ]] ||
   source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
 
 source-testml-config

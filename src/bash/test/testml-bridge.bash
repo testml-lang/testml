@@ -1,5 +1,3 @@
-#! bash
-
 set -e -u
 
 TestMLBridge.add() {

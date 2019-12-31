@@ -69,13 +69,13 @@ run-cli() {
 
 check-input-file() {
   if [[ $1 != '-' ]]; then
-    [[ $# == 1 && -n $1 ]] ||
+    [[ $# == 1 && $1 ]] ||
       die "Can't determine testml source file"
     [[ -e $1 ]] ||
       die "TestML input file '$1' does not exist"
   fi
 
-  if [[ -n ${from_main-} && $1 != - &&
+  if [[ ${from_main-} && $1 != - &&
     $(head -n1 "$1") =~ \ (testml-[-a-z0-9]+) ]]; then
     export TESTML_INPUT=${BASH_REMATCH[1]}
     return 1
@@ -86,17 +86,17 @@ check-input-file() {
 }
 
 set-testml-bin() {
-  local PATH="$TESTML_ROOT/bin:$PATH"
+  local PATH=$TESTML_ROOT/bin:$PATH
 
-  if [[ -n ${TESTML_BIN-} ]]; then
+  if [[ ${TESTML_BIN-} ]]; then
     can "$TESTML_BIN" ||
       die "TESTML_BIN=$TESTML_BIN but '$TESTML_BIN' not found"
     export TESTML_BIN=$can_path
     return 0
   fi
 
-  if [[ -n ${TESTML_RUN-} ]]; then
-    TESTML_BIN="testml-$TESTML_RUN"
+  if [[ ${TESTML_RUN-} ]]; then
+    TESTML_BIN=testml-$TESTML_RUN
     can "$TESTML_BIN" ||
       die "TESTML_RUN=$TESTML_RUN but '$TESTML_BIN' not found"
     export TESTML_RUN
@@ -120,25 +120,25 @@ set-testml-vars() {
   if [[ $TESTML_INPUT == '-' ]]; then
     export TESTML_FILE='-'
   else
-    export TESTML_FILE="$TESTML_DIR/$TESTML_FILENAME"
+    export TESTML_FILE=$TESTML_DIR/$TESTML_FILENAME
   fi
 
   source-testml-config
 
-  [[ -n ${TESTML_CACHE-} ]] ||
-    TESTML_CACHE="$(abs-dir-path "$TESTML_INPUT")/.testml"
+  [[ ${TESTML_CACHE-} ]] ||
+    TESTML_CACHE=$(abs-dir-path "$TESTML_INPUT")/.testml
   export TESTML_CACHE
-  export TESTML_AST="$TESTML_CACHE/$TESTML_FILENAME.lingy"
+  export TESTML_AST=$TESTML_CACHE/$TESTML_FILENAME.lingy
 }
 
 source-testml-config() {
   if [[ -z ${TESTML_CONFIG-} ]]; then
     if [[ -e ${TESTML_DIR-}/.testmlrc ]]; then
-      TESTML_CONFIG="$TESTML_DIR/.testmlrc"
+      TESTML_CONFIG=$TESTML_DIR/.testmlrc
     fi
   fi
 
-  [[ -n ${TESTML_CONFIG-} ]] || return 0
+  [[ ${TESTML_CONFIG-} ]] || return 0
 
   [[ -f $TESTML_CONFIG ]] ||
     die "TestML config file '$TESTML_CONFIG' does not exist"
@@ -155,7 +155,7 @@ export-testml-vars() {
 }
 
 set-testml-lib-vars() {
-  TESTML_LIB="${TESTML_LIB:+$TESTML_LIB:}$TESTML_DIR"
+  TESTML_LIB=${TESTML_LIB:+$TESTML_LIB:}$TESTML_DIR
 
   if [[ ${TESTML_LANG-} == 'perl6' ]]; then
     TESTML_LIB=${TESTML_LIB//:/,}
@@ -163,8 +163,8 @@ set-testml-lib-vars() {
 
   export TESTML_LIB
 
-  if [[ -n ${TESTML_LANG+x} ]]; then
-    export TESTML_ROOT_LIB="$TESTML_ROOT/src/$TESTML_LANG/lib"
+  if [[ ${TESTML_LANG+x} ]]; then
+    export TESTML_ROOT_LIB=$TESTML_ROOT/src/$TESTML_LANG/lib
   fi
 }
 
@@ -180,14 +180,14 @@ compile-testml() {
 
   rc=0
   ast=$(
-    if [[ -n ${testml_eval_input-} ]]; then
+    if [[ ${testml_eval_input-} ]]; then
       echo "$testml_eval_input" | "${TESTML_COMPILER_BIN}" -
     else
       "${TESTML_COMPILER_BIN}" "$TESTML_FILE"
     fi
   ) || rc=$?
 
-  if [[ -n $TESTML_AST ]]; then
+  if [[ $TESTML_AST ]]; then
     mkdir -p "$TESTML_CACHE"
     echo -n "$ast" > "$TESTML_AST"
   else
@@ -202,7 +202,7 @@ is-tty() {
 }
 
 can() {
-  can_path=$(which "$1") || return $?
+  can_path=$(command -v "$1") || return $?
 }
 
 abs-dir-path() {
@@ -216,7 +216,7 @@ abs-dir-path() {
   (
     cd "$file_dir"
     link=$(readlink -- "$file_name")
-    if [[ -n $link ]]; then
+    if [[ $link ]]; then
       cd "$(dirname -- "$link")"
     fi
     pwd -P 2>/dev/null || pwd

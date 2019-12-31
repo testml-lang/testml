@@ -186,6 +186,9 @@ test-docker:
 test-docker-command:
 	@echo 'docker run --tty --rm --volume "$$PWD:/test" testml-test-docker bash -c "cd /test && $(MAKE) test"'
 
+shellcheck:
+	shellcheck `grep -lEr '^#!.*sh' . | grep -Ev '(\.git|\.tml$$|lingy|node_modules)'`
+
 #------------------------------------------------------------------------------
 # TestML repository managment rules:
 #------------------------------------------------------------------------------

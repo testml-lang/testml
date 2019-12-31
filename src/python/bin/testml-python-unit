@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
-# shellcheck disable=1090,2034
+# shellcheck disable=1090,2034,2153
 
 set -e -u -o pipefail
 
 testml-run-file() {
-  PYTHONPATH="$TESTML_ROOT_LIB:$TESTML_LIB${PYTHONPATH:+:$PYTHONPATH}" \
+  PYTHONPATH=$TESTML_ROOT_LIB:$TESTML_LIB${PYTHONPATH:+:$PYTHONPATH} \
     "$TESTML_LANG_BIN" -u \
       -c "from $TESTML_MODULE import TestMLRunUnit; TestMLRunUnit.run('$1')"
 }
 
-[[ -n ${TESTML_SOURCED-} ]] ||
+[[ ${TESTML_SOURCED-} ]] ||
   source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
 
 source-testml-config

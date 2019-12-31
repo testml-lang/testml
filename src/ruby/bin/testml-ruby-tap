@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
-# shellcheck disable=1090,2034
+# shellcheck disable=1090,2034,2153
 
 set -e -u -o pipefail
 
 testml-run-file() {
   # set -x
-  RUBYLIB="$TESTML_ROOT_LIB:$TESTML_LIB${RUBYLIB:+:$RUBYLIB}" \
+  RUBYLIB=$TESTML_ROOT_LIB:$TESTML_LIB${RUBYLIB:+:$RUBYLIB} \
     ${TESTML_LANG} -e "require 'testml/run/tap'; $TESTML_MODULE.run('$1')"
 }
 
-[[ -n ${TESTML_SOURCED-} ]] ||
+[[ ${TESTML_SOURCED-} ]] ||
   source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
 
 source-testml-config

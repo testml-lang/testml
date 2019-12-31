@@ -1,3 +1,5 @@
+# shellcheck shell=bash
+
 [[ -n ${ZSH_VERSION-} ]] &&
   TESTML_ROOT="$0" ||
   TESTML_ROOT="${BASH_SOURCE[0]}"

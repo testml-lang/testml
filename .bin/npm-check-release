@@ -2,7 +2,7 @@
 
 set -e -u -o pipefail
 
-: ${VERSION:?}
+: "${VERSION:?}"
 
 OK=0
 
@@ -11,7 +11,7 @@ error() {
   OK=1
 }
 
-[ -z "$(git status -s)" ] ||
+[[ -z $(git status -s) ]] ||
   error "Uncommited git changes"
 
 if ! (grep "^version: $VERSION" pkg/Changes &>/dev/null); then

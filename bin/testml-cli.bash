@@ -1,5 +1,3 @@
-#! bash
-
 # echo ">>> Entering bin/testml-cli.bash
 # \$0 = $0
 # \$BASH_SOURCE = $BASH_SOURCE
@@ -157,7 +155,7 @@ NOTE: For shebang line usage with Perl (5 or 6) use 'testml-pl5' or
 }
 
 cmd-env() {
-  [[ -n $1 ]] ||
+  [[ $1 ]] ||
     die "usage: testml --env <testml-file>"
 
   export TESTML_INPUT=$1
@@ -203,19 +201,19 @@ get-options() {
     [[ ${#arguments[@]} -gt 0 ]] || exit 1
   fi
 
-  if [[ -n ${option_config-} ]]; then
+  if [[ ${option_config-} ]]; then
     export TESTML_CONFIG=$option_config
   fi
 
-  if [[ -n ${option_bridge-} ]]; then
+  if [[ ${option_bridge-} ]]; then
     export TESTML_BRIDGE=$option_bridge
   fi
-  if [[ -n ${option_lib-} ]]; then
-    TESTML_LIB="$(cd "$option_lib" && pwd)"
+  if [[ ${option_lib-} ]]; then
+    TESTML_LIB=$(cd "$option_lib" && pwd)
     export TESTML_LIB
   fi
-  if [[ -n ${option_path-} ]]; then
-    TESTML_PATH="$(cd "$option_path" && pwd)"
+  if [[ ${option_path-} ]]; then
+    TESTML_PATH=$(cd "$option_path" && pwd)
     export TESTML_PATH
   fi
 
@@ -231,8 +229,8 @@ get-options() {
     cmd=run
   fi
 
-  [[ -n ${option_run-} ]] &&
-    export TESTML_RUN="$option_run"
+  [[ ${option_run-} ]] &&
+    export TESTML_RUN=$option_run
 
   true
 }
@@ -240,21 +238,21 @@ get-options() {
 setup-eval() {
   testml_eval_input=''
 
-  if [[ -n ${option_eval+x} ]]; then
+  if [[ ${option_eval+x} ]]; then
     for line in "${option_eval[@]}"; do
-      testml_eval_input+="$line"$'\n'
+      testml_eval_input+=$line$'\n'
     done
   fi
 
-  if [[ -n ${option_input-} ]]; then
-    testml_eval_input+="$(cat "$option_input")"$'\n'
+  if [[ ${option_input-} ]]; then
+    testml_eval_input+=$(cat "$option_input")$'\n'
   fi
 
   if $option_all; then
-    [[ -n ${arguments+x} && ${#arguments[@]} -gt 0 ]] ||
+    [[ ${arguments+x} && ${#arguments[@]} -gt 0 ]] ||
       die "--all used but no input files specified"
     for file in "${arguments[@]}"; do
-      testml_eval_input="$testml_eval_input$(cat "$file")"$'\n'
+      testml_eval_input=$testml_eval_input$(cat "$file")$'\n'
     done
     arguments=('-')
   else
@@ -266,16 +264,16 @@ setup-eval() {
 }
 
 add-eval-text() {
-  [[ -n ${testml_eval_text-} ]] || return 0
+  [[ ${testml_eval_text-} ]] || return 0
 
   testml_eval_input=$testml_eval_text
   if [[ $file != '-' ]]; then
-    testml_eval_input+="$(cat "$file")"$'\n'
+    testml_eval_input+=$(cat "$file")$'\n'
   fi
 
   file='-'
 
-  export TESTML_FILEVAR="$TESTML_INPUT"
+  export TESTML_FILEVAR=$TESTML_INPUT
   export TESTML_INPUT='-'
 }
 

@@ -1,5 +1,3 @@
-#! bash
-
 set -e -u -o pipefail
 
 TestML.Run.pick() {
@@ -26,11 +24,11 @@ TestML.Run.get-label() {
   local label=${1-}
 
   if [[ -z $label && -n ${TestML_block-} ]]; then
-    label=$(TestML.block:$TestML_block:Label)
+    label=$("TestML.block:$TestML_block:Label")
 
   elif [[ $label =~ \+ ]]; then
     if [[ -n ${TestML_block-} ]]; then
-      label="${label/+/$(TestML.block:$TestML_block:Label)}"
+      label=${label/+/$("TestML.block:$TestML_block:Label")}
 
     else
       die "Can't use '+' in label when there are no data blocks"
@@ -39,7 +37,7 @@ TestML.Run.get-label() {
 
   while [[ $label =~ \{\*([-a-z0-9]+)\} ]]; do
     local var=${BASH_REMATCH[1]}
-    local val=$(TestML.block:$TestML_block:$var)
+    local val; val=$("TestML.block:$TestML_block:$var")
     label=${label/\{\*$var\}/$val}
   done
 

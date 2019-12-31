@@ -33,7 +33,7 @@ testml-run-file() {
   TestML.main
 }
 
-[[ -n ${TESTML_SOURCED-} ]] ||
+[[ ${TESTML_SOURCED-} ]] ||
   source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
 
 source-testml-config

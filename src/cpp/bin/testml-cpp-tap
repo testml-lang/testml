@@ -14,15 +14,15 @@ testml-run-file() {
 
   set -x
   /usr/bin/env c++ \
-    -o $testml_runner \
-    $src_bin \
-    $lib/run/tap.cpp \
-    $lib/run.cpp \
-    $lib/stdlib.cpp \
-    $lib/bridge.cpp \
-    $bridge_file || return
+    -o "$testml_runner" \
+    "$src_bin" \
+    "$lib/run/tap.cpp" \
+    "$lib/run.cpp" \
+    "$lib/stdlib.cpp" \
+    "$lib/bridge.cpp" \
+    "$bridge_file" || return
 
-  chmod +x $testml_runner
+  chmod +x "$testml_runner"
   $testml_runner "$TESML_AST"
 }
 
@@ -32,7 +32,7 @@ testml-run-file() {
 : "${TESTML_BRIDGE:=testml-bridge}"
 export TESTML_{BIN,LANG,MODULE,BRIDGE}
 
-[[ -n $TESTML_SOURCED ]] ||
+[[ $TESTML_SOURCED ]] ||
   source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"
 
 testml_runner_sourced=true
