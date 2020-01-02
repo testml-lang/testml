@@ -23,17 +23,20 @@ TestML.Run.assert-any-like-any() {
 TestML.Run.get-label() {
   local label=${1-}
 
-  if [[ -z $label && -n ${TestML_block-} ]]; then
+  if [[ -z $label ]] && command -v TestML.vars:Label >/dev/null; then
+    label=$(TestML.vars:Label)
+  fi
+
+  if [[ -z $label && ${TestML_block-} ]]; then
     label=$("TestML.block:$TestML_block:Label")
-
   elif [[ $label =~ \+ ]]; then
-    if [[ -n ${TestML_block-} ]]; then
+    if [[ ${TestML_block-} ]]; then
       label=${label/+/$("TestML.block:$TestML_block:Label")}
-
     else
       die "Can't use '+' in label when there are no data blocks"
     fi
   fi
+
 
   while [[ $label =~ \{\*([-a-z0-9]+)\} ]]; do
     local var=${BASH_REMATCH[1]}

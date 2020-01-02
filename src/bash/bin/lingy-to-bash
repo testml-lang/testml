@@ -79,30 +79,41 @@ sub make_code {
 
 sub make_stmt {
     my ($ast) = @_;
-    my $bash = '';
-    if ($ast->[0] eq '%<>') {
-        my ($each, $pick, $assert) = @$ast;
-        my ($op, $lexpr, $rexpr, $label) = @$assert;
-        $label //= '';
 
-        my $picks = join ' ', map "'$_'", @$pick;
+    my $op = $ast->[0];
 
-        $var = 'lhs';
-        my $lhs = join "\n", @{make_expr($lexpr)};
-        $lhs =~ s/^/    /gm;
+    $op eq '%<>' ? make_stmt_each_pick($ast) :
+    $op eq '==' ? make_stmt_assert_eq($ast) :
+    $op eq '=' ? make_stmt_set_var($ast) :
+    (@$ast == 1 and $op =~ /^[-\w]+$/) ? make_stmt_bridge_call($ast) :
+    die "Can only compile assertion statements";
+}
 
-        $var = 'rhs';
-        my $rhs = join "\n", @{make_expr($rexpr)};
-        $rhs =~ s/^/    /gm;
+sub make_stmt_each_pick {
+    my ($ast) = @_;
 
-        my $assert_type =
-          $op eq '==' ? 'eq' :
-          $op eq '!==' ? 'ne' :
-          $op eq '~~' ? die 'has not yet supported' :
-          $op eq '=~' ? 'like' :
-          die "Unknown assertion operator '$op'";
+    my ($each, $pick, $assert) = @$ast;
+    my ($op, $lexpr, $rexpr, $label) = @$assert;
+    $label //= '';
 
-        $bash .= <<"...";
+    my $picks = join ' ', map "'$_'", @$pick;
+
+    $var = 'lhs';
+    my $lhs = join "\n", @{make_expr($lexpr)};
+    $lhs =~ s/^/    /gm;
+
+    $var = 'rhs';
+    my $rhs = join "\n", @{make_expr($rexpr)};
+    $rhs =~ s/^/    /gm;
+
+    my $assert_type =
+        $op eq '==' ? 'eq' :
+        $op eq '!==' ? 'ne' :
+        $op eq '~~' ? die 'has not yet supported' :
+        $op eq '=~' ? 'like' :
+        die "Unknown assertion operator '$op'";
+
+    return <<"...";
 TestML.stmt:$i() {
   local lhs rhs label
   for TestML_block in \$(TestML.blocks); do
@@ -114,21 +125,35 @@ $rhs
   done
 }
 ...
-    }
-    elsif ($ast->[0] eq '==') {
-        my ($op, $lexpr, $rexpr, $label) = @$ast;
+}
 
-        $label = '' unless defined $label;
+sub make_stmt_set_var {
+    my ($ast) = @_;
+    my ($eq, $var, $val) = @$ast;
 
-        $var = 'lhs';
-        my $lhs = join "\n", @{make_expr($lexpr)};
-        $lhs =~ s/^/  /gm;
+    return <<"...";
+TestML.stmt:$i() {
+    TestML.vars:$var() ( printf "$val" )
+}
+...
+}
 
-        $var = 'rhs';
-        my $rhs = join "\n", @{make_expr($rexpr)};
-        $rhs =~ s/^/  /gm;
+sub make_stmt_assert_eq {
+    my ($ast) = @_;
 
-        $bash .= <<"...";
+    my ($op, $lexpr, $rexpr, $label) = @$ast;
+
+    $label = '' unless defined $label;
+
+    $var = 'lhs';
+    my $lhs = join "\n", @{make_expr($lexpr)};
+    $lhs =~ s/^/  /gm;
+
+    $var = 'rhs';
+    my $rhs = join "\n", @{make_expr($rexpr)};
+    $rhs =~ s/^/  /gm;
+
+    return <<"...";
 TestML.stmt:$i() {
   local lhs rhs label
 $lhs
@@ -137,20 +162,17 @@ $rhs
   TestML.Run.assert-any-eq-any "\$lhs" "\$rhs" "\$label"
 }
 ...
-    }
-    elsif (@$ast == 1 and $ast->[0] =~ /^[-\w]+$/) {
-        my $stmt = $ast->[0];
-        $bash .= <<"...";
+}
+
+sub make_stmt_bridge_call {
+    my ($ast) = @_;
+    my $stmt = $ast->[0];
+
+    return <<"...";
 TestML.stmt:$i() {
   TestMLBridge.$stmt
 }
 ...
-    }
-    else {
-        die "Can only compile assertion statements";
-    }
-
-    return $bash;
 }
 
 sub make_expr {
