@@ -149,7 +149,7 @@ source-testml-config() {
 }
 
 export-testml-vars() {
-  : "${TESTML_LANG_BIN:=$TESTML_LANG}"
+  : "${TESTML_LANG_BIN:=${TESTML_LANG-}}"
 
   export TESTML_{BIN,BRIDGE,LANG{,_BIN},LIB,MODULE,PATH,RUN}
 }
