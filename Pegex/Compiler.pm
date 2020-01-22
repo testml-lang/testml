@@ -103,8 +103,9 @@ sub combinate_object {
     elsif (exists $object->{'.err' }) {
     }
     else {
-        require YAML::XS;
-        die "Can't combinate:\n" . YAML::XS::Dump($object);
+        require YAML::PP;
+        die "Can't combinate:\n" .
+            YAML::PP->new(schema => ['Core', 'Perl'])->dump_string($object);
     }
 }
 
@@ -159,15 +160,18 @@ sub perl_regexes {
 # Serialization formatter methods
 #-----------------------------------------------------------------------------#
 sub to_yaml {
-    require YAML::XS;
+    require YAML::PP;
     my $self = shift;
-    return YAML::XS::Dump($self->tree);
+    my $yaml = YAML::PP->new(schema => ['Core', 'Perl'])
+                       ->dump_string($self->tree);
+    $yaml =~ s/\n *(\[\]\n)/ $1/g; # Work around YAML::PP formatting issue
+    return $yaml;
 }
 
 sub to_json {
-    require JSON::XS;
+    require JSON::PP;
     my $self = shift;
-    return JSON::XS->new->utf8->canonical->pretty->encode($self->tree);
+    return JSON::PP->new->utf8->canonical->pretty->encode($self->tree);
 }
 
 sub to_perl {
@@ -178,8 +182,9 @@ sub to_perl {
     $Data::Dumper::Indent = 1;
     $Data::Dumper::Sortkeys = 1;
     my $perl = Data::Dumper::Dumper($self->tree);
-    $perl =~ s/\?\^:/?-xism:/g;
+    $perl =~ s/\?\^u?:/?-xism:/g; # the "u" is perl 5.14-18 equiv of /u
     $perl =~ s!(\.rgx.*?qr/)\(\?-xism:(.*)\)(?=/)!$1$2!g;
+    $perl =~ s!/u$!/!gm; # perl 5.20+ put /u, older perls don't understand
     die "to_perl failed with non compatible regex in:\n$perl"
         if $perl =~ /\?\^/;
     return $perl;
