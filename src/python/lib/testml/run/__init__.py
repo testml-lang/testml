@@ -315,7 +315,7 @@ class TestMLRun:
     pick = True
     for point in list_:
       if (re.match(r'\*', point) and
-          not self.block['point'].get(point[1:])) or \
+          self.block['point'].get(point[1:])) == None or \
          (re.match(r'\!\*', point) and
           self.block['point'].get(point[2:])):
         pick = False
@@ -486,11 +486,11 @@ class TestMLRun:
 
   def transform1(self, m, label):
     value = self.vars.get(m.group(1))
-    return self.transform(value, label) if value else ''
+    return self.transform(value, label) if value != None else ''
 
   def transform2(self, m, label):
     if not self.block: return ''
     value = self.block['point'].get(m.group(1))
-    return self.transform(value, label) if value else ''
+    return self.transform(value, label) if value != None else ''
 
 # vim: sw=2:
