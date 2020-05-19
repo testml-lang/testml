@@ -151,7 +151,6 @@ class TestMLRun:
 
   def call_bridge(self, name, args):
     if not self.bridge:
-      bridge_module = __import__(os.environ['TESTML_BRIDGE'])
       code = self.ast.get('bridge', {}).get('python', None)
       if code:
         self.bridge = (self.make_class(
@@ -159,6 +158,7 @@ class TestMLRun:
             re.sub(r'^', '  ', code, 0, re.M)
         ))()
       else:
+        bridge_module = __import__(os.environ['TESTML_BRIDGE'])
         self.bridge = (bridge_module.TestMLBridge)()
 
     call = getattr(self.bridge, re.sub(r'-', '_', name))
