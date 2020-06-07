@@ -14,11 +14,9 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 2",
-      "point": {
-        "HEAD": true}},
-    { "label": "Test 3",
-      "point": {}}]}
+    { "Label": "Test 2",
+      "HEAD": true},
+    { "Label": "Test 3"}]}
 
 
 
@@ -33,11 +31,9 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {}},
-    { "label": "Test 2",
-      "point": {
-        "LAST": true}}]}
+    { "Label": "Test 1"},
+    { "Label": "Test 2",
+      "LAST": true}]}
 
 
 
@@ -52,9 +48,8 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 2",
-      "point": {
-        "ONLY": true}}]}
+    { "Label": "Test 2",
+      "ONLY": true}]}
 
 
 
@@ -69,10 +64,8 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {}},
-    { "label": "Test 3",
-      "point": {}}]}
+    { "Label": "Test 1"},
+    { "Label": "Test 3"}]}
 
 
 
@@ -85,8 +78,7 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "DIFF": true}}]}
+    { "Label": "Test 1",
+      "DIFF": true}]}
 
 # vim: ft=:

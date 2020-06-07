@@ -14,10 +14,9 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "single": "this that",
-        "multi": "this\nthat\n"}}]}
+    { "Label": "Test 1",
+      "single": "this that",
+      "multi": "this\nthat\n"}]}
 
 === Numeric points
 --- input
@@ -35,15 +34,14 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "a": 12345,
-        "b": 3.14,
-        "c": -12345,
-        "d": -3.14,
-        "e": "12345",
-        "f": "12345",
-        "g": "12345\n"}}]}
+    { "Label": "Test 1",
+      "a": 12345,
+      "b": 3.14,
+      "c": -12345,
+      "d": -3.14,
+      "e": "12345",
+      "f": "12345",
+      "g": "12345\n"}]}
 
 === Empty point
 --- input
@@ -56,10 +54,9 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": "",
-        "bar": ""}}]}
+    { "Label": "Test 1",
+      "foo": "",
+      "bar": ""}]}
 
 === Point inheritance
 --- input
@@ -73,12 +70,10 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": "xxx"}},
-    { "label": "Test 2",
-      "point": {
-        "foo": "xxx"}}]}
+    { "Label": "Test 1",
+      "foo": "xxx"},
+    { "Label": "Test 2",
+      "foo": "xxx"}]}
 
 === Point inheritance from different name
 --- input
@@ -92,12 +87,10 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": "xxx"}},
-    { "label": "Test 2",
-      "point": {
-        "bar": "xxx"}}]}
+    { "Label": "Test 1",
+      "foo": "xxx"},
+    { "Label": "Test 2",
+      "bar": "xxx"}]}
 
 === User defined data section in block
 --- input
@@ -113,13 +106,11 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": "xxx"},
-      "user": "some\n  stuff\n"},
-    { "label": "Test 2",
-      "point": {
-        "bar": "xxx"}}]}
+    { "Label": "Test 1",
+      "User": "some\n  stuff\n",
+      "foo": "xxx"},
+    { "Label": "Test 2",
+      "bar": "xxx"}]}
 
 === User section must contain some content
 --- input
@@ -133,9 +124,8 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": "xxx"}}]}
+    { "Label": "Test 1",
+      "foo": "xxx"}]}
 
 === Quoted points
 --- input
@@ -149,12 +139,11 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "a": "foo",
-        "b": "foo",
-        "c": "foo\\nbar",
-        "d": "foo\nbar\tbar "}}]}
+    { "Label": "Test 1",
+      "a": "foo",
+      "b": "foo",
+      "c": "foo\\nbar",
+      "d": "foo\nbar\tbar "}]}
 
 === Empty single line point
 --- input
@@ -165,9 +154,8 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "a": ""}}]}
+    { "Label": "Test 1",
+      "a": ""}]}
 
 === Repeated inheritance uses same transform
 --- input
@@ -186,14 +174,11 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "a": [["foo\tbar","baz"]]}},
-    { "label": "Test 2",
-      "point": {
-        "a": [["foo\tbar","baz"]]}},
-    { "label": "Test 3",
-      "point": {
-        "a": [["foo\tbar","baz"]]}}]}
+    { "Label": "Test 1",
+      "a": [["foo\tbar","baz"]]},
+    { "Label": "Test 2",
+      "a": [["foo\tbar","baz"]]},
+    { "Label": "Test 3",
+      "a": [["foo\tbar","baz"]]}]}
 
 # vim: ft= sw=2:

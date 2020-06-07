@@ -44,15 +44,13 @@ Diff = 1
           ["get-md5"]],
         ["*","md5"]]]],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "input": "I like pie.",
-        "sha1": "5f30adb9864439315a33e1a6631358164f94cc20"}},
-    { "label": "Test 2",
-      "point": {
-        "input": "I like pie.\n",
-        "sha1": "53b3de1f1d480989d391f24a8886d291773347a7",
-        "md5": "29a529ed285c7f5cd6c3bff4b3bb7626"}}]}
+    { "Label": "Test 1",
+      "input": "I like pie.",
+      "sha1": "5f30adb9864439315a33e1a6631358164f94cc20"},
+    { "Label": "Test 2",
+      "input": "I like pie.\n",
+      "sha1": "53b3de1f1d480989d391f24a8886d291773347a7",
+      "md5": "29a529ed285c7f5cd6c3bff4b3bb7626"}]}
 
 === Trailing comments after indent
 --- input

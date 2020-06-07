@@ -249,22 +249,20 @@ class TestMLCompiler.AST extends Pegex.Tree
     [operator, null, expression]
 
   got_block_definition: ([label, user, points])->
-    point = {}
+    block =
+      Label: label
+    block.User = user if user.match /\S/
+
     for p in points
       [inherit, name, from, has_transforms, transforms, value] = p
+
       if name.match /^(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF)$/
-        point[name] = true
+        block[name] = true
       else
-        point[name] =
+        block[name] =
           @make_point(name, value, inherit, from, has_transforms, transforms)
 
     @data ||= []
-
-    block =
-      label: label
-      point: point
-
-    block.user = user if user.match /\S/
 
     @data.push block
 
@@ -380,13 +378,13 @@ class TestMLCompiler.AST extends Pegex.Tree
     blocks = []
 
     for block in data
-      if block.point.SKIP
+      if block.SKIP
         continue
-      if block.point.ONLY
+      if block.ONLY
         return [block]
-      if block.point.HEAD
+      if block.HEAD
         blocks = []
-      if block.point.LAST
+      if block.LAST
         blocks.push block
         return blocks
 

@@ -290,7 +290,7 @@ class TestML.Run
     for block in @data
       @block = block
 
-      if block.point.ONLY and not @warned_only
+      if block.ONLY and not @warned_only
         @err "Warning: TestML 'ONLY' in use."
         @warned_only = true
 
@@ -303,8 +303,8 @@ class TestML.Run
   pick_exec: (list, expr)->
     pick = true
     for point in list
-      if (point.match(/^\*/) and not @block.point[point[1..]]?) or
-          (point.match(/^\!\*/) and @block.point[point[2..]]?)
+      if (point.match(/^\*/) and not @block[point[1..]]?) or
+          (point.match(/^\!\*/) and @block[point[2..]]?)
         pick = false
         break
 
@@ -355,7 +355,7 @@ class TestML.Run
   #----------------------------------------------------------------------------
   getp: (name)->
     return unless @block
-    value = @block.point[name]
+    value = @block[name]
     value = @exec value if value?
     value
 
@@ -429,7 +429,7 @@ class TestML.Run
     label = @exec label_expr
 
     label ||= @getv('Label') || ''
-    block_label = if @block? then @block.label else ''
+    block_label = if @block? then @block.Label else ''
 
     if label
       label = label.replace /^\+/, block_label
@@ -461,5 +461,5 @@ class TestML.Run
     @transform value, label
 
   transform2: (name, label)=>
-    return '' unless (value = @block?.point[name])?
+    return '' unless (value = @block?[name])?
     @transform value, label

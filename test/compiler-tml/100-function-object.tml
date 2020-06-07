@@ -39,8 +39,7 @@ Diff = 1
     ["=>",[],
       [["==",123,123]]]],
   "data": [
-    { "label": "Test 1",
-      "point": {}}]}
+    { "Label": "Test 1"}]}
 
 === Assign function to variable
 --- input
@@ -67,8 +66,7 @@ Diff = 1
       ["&",
         ["f1"]]]],
   "data": [
-    { "label": "Test 1",
-      "point": {}}]}
+    { "Label": "Test 1"}]}
 
 === Function with arguments
 --- input
@@ -91,8 +89,7 @@ Diff = 1
             ["c"]]]]],
     ["f1",2,3,5]],
   "data": [
-    { "label": "Test 1",
-      "point": {}}]}
+    { "Label": "Test 1"}]}
 
 === Anonymous function as method
 --- input

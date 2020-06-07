@@ -29,10 +29,9 @@ Diff = 1
           ["x"]],
         ["*","b"]]]],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "a": 1,
-        "b": 2}}]}
+    { "Label": "Test 1",
+      "a": 1,
+      "b": 2}]}
 
 === Import multiple files at once
 --- input
@@ -64,17 +63,14 @@ Diff = 1
           ["x"]],
         ["*","b"]]]],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "a": 1,
-        "b": 2}},
-    { "label": "Test 2",
-      "point": {
-        "a": 3,
-        "b": 4}},
-    { "label": "Test 3",
-      "point": {
-        "a": 5,
-        "b": 6}}]}
+    { "Label": "Test 1",
+      "a": 1,
+      "b": 2},
+    { "Label": "Test 2",
+      "a": 3,
+      "b": 4},
+    { "Label": "Test 3",
+      "a": 5,
+      "b": 6}]}
 
 # vim: ft=:

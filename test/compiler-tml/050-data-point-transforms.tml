@@ -16,10 +16,9 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": "xxx\nyyy\n",
-        "end": ""}}]}
+    { "Label": "Test 1",
+      "foo": "xxx\nyyy\n",
+      "end": ""}]}
 
 === Keep blanks transform
 --- input
@@ -35,10 +34,9 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": "xxx\nyyy\n\n\n",
-        "end": ""}}]}
+    { "Label": "Test 1",
+      "foo": "xxx\nyyy\n\n\n",
+      "end": ""}]}
 
 === Keep comments transform
 --- input
@@ -54,10 +52,9 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": "# xxx\nyyy\n",
-        "bar": "yyy\n"}}]}
+    { "Label": "Test 1",
+      "foo": "# xxx\nyyy\n",
+      "bar": "yyy\n"}]}
 
 === Chomp transform
 --- input
@@ -70,9 +67,8 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": "xxx\nyyy"}}]}
+    { "Label": "Test 1",
+      "foo": "xxx\nyyy"}]}
 
 === Point inheritance with transforms
 --- input
@@ -87,12 +83,10 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": "xxx\nyyy"}},
-    { "label": "Test 2",
-      "point": {
-        "foo": "xxx\nyyy\n"}}]}
+    { "Label": "Test 1",
+      "foo": "xxx\nyyy"},
+    { "Label": "Test 2",
+      "foo": "xxx\nyyy\n"}]}
 
 === Point inheritance from different name with transforms
 --- input
@@ -108,12 +102,10 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": "xxx\nyyy"}},
-    { "label": "Test 2",
-      "point": {
-        "bar": "xxx\nyyy\n\n"}}]}
+    { "Label": "Test 1",
+      "foo": "xxx\nyyy"},
+    { "Label": "Test 2",
+      "bar": "xxx\nyyy\n\n"}]}
 
 === Use auto transforms on inherited point
 --- input
@@ -129,12 +121,10 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": "xxx\nyyy\n\n"}},
-    { "label": "Test 2",
-      "point": {
-        "foo": "xxx\nyyy\n\n"}}]}
+    { "Label": "Test 1",
+      "foo": "xxx\nyyy\n\n"},
+    { "Label": "Test 2",
+      "foo": "xxx\nyyy\n\n"}]}
 
 === Comments removed by default
 --- input
@@ -147,9 +137,8 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": " # Not Comment\n"}}]}
+    { "Label": "Test 1",
+      "foo": " # Not Comment\n"}]}
 
 === Regex transform
 --- input
@@ -164,10 +153,9 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": ["/","this\n  .*\nthat","x"],
-        "bar": ["/","this.*that"]}}]}
+    { "Label": "Test 1",
+      "foo": ["/","this\n  .*\nthat","x"],
+      "bar": ["/","this.*that"]}]}
 
 === Strip blank lines transform
 --- input
@@ -200,11 +188,10 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": "line 1\nline 2\nline 3\n",
-        "bar": "line 1\nline 2\nline 3",
-        "baz": [["line 1","line 2","line 3"]]}}]}
+    { "Label": "Test 1",
+      "foo": "line 1\nline 2\nline 3\n",
+      "bar": "line 1\nline 2\nline 3",
+      "baz": [["line 1","line 2","line 3"]]}]}
 
 === List transform
 --- input
@@ -222,13 +209,12 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": [["line 1","line 2","line 3"]],
-        "bar": [["one","two","three"]],
-        "baz": [[
-            ["/","a b c.*$"],
-            ["/","this.*that"]]]}}]}
+    { "Label": "Test 1",
+      "foo": [["line 1","line 2","line 3"]],
+      "bar": [["one","two","three"]],
+      "baz": [[
+          ["/","a b c.*$"],
+          ["/","this.*that"]]]}]}
 
 === Transforms and Inheritance
 --- input
@@ -252,18 +238,17 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "a": "line 1\nline 2\nline 3\n",
-        "b": "line 1\nline 2\nline 3\n",
-        "c": "line 1\n\nline 2\n\nline 3\n",
-        "d": [["line 1","","line 2","","line 3"]],
-        "e": [[
-            ["/","line 1"],
-            ["/",""],
-            ["/","line 2"],
-            ["/",""],
-            ["/","line 3"]]]}}]}
+    { "Label": "Test 1",
+      "a": "line 1\nline 2\nline 3\n",
+      "b": "line 1\nline 2\nline 3\n",
+      "c": "line 1\n\nline 2\n\nline 3\n",
+      "d": [["line 1","","line 2","","line 3"]],
+      "e": [[
+          ["/","line 1"],
+          ["/",""],
+          ["/","line 2"],
+          ["/",""],
+          ["/","line 3"]]]}]}
 
 === Comments and Inheritance
 --- input
@@ -279,10 +264,9 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "a": "line 1\nline 2\n",
-        "b": "line 1\n# Comment\nline 2\n"}}]}
+    { "Label": "Test 1",
+      "a": "line 1\nline 2\n",
+      "b": "line 1\n# Comment\nline 2\n"}]}
 
 === Don't inherit previous transforms unless using ^x=y form
 --- input
@@ -299,18 +283,15 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "regex": ["/","I like pie"]}},
-    { "label": "Test 2",
-      "point": {
-        "regex": [[
-            ["/","I"],
-            ["/","like"],
-            ["/","pie"]]]}},
-    { "label": "Test 3",
-      "point": {
-        "regex": ["/","I like pie"]}}]}
+    { "Label": "Test 1",
+      "regex": ["/","I like pie"]},
+    { "Label": "Test 2",
+      "regex": [[
+          ["/","I"],
+          ["/","like"],
+          ["/","pie"]]]},
+    { "Label": "Test 3",
+      "regex": ["/","I like pie"]}]}
 
 === Strip comments before trailing blank lines
 --- input
@@ -325,11 +306,9 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test1",
-      "point": {
-        "foo": "line 1\n"}},
-    { "label": "Test 2",
-      "point": {}}]}
+    { "Label": "Test1",
+      "foo": "line 1\n"},
+    { "Label": "Test 2"}]}
 
 === CoffeeScript object syntax transform
 --- SKIP: Need to parse this with pegex, not coffeescript
@@ -352,17 +331,16 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test1",
-      "point": {
-        "foo": [
-          { "foo": "bar",
-            "bar": 42}],
-        "bar": [
-          { "foo": {
-              "bar": 1234}}],
-        "baz": [
-          { "foo": [22]}],
-        "boo": [["foo",123]]}}]}
+    { "Label": "Test1",
+      "foo": [
+        { "foo": "bar",
+          "bar": 42}],
+      "bar": [
+        { "foo": {
+            "bar": 1234}}],
+      "baz": [
+        { "foo": [22]}],
+      "boo": [["foo",123]]}]}
 
 === Double quoted string semantics
 --- input
@@ -377,10 +355,9 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test1",
-      "point": {
-        "foo": "foo\tbar\nfoo\nbar\nfoo\\bar\n",
-        "bar": [["foo\tbar","foo\nbar","foo\\bar"]]}}]}
+    { "Label": "Test1",
+      "foo": "foo\tbar\nfoo\nbar\nfoo\\bar\n",
+      "bar": [["foo\tbar","foo\nbar","foo\\bar"]]}]}
 
 === Leading backslash no longer an escape
 --- input
@@ -393,8 +370,7 @@ Diff = 1
 { "testml": "0.3.0",
   "code": [],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "foo": "\\n\n\\# Not Comment\n"}}]}
+    { "Label": "Test 1",
+      "foo": "\\n\n\\# Not Comment\n"}]}
 
 # vim: ft= sw=2:

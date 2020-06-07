@@ -234,9 +234,10 @@ sub make_data {
     for my $block (@{$ast->{data}}) {
         $i++;
         push @bash, '';
-        push @bash, "TestML.block:$i:Label() { echo '$block->{label}'; }";
-        for my $point (sort keys %{$block->{point}}) {
-            my $value = $block->{point}{$point};
+        push @bash, "TestML.block:$i:Label() { echo '$block->{Label}'; }";
+        for my $point (sort keys %$block) {
+            next if $point =~ /^[A-Z]/;
+            my $value = $block->{$point};
             $value =~ s/([\\\"\`\$])/\\$1/g;
             if ($value =~ /\n/) {
                 push @bash, qq<TestML.block:$i:$point() { echo \\\n"$value"; }>;

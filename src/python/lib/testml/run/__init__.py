@@ -1,5 +1,6 @@
 # -*- coding: utf8 -*-
 
+from __future__ import print_function
 import json, os, re, sys
 
 from testml.util import *
@@ -303,7 +304,7 @@ class TestMLRun:
     for block in self.ast.get('data', []):
       self.block = block
 
-      if block['point'].get('ONLY') and not self.warned_only:
+      if block.get('ONLY') and not self.warned_only:
         self.err("Warning: TestML 'ONLY' in use.")
         self.warned_only = True
 
@@ -315,9 +316,9 @@ class TestMLRun:
     pick = True
     for point in list_:
       if (re.match(r'\*', point) and
-          self.block['point'].get(point[1:])) == None or \
+          self.block.get(point[1:])) == None or \
          (re.match(r'\!\*', point) and
-          self.block['point'].get(point[2:])):
+          self.block.get(point[2:])):
         pick = False
         break
 
@@ -380,7 +381,7 @@ class TestMLRun:
   def getp(self, name):
     if not self.block:
       return
-    value = self.block['point'].get(name)
+    value = self.block.get(name)
     if value is not None:
       value = self.exec_(value)
     return value
@@ -453,7 +454,7 @@ class TestMLRun:
       if not label:
         label = ''
 
-    block_label = self.block['label'] if self.block else ''
+    block_label = self.block['Label'] if self.block else ''
 
     if label:
       label = re.sub(r'^\+', block_label, label)
@@ -490,7 +491,10 @@ class TestMLRun:
 
   def transform2(self, m, label):
     if not self.block: return ''
-    value = self.block['point'].get(m.group(1))
+    value = self.block.get(m.group(1))
     return self.transform(value, label) if value != None else ''
+
+  def err(self, msg):
+    print(msg, file=sys.stderr)
 
 # vim: sw=2:

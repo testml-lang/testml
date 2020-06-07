@@ -345,6 +345,11 @@ method each-pick($list, $expr) {
   for |$!data -> $block {
     $!block = $block;
 
+    if defined $!block<ONLY> and not self.warned-only {
+      self.err("Warning: TestML 'ONLY' in use.");
+      self.warned-only = True;
+    }
+
     self.exec-expr(['<>', $list, $expr]);
   }
 
@@ -357,9 +362,9 @@ method pick-exec($list, $expr) {
   my $pick = True;
   for |$list -> $point {
     if ($point ~~ /^\*/ and
-        not $!block<point>{substr($point, 1)}:exists) or
+        not $!block{substr($point, 1)}:exists) or
        ($point ~~ /^\!\*/ and
-        $!block<point>{substr($point, 2)}:exists
+        $!block{substr($point, 2)}:exists
     ) {
       $pick = False;
       last;
@@ -427,7 +432,7 @@ method or-set-var($name, $expr) {
 #------------------------------------------------------------------------------
 method getp($name) {
   return unless $!block;
-  my $value = $!block<point>{$name};
+  my $value = $!block{$name};
   self.exec($value) if $value.defined;
 }
 
@@ -504,7 +509,7 @@ method get-label($label-expr='') {
 
   $label ||= self.getv('Label') || '';
 
-  my $block-label = $!block ?? $!block<label> !! '';
+  my $block-label = $!block ?? $!block<Label> !! '';
 
   if $label {
     $label ~~ s/^\+/$block-label/;
@@ -553,7 +558,7 @@ method transform1($name, $label) {
 
 method transform2($name, $label) {
   return '' unless $.block;
-  my $value = $.block<point>{$name} // return '';
+  my $value = $.block{$name} // return '';
   self.transform($value, $label);
 }
 

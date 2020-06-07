@@ -24,7 +24,7 @@ class TestML.StdLib
   block: (selector)->
     return @run.block if not selector?
     for block in @run.data
-      if block.label == selector
+      if block.Label == selector
         return block
     null
 

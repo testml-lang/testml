@@ -111,8 +111,7 @@ ARGV % (this)=>
                 ["Bool"]],
               ["True"]]]]]]],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "list": [["foo","bar"]]}}]}
+    { "Label": "Test 1",
+      "list": [["foo","bar"]]}]}
 
 # vim: ft=:

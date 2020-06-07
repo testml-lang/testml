@@ -5,13 +5,13 @@
 
 % =>
   "Block() returns current block":
-    Block:label =~ /^Test/
+    Block:Label =~ /^Test/
 
 "Block(label) finds correct block":
-  Block('Test 1'):point:foo == 42
+  Block('Test 1'):foo == 42
 
 "Blocks returns a list of all blocks":
-  Blocks:1:point:foo == "I like pie\n"
+  Blocks:1:foo == "I like pie\n"
 
 "Bool(0) is true":
   Bool(0) == True

@@ -412,6 +412,12 @@ class TestML::Run
 
     @ast["data"].each do |block|
       @block = block
+
+      if @block["ONLY"] and not @warned_only
+        self.err("Warning: TestML 'ONLY' in use")
+        @warned_only = true
+      end
+
       self.exec_expr ['<>', list, expr]
     end
 
@@ -424,8 +430,8 @@ class TestML::Run
     pick = true
 
     list.each do |point|
-      if point.match /^\*/ and not @block["point"].key? point[1..-1] or
-         point.match /^!*/ and @block["point"].key? point[2..-1]
+      if point.match /^\*/ and not @block.key? point[1..-1] or
+         point.match /^!*/ and @block.key? point[2..-1]
         throw point
         pick = false
         break
@@ -499,7 +505,7 @@ class TestML::Run
 # #------------------------------------------------------------------------------
   def getp(name)
     return unless @block
-    value = @block["point"][name]
+    value = @block[name]
     value = self.exec value if defined? value
     return value
   end
@@ -597,7 +603,7 @@ class TestML::Run
 
 #   $label ||= $self->getv('Label') || '';
 
-    block_label = @block ? @block['label'] : ''
+    block_label = @block ? @block['Label'] : ''
 
     if label
 #     $label =~ s/^\+/$block_label/;

@@ -91,16 +91,14 @@ TestML v0.3.0
             ["*","b"]]],
         ["*","a"]]]],
   "data": [
-    { "label": "Test 1",
-      "point": {
-        "a": 111,
-        "b": 222,
-        "c": 333}},
-    { "label": "Test 2",
-      "point": {
-        "a": 444,
-        "b": 555,
-        "c": 999}}]}
+    { "Label": "Test 1",
+      "a": 111,
+      "b": 222,
+      "c": 333},
+    { "Label": "Test 2",
+      "a": 444,
+      "b": 555,
+      "c": 999}]}
 
 ===
 --- command: testml-perl-tap test/runtime-tml/010-math.tml

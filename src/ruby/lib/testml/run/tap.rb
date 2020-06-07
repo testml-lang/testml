@@ -233,12 +233,9 @@ class TestML::Run::TAP < TestML::Run
     puts str
   end
 
-# sub err {
-#   my ($self, $str) = @_;
-#   binmode STDERR, ':utf8';
-#   print STDERR "$str$/";
-# }
-# 
+  def err(str)
+    $stderr.puts str
+  end
 end
 
 # vim: set sw=2 sts=2 et:

@@ -424,15 +424,19 @@ sub got_bridge_definition {
 sub got_block_definition {
   my ($self, $got) = @_;
   my ($label, $user, $points) = @$got;
-  tie my %point, 'Tie::IxHash';
+
+  tie my %block, 'Tie::IxHash';
+  $block{Label} = $label;
+  $block{User} = $user if $user =~ /\S/;
+
   for my $p (@$points) {
     my ($inherit, $name, $from, $has_transforms, $transforms, $value) = @$p;
 
     if ($name =~ /^(?:HEAD|LAST|ONLY|SKIP|TODO|DIFF)$/) {
-      $point{$name} = bless(do{\(my $o = 1)}, 'JSON::PP::Boolean');
+      $block{$name} = bless(do{\(my $o = 1)}, 'JSON::PP::Boolean');
     }
     else {
-      $point{$name} = $self->make_point(
+      $block{$name} = $self->make_point(
         $name, $value,
         $inherit, $from,
         $has_transforms, $transforms,
@@ -441,14 +445,6 @@ sub got_block_definition {
   }
 
   $self->{data} ||= [];
-
-  tie my %block, 'Tie::IxHash';
-  %block = (
-    label => $label,
-    point => \%point,
-  );
-
-  $block{user} = $user if $user =~ /\S/;
 
   push @{$self->{data}}, \%block;
 
@@ -609,16 +605,16 @@ sub make_data {
   my $blocks = [];
 
   for my $block (@$data) {
-    if ($block->{point}{SKIP}) {
+    if ($block->{SKIP}) {
       next;
     }
-    if ($block->{point}{ONLY}) {
+    if ($block->{ONLY}) {
       return [$block];
     }
-    if ($block->{point}{HEAD}) {
+    if ($block->{HEAD}) {
       $blocks = [];
     }
-    if ($block->{point}{LAST}) {
+    if ($block->{LAST}) {
       push @$blocks, $block;
       return $blocks;
     }

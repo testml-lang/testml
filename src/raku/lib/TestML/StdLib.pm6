@@ -14,7 +14,7 @@ method block($selector=Nil) {
   return $.run.block
     if not defined $selector;
   for $.run.data -> $block {
-    if $block<label> eq $selector {
+    if $block<Label> eq $selector {
       return $block;
     }
   }

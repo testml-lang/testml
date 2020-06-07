@@ -30,9 +30,8 @@ Diff = 1
           ["foo"]],
         ["*","b"]]]],
   "data": [
-    { "label": "Test 1",
-      "point": {},
-      "user": "a: apple\nb: orange\n"}],
+    { "Label": "Test 1",
+      "User": "a: apple\nb: orange\n"}],
   "bridge": {
     "bash": "foo() {\n  echo orange\n}\n"}}
 

@@ -18,7 +18,7 @@ class StdLib():
       return self.run.block
 
     for block in self.run.ast.get('data', []):
-      if block['label'] == selector:
+      if block['Label'] == selector:
         return block
 
   def blocks(self):
