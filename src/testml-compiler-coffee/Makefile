@@ -9,7 +9,7 @@ NODE_MODULES := $(ROOT)/src/node_modules
 PATH := $(ROOT)/.bin:$(PATH)
 # For testml-switch
 PATH := $(TESTML_COMPILER_TEST)/bin:$(PATH)
-# For testml-perl5-tap
+# For testml-perl-tap
 PATH := $(ROOT)/bin:$(PATH)
 # For coffee
 PATH := $(NODE_MODULES)/.bin:$(PATH)
@@ -30,7 +30,7 @@ default:
 
 .PHONY: test
 test: $(NODE_MODULES)
-	NODE_PATH=lib PERL5LIB=$(ROOT)/ext/perl5:test prove -v -j$(j) $(test)
+	NODE_PATH=lib PERL5LIB=$(ROOT)/ext/perl:test prove -v -j$(j) $(test)
 
 update: update-grammar
 

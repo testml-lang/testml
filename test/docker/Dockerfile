@@ -17,7 +17,7 @@ RUN true \
 
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 
-# NodeJS / CoffeeScript / Perl 5 / Python 2 / Python 3
+# NodeJS / CoffeeScript / Perl / Python 2 / Python 3
 RUN true \
  && apt-get update \
  && apt-get install -y \
@@ -47,7 +47,7 @@ RUN true \
 ENV GOROOT=/usr/local/go \
     PATH="/usr/local/go/bin:$PATH"
 
-# Perl 6
+# Raku
 RUN true \
  && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 379CE192D401AB61 \
  && echo "deb https://dl.bintray.com/nxadm/rakudo-pkg-debs $(lsb_release -cs) main" \
@@ -57,4 +57,4 @@ RUN true \
     rakudo-pkg \
  && true
 
-ENV PATH="/opt/rakudo-pkg/bin:/opt/rakudo-pkg/share/perl6/site/bin:$PATH"
+ENV PATH="/opt/rakudo-pkg/bin:/opt/rakudo-pkg/share/raku/site/bin:$PATH"

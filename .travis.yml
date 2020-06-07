@@ -7,7 +7,7 @@ branches: {only: [master, travis]}
 env:
   global:
   - export GOROOT=/usr/local/go
-  - export PATH="/usr/local/go/bin:/opt/rakudo-pkg/bin:/opt/rakudo-pkg/share/perl6/site/bin:$PATH"
+  - export PATH="/usr/local/go/bin:/opt/rakudo-pkg/bin:/opt/rakudo-pkg/share/raku/site/bin:$PATH"
 addons:
   apt:
     sources:

@@ -1,4 +1,4 @@
-#!/usr/bin/env testml-pl5
+#!/usr/bin/env testml-pl
 
 
 "Test command '{*command}'":
@@ -103,7 +103,7 @@ TestML v0.3.0
         "c": 999}}]}
 
 ===
---- command: testml-perl5-tap test/runtime-tml/010-math.tml
+--- command: testml-perl-tap test/runtime-tml/010-math.tml
 --- output
 ok 1 - Test 1
 ok 2 - Test 2
@@ -116,19 +116,19 @@ ok 8 - Test 2
 1..8
 
 ===
---- command: TESTML_RUN=perl5-tap testml test/runtime-tml/010-math.tml
+--- command: TESTML_RUN=perl-tap testml test/runtime-tml/010-math.tml
 --- ^output
 
 ===
---- command: testml --run=perl5-tap test/runtime-tml/010-math.tml
+--- command: testml --run=perl-tap test/runtime-tml/010-math.tml
 --- ^output
 
 ===
---- command: testml -R perl5-tap test/runtime-tml/010-math.tml
+--- command: testml -R perl-tap test/runtime-tml/010-math.tml
 --- ^output
 
 ===
---- command: TESTML_RUN=perl5-tap prove -v test/runtime-tml/010-math.tml
+--- command: TESTML_RUN=perl-tap prove -v test/runtime-tml/010-math.tml
 --- output
 test/runtime-tml/010-math.tml ..
 ok 1 - Test 1
@@ -145,7 +145,7 @@ All tests successful.
 Result: PASS
 
 ===
---- command: testml-perl5-tap -e '1 == 1'
+--- command: testml-perl-tap -e '1 == 1'
 --- output
 ok 1
 1..1
@@ -162,19 +162,19 @@ ok 2 - foo
 --- ^output
 
 ===
---- command: testml -R perl5 test/cli-tml/a-test.t
+--- command: testml -R perl test/cli-tml/a-test.t
 --- ^output
 
 ===
---- command: testml -R perl5-tap test/cli-tml/a-test.t
+--- command: testml -R perl-tap test/cli-tml/a-test.t
 --- ^output
 
 ===
---- command: testml --run=perl5-tap test/cli-tml/a-test.t
+--- command: testml --run=perl-tap test/cli-tml/a-test.t
 --- ^output
 
 ===
---- command: TESTML_RUN=perl5-tap testml test/cli-tml/a-test.t
+--- command: TESTML_RUN=perl-tap testml test/cli-tml/a-test.t
 --- ^output
 
 ===
@@ -194,12 +194,12 @@ ok 1
 --- ^output
 
 ===
---- command: testml-perl5-tap -e '1 == 1'
+--- command: testml-perl-tap -e '1 == 1'
 --- ^output
 
 ===
---- WHEN: Env:TESTML_HAS_LANG_PERL6
---- command: testml-perl6-tap -e '1 == 1'
+--- WHEN: Env:TESTML_HAS_LANG_RAKU
+--- command: testml-raku-tap -e '1 == 1'
 --- ^output
 
 ===
@@ -215,7 +215,7 @@ ok 1
 
 
 # ===
-# --- command: testml-perl5-tap -e 'Diff = True' -a a.tml b.tml c.tml
+# --- command: testml-perl-tap -e 'Diff = True' -a a.tml b.tml c.tml
 # --- output
 # ok 1
 # 1..1

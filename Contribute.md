@@ -34,9 +34,9 @@ clean debian install. Here's a short list, most important first:
   * Used for many things beyond cloning the repo
 * Recent NodeJS
   * The TestML reference compiler is currently written in NodeJS
-* Perl(5) 5.14 or higher
+* Perl 5.14 or higher
   * Some of the framework tests use perl as the TestML runtime
-* Python(2), Perl(6)
+* Python (2 or 3), Raku
   * Other current TestML runtime languages
 
 You don't need all these things to _use_ TestML, but they are useful for
@@ -105,9 +105,9 @@ sub-directory. The `testml/*` branches are under the `test` sub-directory.
   written in CoffeeScript/NodeJS/JavaScript and it runs on the server and in
   the browser. Try http://testml.org/playground/?view=compiler
 
-* `compiler/perl5`
+* `compiler/perl`
 
-  The TestML reference compiler is ported to Perl5 because the NodeJS startup
+  The TestML reference compiler is ported to Perl because the NodeJS startup
   time is prohibitively slow.
 
 * `compiler/haskell`
@@ -123,8 +123,8 @@ sub-directory. The `testml/*` branches are under the `test` sub-directory.
 
   There are one of these branches for every supported programming language.
   These are the language runtime branches and the place where all the code for
-  a specific language goes. Currently there are 5 working languages: `coffee`
-  (which would be on the `run/coffee` branch), `node`, `perl5`, `perl6`,
+  a specific language goes. Currently there are 6 working languages: `bash`, `coffee`
+  (which would be on the `run/coffee` branch), `node`, `perl`, `raku`,
   `python`.
 
 * `testml/runtime-tml`

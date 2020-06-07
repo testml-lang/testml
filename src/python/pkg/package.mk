@@ -1,4 +1,4 @@
-export PATH := $(ROOT)/src/testml-compiler-perl5/bin:$(PATH)
+export PATH := $(ROOT)/src/testml-compiler-perl/bin:$(PATH)
 
 B := build
 P := pkg

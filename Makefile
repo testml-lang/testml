@@ -3,7 +3,7 @@ define HELP
 
     make                    - Same as `make status`
     make test               - Run all tests
-    make test-runtime-perl5 - Run language specific tests
+    make test-runtime-perl  - Run language specific tests
     make test-compiler      - Compiler tests
     make test-cli           - Run CLI output tests
     make clean              - Remove generated files
@@ -15,14 +15,14 @@ define HELP
 endef
 export HELP
 
-export PATH := $(PWD)/bin:$(PWD)/src/testml-compiler-perl5/bin:$(PWD)/src/node_modules/.bin:$(PATH)
+export PATH := $(PWD)/bin:$(PWD)/src/testml-compiler-perl/bin:$(PWD)/src/node_modules/.bin:$(PATH)
 
 # All the current support languages:
 ifeq ($(shell which bash 2>/dev/null),)
     $(error 'bash' is a minimum requirement for TestML development)
 endif
 ifeq ($(shell which perl 2>/dev/null),)
-    $(error 'perl' (5) is a minimum requirement for TestML development)
+    $(error 'perl' is a minimum requirement for TestML development)
 endif
 
 LANG_ALL = bash
@@ -40,11 +40,9 @@ ifneq ($(shell which node 2>/dev/null),)
     export TESTML_HAS_LANG_NODE := 1
     LANG_ALL += node
 endif
-LANG_ALL += perl5
-ifneq ($(shell which perl6 2>/dev/null),)
-    export TESTML_HAS_LANG_PERL6 := 1
-    LANG_ALL += perl6
-endif
+
+LANG_ALL += perl
+
 ifneq ($(shell which python 2>/dev/null),)
     export TESTML_HAS_LANG_PYTHON := 1
     LANG_ALL += python
@@ -57,6 +55,10 @@ ifneq ($(shell which python3 2>/dev/null),)
     export TESTML_HAS_LANG_PYTHON3 := 1
     LANG_ALL += python3
 endif
+ifneq ($(shell which raku 2>/dev/null),)
+    export TESTML_HAS_LANG_RAKU
+    LANG_ALL += raku
+endif
 ifneq ($(shell which ruby),)
     export TESTML_HAS_LANG_RUBY := 1
     LANG_ALL += ruby
@@ -68,10 +70,10 @@ LANG_NEW := \
     cpp \
     gambas \
 
-# All the language test rules (like `test-runtime-perl5`):
+# All the language test rules (like `test-runtime-perl`):
 TEST_ALL := $(LANG_ALL:%=test-runtime-%)
 
-# All the language specific runtime code branches (like `run/perl5`):
+# All the language specific runtime code branches (like `run/perl`):
 RUNTIME_ALL := $(LANG_ALL:%=runtime/%)
 
 # New language specific runtime branches in progress:
@@ -83,8 +85,8 @@ NODE_MODULES := src/node_modules
 EXT_ALL := \
     ext/cpp \
     ext/go \
-    ext/perl5 \
-    ext/perl6 \
+    ext/perl \
+    ext/raku \
 
 # All the branches for `make work` which checks them out as worktree subdirs:
 WORK := \
@@ -148,18 +150,18 @@ testml-python test-runtime-python2 test-runtime-python3: src/python
 	TESTML_LANG_BIN=$(@:test-runtime-%=%) $(MAKE) -C $< test j=$(j)
 
 # Run a specific language runtime test:
-test-runtime-%: src/% ext/% ext/perl5
+test-runtime-%: src/% ext/% ext/perl
 	$(call header,$@)
 	$(MAKE) -C $< test j=$(j)
 
 ifneq ($(TESTML_HAS_LANG_NODE),)
-test-compiler: test-compiler-perl5 test-compiler-coffee
+test-compiler: test-compiler-perl test-compiler-coffee
 else
-test-compiler: test-compiler-perl5
+test-compiler: test-compiler-perl
 endif
 
 # Run all the compiler tests:    note:(`$(MAKE) -C` doesn't work here)
-test-compiler-perl5: src/testml-compiler-perl5
+test-compiler-perl: src/testml-compiler-perl
 	$(call header,$@)
 	cd $<; $(MAKE) test j=$(j)
 
@@ -169,12 +171,12 @@ test-compiler-coffee: src/testml-compiler-coffee
 
 # Test the output of various testml CLI invocations:
 ifneq ($(TESTML_HAS_LANG_NODE),)
-test-cli: ext/perl5 ext/perl6 src/node/lib $(NODE_MODULES)
+test-cli: ext/perl ext/raku src/node/lib $(NODE_MODULES)
 else
-test-cli: ext/perl5 ext/perl6
+test-cli: ext/perl ext/raku
 endif
 	$(call header,$@)
-	PERL5LIB=ext/perl5 test=$(test) prove -v -j$(j) $${test:-test/cli-tml/*.tml}
+	PERL5LIB=ext/perl test=$(test) prove -v -j$(j) $${test:-test/cli-tml/*.tml}
 
 # A special rule to run tests on travis-ci:
 test-travis: test
@@ -226,12 +228,12 @@ realclean: clean
 	$(MAKE) -C src/coffee $@
 	$(MAKE) -C src/go $@
 	$(MAKE) -C src/node $@
-	$(MAKE) -C src/perl5 $@
-	$(MAKE) -C src/perl6 $@
+	$(MAKE) -C src/perl $@
 	$(MAKE) -C src/python $@
+	$(MAKE) -C src/raku $@
 	$(MAKE) -C src/ruby $@
 	$(MAKE) -C src/testml-compiler-coffee $@
-	$(MAKE) -C src/testml-compiler-perl5 $@
+	$(MAKE) -C src/testml-compiler-perl $@
 
 .PHONY: test
 

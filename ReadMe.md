@@ -41,11 +41,11 @@ An example TestML file, `math.tml`:
 could be run to test a math software library written in any language. This
 particular test makes 9 assertions.
 
-To run the test, let's say in Perl 6, use any of these:
+To run the test, let's say in Raku, use any of these:
 ```
-testml -R perl6 math.tml
-testml-perl6 math.tml
-TESTML_RUN=perl6 prove -v math.tml
+testml -R raku math.tml
+testml-raku math.tml
+TESTML_RUN=raku prove -v math.tml
 ```
 
 The output would look something like this:
@@ -178,8 +178,8 @@ To implement TestML, 2 things need to happen:
 * Implement all the TestML language features into the TestML Compiler
 * Implement the Runtime in each programming language / test framework
 
-The testml-compiler is fully implemented in both Perl5 and JavaScript (NodeJS
-and Browser) and passing all the compiler tests. The Perl5 version is default
+The testml-compiler is fully implemented in both Perl and JavaScript (NodeJS
+and Browser) and passing all the compiler tests. The Perl version is default
 on server side for performance reasons.
 
 The following language runtimes are all fully implemented and passing all the
@@ -187,10 +187,10 @@ runtime tests:
 
 * CoffeeScript - Complete.
 * JavaScript - Complete.
-* Perl 5 - Complete.
-* Perl 6 - Complete.
+* Perl - Complete.
 * Python 2 - Complete.
 * Python 3 - Complete.
+* Raku - Complete.
 
 These languages are in progress, with some tests passing and available in
 the master branch:

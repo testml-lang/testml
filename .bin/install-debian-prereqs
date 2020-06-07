@@ -3,14 +3,13 @@
 
 set -ex
 
-# For recent stable Perl6:
+# For recent stable Raku:
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 379CE192D401AB61
 echo "deb https://dl.bintray.com/nxadm/rakudo-pkg-debs `lsb_release -cs` main" | tee -a /etc/apt/sources.list.d/rakudo-pkg.list
 
 # Install packages:
 apt update
 apt install -y build-essential cpanminus libssl-dev python rakudo-pkg
-/opt/rakudo-pkg/bin/add-perl6-to-path
 
 # Install NVM, a recent nodejs and coffeescript:
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
@@ -18,5 +17,5 @@ source ~/.profile
 nvm install v8.11.3
 npm install -g coffeescript
 
-# Install a couple Perl5 CPAN modules:
+# Install a couple Perl CPAN modules:
 cpanm -n boolean Capture::Tiny

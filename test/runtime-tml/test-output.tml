@@ -1,10 +1,10 @@
-#!/usr/bin/env testml-pl5
+#!/usr/bin/env testml-pl
 
 *test.make-test == *out
   :"'test/{*test}' output is correct"
 
 
-%Bridge perl5
+%Bridge perl
 
 use Capture::Tiny 'capture_merged';
 

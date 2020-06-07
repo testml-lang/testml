@@ -157,7 +157,7 @@ export-testml-vars() {
 set-testml-lib-vars() {
   TESTML_LIB=${TESTML_LIB:+$TESTML_LIB:}$TESTML_DIR
 
-  if [[ ${TESTML_LANG-} == 'perl6' ]]; then
+  if [[ ${TESTML_LANG-} == raku ]]; then
     TESTML_LIB=${TESTML_LIB//:/,}
   fi
 

@@ -135,21 +135,20 @@ TestML supports the following runners:
     go-tap          Go w/ TAP
     node-mocha      NodeJS w/ Mocha
     node-tap        NodeJS w/ TAP
-    perl5-tap       Perl 5 w/ TAP
-    perl6-tap       Perl 6 w/ TAP
+    perl-tap        Perl w/ TAP
     python-tap      Python (2 or 3) w/ TAP
     python-tap      Python (2 or 3) w/ unittest
+    raku-tap        Raku w/ TAP
 
 Aliases:
     coffee          Alias for coffee-mocha
     node            Alias for node-mocha
-    perl            Alias for perl5-tap
-    perl5           Alias for perl5-tap
-    perl6           Alias for perl6-tap
+    perl            Alias for perl-tap
     python          Alias for python-unit
+    raku            Alias for raku-tap
 
-NOTE: For shebang line usage with Perl (5 or 6) use 'testml-pl5' or
-'testml-pl6' (instead of 'testml-perl5' or 'testml-perl6'.
+NOTE: For shebang line usage with Perl use 'testml-pl' instead of
+'testml-perl'.
 
 ...
 }
