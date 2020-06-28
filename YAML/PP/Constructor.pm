@@ -3,9 +3,10 @@ use strict;
 use warnings;
 package YAML::PP::Constructor;
 
-our $VERSION = '0.019'; # VERSION
+our $VERSION = '0.022'; # VERSION
 
 use YAML::PP;
+use YAML::PP::Common qw/ PRESERVE_ALL PRESERVE_ORDER PRESERVE_SCALAR_STYLE /;
 use Scalar::Util qw/ reftype /;
 
 use constant DEBUG => ($ENV{YAML_PP_LOAD_DEBUG} or $ENV{YAML_PP_LOAD_TRACE}) ? 1 : 0;
@@ -16,26 +17,38 @@ my %cyclic_refs = qw/ allow 1 ignore 1 warn 1 fatal 1 /;
 sub new {
     my ($class, %args) = @_;
 
+    my $default_yaml_version = delete $args{default_yaml_version};
+    my $preserve = delete $args{preserve} || 0;
+    if ($preserve == PRESERVE_ALL) {
+        $preserve = PRESERVE_ORDER | PRESERVE_SCALAR_STYLE;
+    }
     my $cyclic_refs = delete $args{cyclic_refs} || 'allow';
     die "Invalid value for cyclic_refs: $cyclic_refs"
         unless $cyclic_refs{ $cyclic_refs };
-    my $schema = delete $args{schema};
+    my $schemas = delete $args{schemas};
 
     if (keys %args) {
         die "Unexpected arguments: " . join ', ', sort keys %args;
     }
 
     my $self = bless {
-        schema => $schema,
+        default_yaml_version => $default_yaml_version,
+        schemas => $schemas,
         cyclic_refs => $cyclic_refs,
+        preserve => $preserve,
     }, $class;
+    $self->init;
+    return $self;
 }
 
 sub clone {
     my ($self) = @_;
     my $clone = {
-        schema => $self->schema,
+        schemas => $self->{schemas},
+        schema => $self->{schema},
+        default_yaml_version => $self->{default_yaml_version},
         cyclic_refs => $self->cyclic_refs,
+        preserve => $self->{preserve},
     };
     return bless $clone, ref $self;
 }
@@ -45,6 +58,8 @@ sub init {
     $self->set_docs([]);
     $self->set_stack([]);
     $self->set_anchors({});
+    $self->set_yaml_version($self->default_yaml_version);
+    $self->set_schema($self->schemas->{ $self->yaml_version } );
 }
 
 sub docs { return $_[0]->{docs} }
@@ -53,14 +68,32 @@ sub anchors { return $_[0]->{anchors} }
 sub set_docs { $_[0]->{docs} = $_[1] }
 sub set_stack { $_[0]->{stack} = $_[1] }
 sub set_anchors { $_[0]->{anchors} = $_[1] }
+sub schemas { return $_[0]->{schemas} }
 sub schema { return $_[0]->{schema} }
 sub set_schema { $_[0]->{schema} = $_[1] }
 sub cyclic_refs { return $_[0]->{cyclic_refs} }
 sub set_cyclic_refs { $_[0]->{cyclic_refs} = $_[1] }
+sub yaml_version { return $_[0]->{yaml_version} }
+sub set_yaml_version { $_[0]->{yaml_version} = $_[1] }
+sub default_yaml_version { return $_[0]->{default_yaml_version} }
+sub preserve_order { return $_[0]->{preserve} & PRESERVE_ORDER }
+sub preserve_scalar_style { return $_[0]->{preserve} & PRESERVE_SCALAR_STYLE }
 
 sub document_start_event {
     my ($self, $event) = @_;
     my $stack = $self->stack;
+    if ($event->{version_directive}) {
+        my $version = $event->{version_directive};
+        $version = "$version->{major}.$version->{minor}";
+        if ($self->{schemas}->{ $version }) {
+            $self->set_yaml_version($version);
+            $self->set_schema($self->schemas->{ $version });
+        }
+        else {
+            $self->set_yaml_version($self->default_yaml_version);
+            $self->set_schema($self->schemas->{ $self->default_yaml_version });
+        }
+    }
     my $ref = [];
     push @$stack, { type => 'document', ref => $ref, data => $ref, event => $event };
 }
@@ -90,6 +123,10 @@ sub mapping_start_event {
         on_data => $on_data,
     };
     my $stack = $self->stack;
+
+    if ($self->preserve_order and not tied(%$data)) {
+        tie %$data, 'YAML::PP::Preserve::Hash';
+    }
 
     push @$stack, $ref;
     if (defined(my $anchor = $event->{anchor})) {
@@ -207,6 +244,13 @@ sub scalar_event {
         $self->anchors->{ $name } = { data => $value, finished => 1 };
     }
     my $last = $self->stack->[-1];
+    if ($self->preserve_scalar_style and not ref $value) {
+        $value = YAML::PP::Preserve::Scalar->new(
+            value => $value,
+            style => $event->{style},
+            tag => $event->{tag},
+        );
+    }
     push @{ $last->{ref} }, $value;
 }
 
@@ -240,6 +284,7 @@ sub alias_event {
 
 sub stringify_complex {
     my ($self, $data) = @_;
+    return $data if (ref $data eq 'YAML::PP::Preserve::Scalar' and $self->preserve_scalar_style);
     require Data::Dumper;
     local $Data::Dumper::Quotekeys = 0;
     local $Data::Dumper::Terse = 1;

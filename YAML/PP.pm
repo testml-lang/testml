@@ -1,61 +1,82 @@
-# ABSTRACT: YAML Framework
+# ABSTRACT: YAML 1.2 Processor
 use strict;
 use warnings;
 package YAML::PP;
 
-our $VERSION = '0.019'; # VERSION
+our $VERSION = '0.022'; # VERSION
 
 use YAML::PP::Schema;
 use YAML::PP::Schema::JSON;
 use YAML::PP::Loader;
 use YAML::PP::Dumper;
 use Scalar::Util qw/ blessed /;
+use Carp qw/ croak /;
 
 use base 'Exporter';
 our @EXPORT_OK = qw/ Load LoadFile Dump DumpFile /;
+
+my %YAML_VERSIONS = ('1.1' => 1, '1.2' => 1);
+
 
 sub new {
     my ($class, %args) = @_;
 
     my $bool = delete $args{boolean};
     $bool = 'perl' unless defined $bool;
-    my $schemas = delete $args{schema} || ['JSON'];
+    my $schemas = delete $args{schema} || ['+'];
     my $cyclic_refs = delete $args{cyclic_refs} || 'allow';
     my $indent = delete $args{indent};
     my $writer = delete $args{writer};
     my $header = delete $args{header};
     my $footer = delete $args{footer};
+    my $yaml_version = $class->_arg_yaml_version(delete $args{yaml_version});
+    my $default_yaml_version = $yaml_version->[0];
+    my $version_directive = delete $args{version_directive};
+    my $preserve = delete $args{preserve};
     my $parser = delete $args{parser};
     my $emitter = delete $args{emitter} || {
         indent => $indent,
         writer => $writer,
     };
+    if (keys %args) {
+        die "Unexpected arguments: " . join ', ', sort keys %args;
+    }
 
-    my $schema;
-    if (blessed($schemas) and $schemas->isa('YAML::PP::Schema')) {
-        $schema = $schemas;
+    my %schemas;
+    for my $v (@$yaml_version) {
+        my $schema;
+        if (blessed($schemas) and $schemas->isa('YAML::PP::Schema')) {
+            $schema = $schemas;
+        }
+        else {
+            $schema = YAML::PP::Schema->new(
+                boolean => $bool,
+                yaml_version => $v,
+            );
+            $schema->load_subschemas(@$schemas);
+        }
+        $schemas{ $v } = $schema;
     }
-    else {
-        $schema = YAML::PP::Schema->new(
-            boolean => $bool,
-        );
-        $schema->load_subschemas(@$schemas);
-    }
+    my $default_schema = $schemas{ $default_yaml_version };
 
     my $loader = YAML::PP::Loader->new(
-        schema => $schema,
+        schemas => \%schemas,
         cyclic_refs => $cyclic_refs,
         parser => $parser,
+        default_yaml_version => $default_yaml_version,
+        preserve => $preserve,
     );
     my $dumper = YAML::PP::Dumper->new(
-        schema => $schema,
+        schema => $default_schema,
         emitter => $emitter,
         header => $header,
         footer => $footer,
+        version_directive => $version_directive,
+        preserve => $preserve,
     );
 
     my $self = bless {
-        schema => $schema,
+        schema => \%schemas,
         loader => $loader,
         dumper => $dumper,
     }, $class;
@@ -72,6 +93,25 @@ sub clone {
     return bless $clone, ref $self;
 }
 
+sub _arg_yaml_version {
+    my ($class, $version) = @_;
+    my @versions = ('1.2');
+    if (defined $version) {
+        @versions = ();
+        if (not ref $version) {
+            $version = [$version];
+        }
+        for my $v (@$version) {
+            unless ($YAML_VERSIONS{ $v }) {
+                croak "YAML Version '$v' not supported";
+            }
+            push @versions, $v;
+        }
+    }
+    return \@versions;
+}
+
+
 sub loader {
     if (@_ > 1) {
         $_[0]->{loader} = $_[1]
@@ -87,8 +127,8 @@ sub dumper {
 }
 
 sub schema {
-    if (@_ > 1) { $_[0]->{schema} = $_[1] }
-    return $_[0]->{schema};
+    if (@_ > 1) { $_[0]->{schema}->{'1.2'} = $_[1] }
+    return $_[0]->{schema}->{'1.2'};
 }
 
 sub default_schema {
@@ -146,6 +186,89 @@ sub DumpFile {
     YAML::PP->new->dump_file($file, @data);
 }
 
+package YAML::PP::Preserve::Hash;
+# experimental
+use Tie::Hash;
+use base qw/ Tie::StdHash /;
+
+sub TIEHASH {
+    my ($class) = @_;
+    my $self = bless {
+        keys => [],
+        data => {},
+    }, $class;
+}
+
+sub STORE {
+    my ($self, $key, $val) = @_;
+    my $keys = $self->{keys};
+    unless (exists $self->{data}->{ $key }) {
+        push @$keys, $key;
+    }
+    $self->{data}->{ $key } = $val;
+}
+
+sub FIRSTKEY {
+    my ($self) = @_;
+    return $self->{keys}->[0];
+}
+
+sub NEXTKEY {
+    my ($self, $last) = @_;
+    my $keys = $self->{keys};
+    for my $i (0 .. $#$keys) {
+        if ("$keys->[ $i ]" eq "$last") {
+            return $keys->[ $i + 1 ];
+        }
+    }
+    return;
+}
+
+sub FETCH {
+    my ($self, $key) = @_;
+    my $val = $self->{data}->{ $key };
+}
+
+sub DELETE {
+    my ($self, $key) = @_;
+    @{ $self->{keys} } = grep { "$_" ne "$key" } @{ $self->{keys} };
+    delete $self->{data}->{ $key };
+}
+
+sub EXISTS {
+    my ($self, $key) = @_;
+    return exists $self->{data}->{ $key };
+}
+
+sub CLEAR {
+    my ($self) = @_;
+    $self->{keys} = [];
+    $self->{data} = {};
+}
+
+sub SCALAR {
+    my ($self) = @_;
+    return scalar %{ $self->{data} };
+}
+
+package YAML::PP::Preserve::Scalar;
+
+use overload
+    '+' => \&value,
+    '""' => \&value,
+    'bool' => \&value,
+    ;
+sub new {
+    my ($class, %args) = @_;
+    my $self = {
+        %args,
+    };
+    bless $self, $class;
+}
+sub value { $_[0]->{value} }
+sub tag { $_[0]->{tag} }
+sub style { $_[0]->{style} }
+
 1;
 
 __END__
@@ -160,12 +283,13 @@ YAML::PP - YAML 1.2 processor
 
 =head1 SYNOPSIS
 
-WARNING: This is not yet stable.
+WARNING: Most of the inner API is not stable yet.
 
 Here are a few examples of the basic load and dump methods:
 
     use YAML::PP;
     my $ypp = YAML::PP->new;
+
     my $yaml = <<'EOM';
     --- # Document one is a mapping
     name: Tina
@@ -197,6 +321,10 @@ Here are a few examples of the basic load and dump methods:
     my $ypp = YAML::PP->new(boolean => 'boolean');
     my $ypp = YAML::PP->new(boolean => 'perl');
 
+    # Enable perl data types and objects
+    my $ypp = YAML::PP->new(schema => [qw/ + Perl /]);
+    my $yaml = $yp->dump_string($data_with_perl_objects);
+
     # Legacy interface
     use YAML::PP qw/ Load Dump LoadFile DumpFile /;
     my @documents = Load($yaml);
@@ -206,34 +334,32 @@ Here are a few examples of the basic load and dump methods:
     DumpFile($filename, @documents);
     DumpFile($filenhandle @documents);
 
-    my $ypp = YAML::PP->new(schema => [qw/ JSON Perl /]);
-    my $yaml = $yp->dump_string($data_with_perl_objects);
-
 
 Some utility scripts, mostly useful for debugging:
 
     # Load YAML into a data structure and dump with Data::Dumper
-    yamlpp5-load < file.yaml
+    yamlpp-load < file.yaml
 
     # Load and Dump
-    yamlpp5-load-dump < file.yaml
+    yamlpp-load-dump < file.yaml
 
     # Print the events from the parser in yaml-test-suite format
-    yamlpp5-events < file.yaml
+    yamlpp-events < file.yaml
 
     # Parse and emit events directly without loading
-    yamlpp5-parse-emit < file.yaml
+    yamlpp-parse-emit < file.yaml
 
     # Create ANSI colored YAML. Can also be useful for invalid YAML, showing
     # you the exact location of the error
-    yamlpp5-highlight < file.yaml
+    yamlpp-highlight < file.yaml
 
 
 =head1 DESCRIPTION
 
-YAML::PP is a modern, modular YAML processor.
+YAML::PP is a modular YAML processor.
 
 It aims to support C<YAML 1.2> and C<YAML 1.1>. See L<http://yaml.org/>.
+Some (rare) syntax elements are not yet supported and documented below.
 
 YAML is a serialization language. The YAML input is called "YAML Stream".
 A stream consists of one or more "Documents", separated by a line with a
@@ -254,6 +380,311 @@ You can check out all current parse and load results from the
 yaml-test-suite here:
 L<https://perlpunk.github.io/YAML-PP-p5/test-suite.html>
 
+
+=head1 METHODS
+
+=head2 new
+
+    my $ypp = YAML::PP->new;
+    # load booleans via boolean.pm
+    my $ypp = YAML::PP->new( boolean => 'boolean' );
+    # load booleans via JSON::PP::true/false
+    my $ypp = YAML::PP->new( boolean => 'JSON::PP' );
+    
+    # use YAML 1.2 Failsafe Schema
+    my $ypp = YAML::PP->new( schema => ['Failsafe'] );
+    # use YAML 1.2 JSON Schema
+    my $ypp = YAML::PP->new( schema => ['JSON'] );
+    # use YAML 1.2 Core Schema
+    my $ypp = YAML::PP->new( schema => ['Core'] );
+    
+    # Die when detecting cyclic references
+    my $ypp = YAML::PP->new( cyclic_refs => 'fatal' );
+    
+    my $ypp = YAML::PP->new(
+        boolean => 'JSON::PP',
+        schema => ['Core'],
+        cyclic_refs => 'fatal',
+        indent => 4,
+        header => 1,
+        footer => 1,
+        version_directive => 1,
+    );
+
+Options:
+
+=over
+
+=item boolean
+
+Values: C<perl> (currently default), C<JSON::PP>, C<boolean>
+
+=item schema
+
+Default: C<['Core']>
+
+Array reference. Here you can define what schema to use.
+Supported standard Schemas are: C<Failsafe>, C<JSON>, C<Core>, C<YAML1_1>.
+
+To get an overview how the different Schemas behave, see
+L<https://perlpunk.github.io/YAML-PP-p5/schemas.html>
+
+Additionally you can add further schemas, for example C<Merge>.
+
+=item cyclic_refs
+
+Default: 'allow' but will be switched to fatal in the future for safety!
+
+Defines what to do when a cyclic reference is detected when loading.
+
+    # fatal  - die
+    # warn   - Just warn about them and replace with undef
+    # ignore - replace with undef
+    # allow  - Default
+
+=item indent
+
+Default: 2
+
+Use that many spaces for indenting
+
+=item header
+
+Default: 1
+
+Print document heaader C<--->
+
+=item footer
+
+Default: 0
+
+Print document footer C<...>
+
+=item yaml_version
+
+Since version 0.020
+
+Default: C<1.2>
+
+Note that in this case, a directive C<%YAML 1.1> will basically be ignored
+and everything loaded with the C<1.2 Core> Schema.
+
+If you want to support both YAML 1.1 and 1.2, you have to specify that, and the
+schema (C<Core> or C<YAML1_1>) will be chosen automatically.
+
+    my $yp = YAML::PP->new(
+        yaml_version => ['1.2', '1.1'],
+    );
+
+This is the same as
+
+    my $yp = YAML::PP->new(
+        schema => ['+'],
+        yaml_version => ['1.2', '1.1'],
+    );
+
+because the C<+> stands for the default schema per version.
+
+When loading, and there is no C<%YAML> directive, C<1.2> will be considered
+as default, and the C<Core> schema will be used.
+
+If there is a C<%YAML 1.1> directive, the C<YAML1_1> schema will be used.
+
+Of course, you can also make C<1.1> the default:
+
+    my $yp = YAML::PP->new(
+        yaml_version => ['1.1', '1.2'],
+    );
+
+
+You can also specify C<1.1> only:
+
+    my $yp = YAML::PP->new(
+        yaml_version => ['1.1'],
+    );
+
+In this case also documents with C<%YAML 1.2> will be loaded with the C<YAML1_1>
+schema.
+
+=item version_directive
+
+Since version 0.020
+
+Default: 0
+
+Print Version Directive C<%YAML 1.2> (or C<%YAML 1.1>) on top of each YAML
+document. It will use the first version specified in the C<yaml_version> option.
+
+=item preserve
+
+Since version 0.021
+
+Default: false
+
+Preserving scalar styles is still experimental.
+
+    use YAML::PP::Common qw/ PRESERVE_ORDER PRESERVE_SCALAR_STYLE /;
+
+    # Preserve the order of hash keys
+    my $yp = YAML::PP->new( preserve => PRESERVE_ORDER );
+
+    # Preserve the quoting style of scalars
+    my $yp = YAML::PP->new( preserve => PRESERVE_SCALAR_STYLE );
+
+    # Preserve order and scalar style
+    my $yp = YAML::PP->new( preserve => PRESERVE_ORDER | PRESERVE_SCALAR_STYLE );
+
+Do NOT rely on the internal implementation of it.
+
+If you load the following input:
+
+    ---
+    z: 1
+    a: 2
+    ---
+    - plain
+    - 'single'
+    - "double"
+    - |
+      literal
+
+    my $yp = YAML::PP->new( preserve => PRESERVE_ORDER | PRESERVE_SCALAR_STYLE );
+    my ($hash, $styles) = $yp->load_file($file);
+
+Then dumping it will return the same output.
+Only folded block scalars '>' cannot preserve the style yet.
+
+When loading, hashes will be tied to an internal class
+(C<YAML::PP::Preserve::Hash>) that keeps the key order.
+
+Scalars will be returned as objects of an internal class
+(C<YAML::PP::Preserve::Scalar>) with overloading. If you assign to such
+a scalar, the object will be replaced by a simple scalar.
+
+    # assignment, style gets lost
+    $styles->[1] .= ' append';
+
+You can also pass C<1> as a value. In this case all preserving options will be
+enabled, also if there are new options added in the future.
+
+=back
+
+=head2 load_string
+
+    my $doc = $ypp->load_string("foo: bar");
+    my @docs = $ypp->load_string("foo: bar\n---\n- a");
+
+Input should be Unicode characters.
+
+So if you read from a file, you should decode it, for example with
+C<Encode::decode()>.
+
+Note that in scalar context, C<load_string> and C<load_file> return the first
+document (like L<YAML::Syck>), while L<YAML> and L<YAML::XS> return the
+last.
+
+=head2 load_file
+
+    my $doc = $ypp->load_file("file.yaml");
+    my @docs = $ypp->load_file("file.yaml");
+
+Strings will be loaded as unicode characters.
+
+=head2 dump_string
+
+    my $yaml = $ypp->dump_string($doc);
+    my $yaml = $ypp->dump_string($doc1, $doc2);
+    my $yaml = $ypp->dump_string(@docs);
+
+Input strings should be Unicode characters.
+
+Output will return Unicode characters.
+
+So if you want to write that to a file (or pass to YAML::XS, for example),
+you typically encode it via C<Encode::encode()>.
+
+=head2 dump_file
+
+    $ypp->dump_file("file.yaml", $doc);
+    $ypp->dump_file("file.yaml", $doc1, $doc2);
+    $ypp->dump_file("file.yaml", @docs);
+
+Input data should be Unicode characters.
+
+=head2 dump
+
+This will dump to a predefined writer. By default it will just use the
+L<YAML::PP::Writer> and output a string.
+
+    my $writer = MyWriter->new(\my $output);
+    my $yp = YAML::PP->new(
+        writer => $writer,
+    );
+    $yp->dump($data);
+
+=head2 loader
+
+Returns or sets the loader object, by default L<YAML::PP::Loader>
+
+=head2 dumper
+
+Returns or sets the dumper object, by default L<YAML::PP::Dumper>
+
+=head2 schema
+
+Returns or sets the schema object
+
+=head2 default_schema
+
+Creates and returns the default schema
+
+=head1 FUNCTIONS
+
+The functions C<Load>, C<LoadFile>, C<Dump> and C<DumpFile> are provided
+as a drop-in replacement for other existing YAML processors.
+No function is exported by default.
+
+Note that in scalar context, C<Load> and C<LoadFile> return the first
+document (like L<YAML::Syck>), while L<YAML> and L<YAML::XS> return the
+last.
+
+=over
+
+=item Load
+
+    use YAML::PP qw/ Load /;
+    my $doc = Load($yaml);
+    my @docs = Load($yaml);
+
+Works like C<load_string>.
+
+=item LoadFile
+
+    use YAML::PP qw/ LoadFile /;
+    my $doc = LoadFile($file);
+    my @docs = LoadFile($file);
+    my @docs = LoadFile($filehandle);
+
+Works like C<load_file>.
+
+=item Dump
+
+    use YAML::PP qw/ Dump /;
+    my $yaml = Dump($doc);
+    my $yaml = Dump(@docs);
+
+Works like C<dump_string>.
+
+=item DumpFile
+
+    use YAML::PP qw/ DumpFile /;
+    DumpFile($file, $doc);
+    DumpFile($file, @docs);
+    DumpFile($filehandle, @docs);
+
+Works like C<dump_file>.
+
+=back
 
 =head1 PLUGINS
 
@@ -288,7 +719,7 @@ Serializing binary data
 
 =item L<YAML::PP::Schema::Tie::IxHash>
 
-In progress. Keeping hash key order.
+Deprecated. See option C<preserve>
 
 =item L<YAML::PP::Schema::Merge>
 
@@ -302,6 +733,8 @@ Include other YAML files via C<!include> tags
 
 To make the parsing process faster, you can plugin the libyaml parser
 with L<YAML::PP::LibYAML>.
+
+
 
 =head1 IMPLEMENTATION
 
@@ -324,9 +757,6 @@ The process of loading and dumping is split into the following steps:
 You can dump basic perl types like hashes, arrays, scalars (strings, numbers).
 For dumping blessed objects and things like coderefs have a look at
 L<YAML::PP::Perl>/L<YAML::PP::Schema::Perl>.
-
-For keeping your ordered L<Tie::IxHash> hashes, try out
-L<YAML::PP::Schema::Tie::IxHash>.
 
 =over
 
@@ -413,14 +843,13 @@ Currently loaded as single characters without validating
 
 =head2 YAML::PP::Constructor
 
-The Constructor now supports all three YAML 1.2 Schemas, Failsafe, JSON and JSON.
-Additionally you can choose the schema for YAML 1.1 as C<YAML1_1>.
+The Constructor now supports all three YAML 1.2 Schemas, Failsafe, JSON and
+Core.  Additionally you can choose the schema for YAML 1.1 as C<YAML1_1>.
 
 Too see what strings are resolved as booleans, numbers, null etc. look at
-C<t/31.schema.t>.
+L<https://perlpunk.github.io/YAML-PP-p5/schema-examples.html>.
 
-You can choose the Schema, however, the API for that is not yet fixed.
-Currently it looks like this:
+You can choose the Schema like this:
 
     my $ypp = YAML::PP->new(schema => ['JSON']); # default is 'Core'
 
@@ -435,6 +864,9 @@ It supports:
 Like in modules like L<YAML>, the Constructor will use references for mappings and
 sequences, but obviously not for scalars.
 
+L<YAML::XS> uses real aliases, which allows also aliasing scalars. I might add
+an option for that since aliasing is now available in pure perl.
+
 =item Boolean Handling
 
 You can choose between C<'perl'> (1/'', currently default), C<'JSON::PP'> and
@@ -446,8 +878,6 @@ booleans.
 
 Numbers are created as real numbers instead of strings, so that they are
 dumped correctly by modules like L<JSON::PP> or L<JSON::XS>, for example.
-
-See L<"NUMBERS"> for an example.
 
 =item Complex Keys
 
@@ -539,236 +969,6 @@ The layout is like libyaml output:
     - - b1
       - b2
 
-=head1 METHODS
-
-=over
-
-=item new
-
-    my $ypp = YAML::PP->new;
-    # load booleans via boolean.pm
-    my $ypp = YAML::PP->new( boolean => 'boolean' );
-    # load booleans via JSON::PP::true/false
-    my $ypp = YAML::PP->new( boolean => 'JSON::PP' );
-    
-    # use YAML 1.2 Failsafe Schema
-    my $ypp = YAML::PP->new( schema => ['Failsafe'] );
-    # use YAML 1.2 JSON Schema
-    my $ypp = YAML::PP->new( schema => ['JSON'] );
-    # use YAML 1.2 Core Schema
-    my $ypp = YAML::PP->new( schema => ['Core'] );
-    
-    # Die when detecting cyclic references
-    my $ypp = YAML::PP->new( cyclic_refs => 'fatal' );
-    # Other values:
-    # warn   - Just warn about them and replace with undef
-    # ignore - replace with undef
-    # allow  - Default
-    
-    my $ypp = YAML::PP->new(
-        boolean => 'JSON::PP',
-        schema => ['JSON'],
-        cyclic_refs => 'fatal',
-        indent => 4, # use 4 spaces for dumping indentation
-        header => 1, # default 1; print document header ---
-        footer => 1, # default 0; print document footer ...
-    );
-
-=item load_string
-
-    my $doc = $ypp->load_string("foo: bar");
-    my @docs = $ypp->load_string("foo: bar\n---\n- a");
-
-Input should be Unicode characters.
-
-So if you read from a file, you should decode it, for example with
-C<Encode::decode_utf8($bytes)>.
-
-Note that in scalar context, C<load_string> and C<load_file> return the first
-document (like L<YAML::Syck>), while L<YAML> and L<YAML::XS> return the
-last.
-
-=item load_file
-
-    my $doc = $ypp->load_file("file.yaml");
-    my @docs = $ypp->load_file("file.yaml");
-
-Strings will be loaded as unicode characters.
-
-=item dump_string
-
-    my $yaml = $ypp->dump_string($doc);
-    my $yaml = $ypp->dump_string($doc1, $doc2);
-    my $yaml = $ypp->dump_string(@docs);
-
-Input strings should be Unicode characters.
-C<utf8::upgrade>.
-
-Output will return Unicode characters.
-
-So if you want to write that to a file (or pass to YAML::XS, for example),
-you typically encode it via C<Encode::encode_utf8($yaml)>.
-
-=item dump_file
-
-    $ypp->dump_file("file.yaml", $doc);
-    $ypp->dump_file("file.yaml", $doc1, $doc2);
-    $ypp->dump_file("file.yaml", @docs);
-
-Input data should be Unicode characters.
-
-=item dump
-
-This will dump to a predefined writer. By default it will just use the
-L<YAML::PP::Writer> and output a string.
-
-    my $writer = MyWriter->new(\my $output);
-    my $yp = YAML::PP->new(
-        writer => $writer,
-    );
-    $yp->dump($data);
-
-=item loader
-
-Returns or sets the loader object, by default L<YAML::PP::Loader>
-
-=item dumper
-
-Returns or sets the dumper object, by default L<YAML::PP::Dumper>
-
-=item schema
-
-Returns or sets the schema object
-
-=item default_schema
-
-Creates and returns the default schema
-
-=back
-
-=head1 FUNCTIONS
-
-The functions C<Load>, C<LoadFile>, C<Dump> and C<DumpFile> are provided
-as a drop-in replacement for other existing YAML processors.
-No function is exported by default.
-
-Note that in scalar context, C<Load> and C<LoadFile> return the first
-document (like L<YAML::Syck>), while L<YAML> and L<YAML::XS> return the
-last.
-
-=over
-
-=item Load
-
-    use YAML::PP qw/ Load /;
-    my $doc = Load($yaml);
-    my @docs = Load($yaml);
-
-Works like C<load_string>.
-
-=item LoadFile
-
-    use YAML::PP qw/ LoadFile /;
-    my $doc = LoadFile($file);
-    my @docs = LoadFile($file);
-    my @docs = LoadFile($filehandle);
-
-Works like C<load_file>.
-
-=item Dump
-
-    use YAML::PP qw/ Dump /;
-    my $yaml = Dump($doc);
-    my $yaml = Dump(@docs);
-
-Works like C<dump_string>.
-
-=item DumpFile
-
-    use YAML::PP qw/ DumpFile /;
-    DumpFile($file, $doc);
-    DumpFile($file, @docs);
-    DumpFile($filehandle, @docs);
-
-Works like C<dump_file>.
-
-=back
-
-=head1 NUMBERS
-
-Compare the output of the following YAML Loaders and JSON::PP dump:
-
-    use JSON::PP;
-    use Devel::Peek;
-
-    use YAML::XS ();
-    use YAML ();
-        $YAML::Numify = 1; # since version 1.23
-    use YAML::Syck ();
-        $YAML::Syck::ImplicitTyping = 1;
-    use YAML::Tiny ();
-    use YAML::PP;
-
-    my $yaml = "foo: 23";
-
-    my $d1 = YAML::XS::Load($yaml);
-    my $d2 = YAML::Load($yaml);
-    my $d3 = YAML::Syck::Load($yaml);
-    my $d4 = YAML::Tiny->read_string($yaml)->[0];
-    my $d5 = YAML::PP->new->load_string($yaml);
-
-    Dump $d1->{foo};
-    Dump $d2->{foo};
-    Dump $d3->{foo};
-    Dump $d4->{foo};
-    Dump $d5->{foo};
-
-    say encode_json($d1);
-    say encode_json($d2);
-    say encode_json($d3);
-    say encode_json($d4);
-    say encode_json($d5);
-
-    SV = PVIV(0x55bbaff2bae0) at 0x55bbaff26518
-      REFCNT = 1
-      FLAGS = (IOK,POK,pIOK,pPOK)
-      IV = 23
-      PV = 0x55bbb06e67a0 "23"\0
-      CUR = 2
-      LEN = 10
-    SV = PVMG(0x55bbb08959b0) at 0x55bbb08fc6e8
-      REFCNT = 1
-      FLAGS = (IOK,pIOK)
-      IV = 23
-      NV = 0
-      PV = 0
-    SV = IV(0x55bbaffcb3b0) at 0x55bbaffcb3c0
-      REFCNT = 1
-      FLAGS = (IOK,pIOK)
-      IV = 23
-    SV = PVMG(0x55bbaff2f1f0) at 0x55bbb08fc8c8
-      REFCNT = 1
-      FLAGS = (POK,pPOK,UTF8)
-      IV = 0
-      NV = 0
-      PV = 0x55bbb0909d00 "23"\0 [UTF8 "23"]
-      CUR = 2
-      LEN = 10
-    SV = PVMG(0x55bbaff2f6d0) at 0x55bbb08b2c10
-      REFCNT = 1
-      FLAGS = (IOK,pIOK)
-      IV = 23
-      NV = 0
-      PV = 0
-
-    {"foo":"23"}
-    {"foo":23}
-    {"foo":23}
-    {"foo":"23"}
-    {"foo":23}
-
-
-
 =head1 WHY
 
 All the available parsers and loaders for Perl are behaving differently,
@@ -777,7 +977,7 @@ doing pretty well, but C<libyaml> only handles YAML 1.1 and diverges
 a bit from the spec. The pure perl loaders lack support for a number of
 features.
 
-I was going over L<YAML>.pm issues end of 216, integrating old patches
+I was going over L<YAML>.pm issues end of 2016, integrating old patches
 from rt.cpan.org and creating some pull requests myself. I realized
 that it would be difficult to patch YAML.pm to parse YAML 1.1 or even 1.2,
 and it would also break existing usages relying on the current behaviour.
@@ -816,7 +1016,7 @@ without turning the examples from the Specification into tests yourself.
 Also the examples aren't completely covering all cases - the test suite
 aims to do that.
 
-The suite contains .tml files, and in a separate 'data' branch you will
+The suite contains .tml files, and in a separate 'data' release you will
 find the content in separate files, if you can't or don't want to
 use TestML.
 
@@ -883,6 +1083,10 @@ Felix answered countless questions about the YAML Specification.
 
 =item L<YAML::Tiny>
 
+=item L<YAML::PP::LibYAML>
+
+=item L<YAML::LibYAML::API>
+
 =back
 
 =head1 SPONSORS
@@ -892,7 +1096,7 @@ The Perl Foundation L<https://www.perlfoundation.org/> sponsored this project
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018 by Tina Müller
+Copyright 2017-2020 by Tina Müller
 
 This library is free software and may be distributed under the same terms
 as perl itself.

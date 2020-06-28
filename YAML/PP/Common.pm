@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package YAML::PP::Common;
 
-our $VERSION = '0.019'; # VERSION
+our $VERSION = '0.022'; # VERSION
 
 use base 'Exporter';
 
@@ -17,6 +17,8 @@ our @EXPORT_OK = qw/
 
     YAML_ANY_MAPPING_STYLE
     YAML_BLOCK_MAPPING_STYLE YAML_FLOW_MAPPING_STYLE
+
+    PRESERVE_ALL PRESERVE_ORDER PRESERVE_SCALAR_STYLE
 /;
 
 use constant {
@@ -35,6 +37,10 @@ use constant {
     YAML_ANY_MAPPING_STYLE   => 'any',
     YAML_BLOCK_MAPPING_STYLE => 'block',
     YAML_FLOW_MAPPING_STYLE  => 'flow',
+
+    PRESERVE_ALL          => 1,
+    PRESERVE_ORDER        => 2,
+    PRESERVE_SCALAR_STYLE => 4,
 };
 
 my %scalar_style_to_string = (
@@ -47,7 +53,7 @@ my %scalar_style_to_string = (
 
 
 sub event_to_test_suite {
-    my ($event) = @_;
+    my ($event, $args) = @_;
     my $ev = $event->{name};
         my $string;
         my $content = $event->{value};
@@ -72,22 +78,22 @@ sub event_to_test_suite {
         }
         elsif ($ev eq 'mapping_start_event') {
             $string = "+MAP";
+            if ($event->{style} and $event->{style} eq YAML_FLOW_MAPPING_STYLE) {
+                $string .= ' {}' if $args->{flow};
+            }
             $string .= $properties;
             if (0) {
                 # doesn't match yaml-test-suite format
-                if ($event->{style} and $event->{style} eq YAML_FLOW_MAPPING_STYLE) {
-                    $string .= " {}";
-                }
             }
         }
         elsif ($ev eq 'sequence_start_event') {
             $string = "+SEQ";
+            if ($event->{style} and $event->{style} eq YAML_FLOW_SEQUENCE_STYLE) {
+                $string .= ' []' if $args->{flow};
+            }
             $string .= $properties;
             if (0) {
                 # doesn't match yaml-test-suite format
-                if ($event->{style} and $event->{style} eq YAML_FLOW_SEQUENCE_STYLE) {
-                    $string .= " []";
-                }
             }
         }
         elsif ($ev eq 'mapping_end_event') {
