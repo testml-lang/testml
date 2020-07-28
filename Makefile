@@ -73,6 +73,9 @@ LANG_NEW := \
 # All the language test rules (like `test-runtime-perl`):
 TEST_ALL := $(LANG_ALL:%=test-runtime-%)
 
+# Remove Go from TEST_ALL for now:
+TEST_ALL := $(patsubst test-runtime-go,,$(TEST_ALL))
+
 # All the language specific runtime code branches (like `run/perl`):
 RUNTIME_ALL := $(LANG_ALL:%=runtime/%)
 
