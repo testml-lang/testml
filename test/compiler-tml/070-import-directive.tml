@@ -31,7 +31,8 @@ Diff = 1
   "data": [
     { "Label": "Test 1",
       "a": 1,
-      "b": 2}]}
+      "b": 2,
+      "Name": "data"}]}
 
 === Import multiple files at once
 --- input
@@ -65,12 +66,15 @@ Diff = 1
   "data": [
     { "Label": "Test 1",
       "a": 1,
-      "b": 2},
+      "b": 2,
+      "Name": "data1"},
     { "Label": "Test 2",
       "a": 3,
-      "b": 4},
+      "b": 4,
+      "Name": "data2"},
     { "Label": "Test 3",
       "a": 5,
-      "b": 6}]}
+      "b": 6,
+      "Name": "data3"}]}
 
 # vim: ft=:

@@ -71,14 +71,32 @@ sub importer {
     $root =~ s/^(.*)\/.*/$1/;
   }
 
-  my $testml_file = "$root/$name.tml";
+  my @lib = grep length,
+    split(':', ($ENV{TESTML_LIB} || '')), $root;
+
+  my $testml_file;
+  for my $lib (@lib) {
+    $testml_file = "$lib/$name.tml";
+    last if -e "$lib/$name.tml";
+    $testml_file = '';
+  }
+  if (not $testml_file) {
+    die "Can't find '$name.tml' in:\n" .
+      join '', map "- '$_'\n", @lib;
+  }
   my $testml_input = file_read($testml_file);
 
-  return parse_testml(
+  my $parse = parse_testml(
     $testml_input,
     $testml_file,
     \&importer,
   );
+
+  for my $block (@{$parse->{data}}) {
+    $block->{Name} = $name;
+  }
+
+  return $parse;
 }
 
 sub ast_to_json {

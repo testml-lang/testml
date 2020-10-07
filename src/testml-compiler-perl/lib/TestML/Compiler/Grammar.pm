@@ -49,7 +49,7 @@ sub rule_undent {
   return;
 }
 
-sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.64_01)
+sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.75)
   {
     '+toprule' => 'testml_document',
     'DOT' => {
@@ -192,7 +192,7 @@ sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.64_01)
           '.ref' => 'function_signature'
         },
         {
-          '.rgx' => qr/\G[\ \t]*=\>(?:;(?:\ (?=\S))?|\r?\n?)/
+          '.rgx' => qr/\G[\ \t]*=\>(?:;(?:\ (?=\S))?|[\ \t]*(?:\#.*\r?\n)|\r?\n?)/
         },
         {
           '-skip' => 1,
@@ -313,7 +313,7 @@ sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.64_01)
       '.rgx' => qr/\G[\ \t]+%[\ \t]+/
     },
     'ending' => {
-      '.rgx' => qr/\G(?:;(?:\ (?=\S))?|\r?\n?)/
+      '.rgx' => qr/\G(?:;(?:\ (?=\S))?|[\ \t]*(?:\#.*\r?\n)|\r?\n?)/
     },
     'expression_label' => {
       '.rgx' => qr/\G"((?:[^\n\\"]|\\[\\"0nt])*?)":\s*/
@@ -365,7 +365,7 @@ sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.64_01)
           '.ref' => 'function_signature'
         },
         {
-          '.rgx' => qr/\G[\ \t]*=\>(?:;(?:\ (?=\S))?|\r?\n?)/
+          '.rgx' => qr/\G[\ \t]*=\>(?:;(?:\ (?=\S))?|[\ \t]*(?:\#.*\r?\n)|\r?\n?)/
         },
         {
           '-skip' => 1,
@@ -547,7 +547,7 @@ sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.64_01)
       ]
     },
     'module_name' => {
-      '.rgx' => qr/\G(\S+)/
+      '.rgx' => qr/\G(\w\S*)/
     },
     'number_object' => {
       '.rgx' => qr/\G(\-?[0-9]+(?:\.[0-9]+)?)/
@@ -649,7 +649,7 @@ sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.64_01)
       '.rgx' => qr/\G\s*:"((?:[^\n\\"]|\\[\\"0nt])*?)"/
     },
     'testml_directive' => {
-      '.rgx' => qr/\G%TestML[\ \t]+([0-9]+\.[0-9]+\.[0-9]+)(?:;(?:\ (?=\S))?|\r?\n?)/
+      '.rgx' => qr/\G%TestML[\ \t]+([0-9]+\.[0-9]+\.[0-9]+)(?:;(?:\ (?=\S))?|[\ \t]*(?:\#.*\r?\n)|\r?\n?)/
     },
     'testml_document' => {
       '.all' => [

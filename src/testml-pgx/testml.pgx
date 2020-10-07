@@ -267,7 +267,7 @@ point-multi: /
 
 #------------------------------------------------------------------------------
 
-ending: /(: SEMI (: SPACE (= NS))? | EOL?)/
+ending: /(: SEMI (: SPACE (= NS))? | - comment-line | EOL?)/
 
 assignment-operator:
   /(: '=' | '||=' )/
@@ -306,7 +306,7 @@ identifier-name:
 identifier-user:
   / LOWER ALNUM* (: DASH ALPHA ALNUM*)* /
 
-module-name: /( NS+ )/
+module-name: /( WORD NS* )/
 
 point-name:
   /(: identifier-user | pseudo-point-name)/
