@@ -104,7 +104,7 @@ git clone git@github.com:testml-lang/testml
 source testml/.rc
 ```
 
-## Developemnt Installation
+## Development Installation
 
 If you want to be a TestML developer, you'll need to install all the languages
 and bin tools needed to run `make test`. You can run this on a Debian/Ubuntu
@@ -122,7 +122,7 @@ See "Hacking on TestML" below.
 # Hacking on TestML
 
 TestML needs language experts (like you) to port the code to all modern
-programming langauges. It's only a few hundred lines of (say, Python) code to
+programming languages. It's only a few hundred lines of (say, Python) code to
 port, so it should be easy, right?
 
 To get started, you might want to drop by #testml on irc.freenode.net. We'll be
@@ -153,8 +153,8 @@ In 2017, the assertion syntax was reinvented, and a TestML compiler was added.
 This made the runtime be much cleaner and easier to port to any language. The
 full stack was implemented at OpenResty Inc for internal use only.
 
-Now, in 2018, this work is being rewitten as open source, with the goal of
-quickly adding support for all popular programming languges.
+Now, in 2018, this work is being rewritten as open source, with the goal of
+quickly adding support for all popular programming languages.
 
 One example of a fairly big TestML suite is
 https://github.com/yaml/yaml-test-suite
