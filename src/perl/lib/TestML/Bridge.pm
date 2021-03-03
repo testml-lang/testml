@@ -7,4 +7,8 @@ sub new {
   bless {@_}, $class;
 }
 
+sub testml_block {
+  return $_[0]->{run}{block};
+}
+
 1;

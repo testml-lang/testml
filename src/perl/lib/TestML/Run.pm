@@ -188,7 +188,8 @@ $code;
       eval "require $bridge_module; 1" or die $@;
     }
 
-    $self->{bridge} = $bridge_module->new;
+    $self->{bridge} = $bridge_module->new(run => $self);
+    Scalar::Util::weaken $self->{run};
   }
 
   (my $call = $name) =~ s/-/_/g;
