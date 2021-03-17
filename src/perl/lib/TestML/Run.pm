@@ -13,6 +13,7 @@ use JSON::PP;
 use utf8;
 use TestML::Boolean;
 use Scalar::Util;
+use B;
 
 # use XXX;
 
@@ -540,7 +541,7 @@ sub type {
   return 'null' if not defined $value;
 
   if (not ref $value) {
-    return 'num' if Scalar::Util::looks_like_number($value);
+    return 'num' if B::svref_2object(\$value) =~ /^B::(IV|NV)$/;;
     return 'str';
   }
   return 'bool' if isBoolean($value);
