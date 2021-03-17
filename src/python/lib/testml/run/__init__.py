@@ -455,6 +455,8 @@ class TestMLRun:
         label = ''
 
     block_label = self.block['Label'] if self.block else ''
+    if block_label is None:
+        block_label = ''
 
     if label:
       label = re.sub(r'^\+', block_label, label)
