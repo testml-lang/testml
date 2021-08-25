@@ -10,9 +10,9 @@ testml-run-file() {
   source "$TESTML_ROOT_LIB/testml/run.bash"
   source "$TESTML_ROOT_LIB/testml/run/tap.bash"
 
-  if [[ -f $TESTML_DIR/$TESTML_BRIDGE.bash ]]; then
-    source "$TESTML_DIR/$TESTML_BRIDGE.bash"
-  fi
+  PATH=$TESTML_LIB:$TESTML_DIR:$PATH \
+    source "$TESTML_BRIDGE.bash" \
+    2>/dev/null || true
 
   TESTML_EXEC_BASH=${TESTML_AST%.lingy}.bash
   TESTML_ROOT_BIN=${TESTML_ROOT_LIB%lib}bin
