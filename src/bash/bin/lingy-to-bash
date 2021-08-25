@@ -255,7 +255,7 @@ sub make_bash {
     my $bash = <<"...";
 #!/usr/bin/env bash
 
-[[ -z \${TESTML_DEBUG-} ]] || { set -x; set -x; }
+[[ \${TESTML_DEBUG_BASH-} ]] && set -x
 
 set -e -u -o pipefail
 

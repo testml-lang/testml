@@ -4,8 +4,8 @@
 
 set -e -u -o pipefail
 
-testml-run-file() {
-  local bridge
+testml-run-file() (
+  ast=$1
 
   source "$TESTML_ROOT_LIB/testml/run.bash"
   source "$TESTML_ROOT_LIB/testml/run/tap.bash"
@@ -14,24 +14,24 @@ testml-run-file() {
     source "$TESTML_BRIDGE.bash" \
     2>/dev/null || true
 
-  TESTML_EXEC_BASH=${TESTML_AST%.lingy}.bash
+  TESTML_EXEC_BASH=${ast%.lingy}.bash
   TESTML_ROOT_BIN=${TESTML_ROOT_LIB%lib}bin
 
-  if [[ $TESTML_AST -nt $TESTML_EXEC_BASH ]]; then
-    "$TESTML_ROOT_BIN/lingy-to-bash" < "$TESTML_AST" \
+  if [[ $ast -nt $TESTML_EXEC_BASH ]]; then
+    "$TESTML_ROOT_BIN/lingy-to-bash" < "$ast" \
       > "$TESTML_EXEC_BASH"
   fi
 
   source "$TESTML_EXEC_BASH"
 
-  bridge=${TESTML_AST%.*.lingy}.bridge.bash
+  bridge=${ast%.*.lingy}.bridge.bash
 
   if [[ -f $bridge ]]; then
     source "$bridge"
   fi
 
   TestML.main
-}
+)
 
 [[ ${TESTML_SOURCED-} ]] ||
   source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"

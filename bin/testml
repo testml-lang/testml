@@ -11,6 +11,8 @@
 
 # shellcheck disable=1090,2034,2154
 
+[[ ${TESTML_DEBUG-} ]] && set -x
+
 set -e -u -o pipefail
 
 export TESTML_VERSION='0.3.0'
@@ -18,7 +20,7 @@ export TESTML_VERSION='0.3.0'
 TESTML_ROOT=${TESTML_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}
 export TESTML_ROOT
 
-main() {
+main() (
   if is-meant-to-run-file "$@"; then
     from_main=1 check-input-file "$@" ||
       exec "$TESTML_INPUT" "$@"
@@ -32,15 +34,15 @@ main() {
   else
     run-cli "$@"
   fi
-}
+)
 
-is-meant-to-run-file() {
+is-meant-to-run-file() (
   [[ $# == 1 && ! $1 =~ ^-. ]] &&
   [[ -f $1 && -r $1 || $1 == - && -t 0 ]] &&
     [[ $(read -r line < "$1" && echo "$line") =~ ^#!.*testml ]]
-}
+  )
 
-testml-run() {
+testml-run() (
   testml_runner_sourced=true
 
   export-testml-vars
@@ -59,13 +61,13 @@ testml-run() {
   else
     run-cli "$@"
   fi
-}
+)
 
-run-cli() {
+run-cli() (
   source "$TESTML_ROOT/bin/testml-cli.bash"
 
   testml-run-cli "$@"
-}
+)
 
 check-input-file() {
   if [[ $1 != '-' ]]; then
@@ -168,9 +170,7 @@ set-testml-lib-vars() {
   fi
 }
 
-compile-testml() {
-  local ast rc
-
+compile-testml() (
   [[ $TESTML_INPUT == '-' || -e $TESTML_AST && ! -s $TESTML_AST ]] &&
     rm -f "$TESTML_AST"
   [[ $TESTML_AST -nt $TESTML_FILE ]] &&
@@ -195,23 +195,21 @@ compile-testml() {
   fi
 
   return $rc
-}
+)
 
-is-tty() {
+is-tty() (
   [[ -t 1 ]]
-}
+)
 
 can() {
   can_path=$(command -v "$1") || return $?
 }
 
-abs-dir-path() {
+abs-dir-path() (
   [[ $1 != '-' ]] || { pwd; return; }
   [[ -f $1 ]] || die "'$1' is not a file"
-  local file_path=$1
-  local file_name=
+  file_path=$1
   file_name=$(basename "$1")
-  local file_dir=
   file_dir=$(cd "$(dirname -- "$1")" && (pwd -P 2>/dev/null || pwd))
   (
     cd "$file_dir"
@@ -221,7 +219,7 @@ abs-dir-path() {
     fi
     pwd -P 2>/dev/null || pwd
   )
-}
+)
 
 die() {
   if [[ $# -eq 0 ]]; then
