@@ -1,20 +1,13 @@
 # shellcheck shell=bash
 
-[[ -n ${ZSH_VERSION-} ]] &&
-  TESTML_ROOT="$0" ||
-  TESTML_ROOT="${BASH_SOURCE[0]}"
+TESTML_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)
 
-TESTML_ROOT=$(cd "$(dirname "$TESTML_ROOT")" && pwd)
-
-if [[ ! -e "$TESTML_ROOT/ext" ]]; then
-  (
-    cd "$TESTML_ROOT" || exit $?
-    make ext &>/dev/null
-  )
-fi
+[[ -e $TESTML_ROOT/ext ]] || (
+  cd "$TESTML_ROOT" || exit $?
+  make ext &>/dev/null
+)
 
 export TESTML_ROOT
-export PATH="$TESTML_ROOT/bin:$PATH"
-export MANPATH="$TESTML_ROOT/man:$MANPATH"
-
-# vim: set ft=sh:
+export PATH=$TESTML_ROOT/bin:$PATH
+export MANPATH=$TESTML_ROOT/man${MANPATH:+:$MANPATH}
+export PYTHONPATH=$TESTML_ROOT/src/python/lib${PYTHONPATH:+:$PYTHONPATH}
