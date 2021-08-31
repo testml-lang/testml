@@ -220,8 +220,8 @@ $(NODE_MODULES):
 
 # Rules to clean up the repo:
 clean:
-	find . -type d | grep -E '(\.testml|\.precomp|__pycache__)$$' | xargs rm -fr
-	find . -type f | grep -E '\.(pyc|swp|swo)$$' | xargs rm -f
+	find . -type d | grep -E '(\.testml|\.precomp)$$' | xargs rm -fr
+	find . -type f | grep -E '\.(swp|swo)$$' | xargs rm -f
 
 realclean: clean
 	rm -fr $(ALL_WORK)

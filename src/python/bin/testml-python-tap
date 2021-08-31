@@ -4,11 +4,12 @@
 
 set -e -u -o pipefail
 
-testml-run-file() {
-  PYTHONPATH=$TESTML_ROOT_LIB:$TESTML_LIB${PYTHONPATH:+:$PYTHONPATH} \
-    "$TESTML_LANG_BIN" -u \
-      -c "from $TESTML_MODULE import TestMLRunTAP; TestMLRunTAP.run('$1')"
-}
+testml-run-file() (
+  export PYTHONPATH=$TESTML_ROOT_LIB:$TESTML_LIB${PYTHONPATH:+:$PYTHONPATH}
+  export PYTHONDONTWRITEBYTECODE=1
+  "$TESTML_LANG_BIN" -u \
+    -c "from $TESTML_MODULE import TestMLRunTAP; TestMLRunTAP.run('$1')"
+)
 
 [[ ${TESTML_SOURCED-} ]] ||
   source "${TESTML_ROOT:-$(dirname "$0")/..}/bin/testml"

@@ -1,5 +1,4 @@
 .precomp/
-*.pyc
 .testml/
 *.swp
 
